@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // Polza AI-related utility functions
+// Direct HTTP API implementation (OpenAI-compatible)
 
 // Check if use is already defined (when imported from solve.mjs)
 // If not, fetch it (when running standalone)
@@ -15,45 +16,39 @@ const os = (await use('os')).default;
 // Import log from general lib
 import { log } from './lib.mjs';
 import { reportError } from './sentry.lib.mjs';
-import { timeouts } from './config.lib.mjs';
 import { detectUsageLimit, formatUsageLimitMessage } from './usage-limit.lib.mjs';
 
 // Model mapping to translate aliases to full model IDs for Polza AI
-// The agent CLI expects format: polza/provider/model-id
+// Polza uses OpenAI-compatible format: provider/model-id
 export const mapModelToId = (model) => {
   const modelMap = {
     // Claude models via Polza
-    'sonnet': 'polza/anthropic/claude-3-5-sonnet-20250219',
-    'claude-sonnet': 'polza/anthropic/claude-3-5-sonnet-20250219',
-    'sonnet-4': 'polza/anthropic/claude-sonnet-4-20250514',
-    'sonnet-4.5': 'polza/anthropic/claude-sonnet-4-5-20250929',
-    'opus': 'polza/anthropic/claude-opus-4-20250418',
-    'haiku': 'polza/anthropic/claude-3-5-haiku-20250310',
+    'sonnet': 'anthropic/claude-3-5-sonnet-20250219',
+    'claude-sonnet': 'anthropic/claude-3-5-sonnet-20250219',
+    'sonnet-4': 'anthropic/claude-sonnet-4-20250514',
+    'sonnet-4.5': 'anthropic/claude-sonnet-4-5-20250929',
+    'opus': 'anthropic/claude-opus-4-20250418',
+    'haiku': 'anthropic/claude-3-5-haiku-20250310',
 
     // OpenAI models via Polza
-    'gpt4o': 'polza/openai/gpt-4o',
-    'gpt-4o': 'polza/openai/gpt-4o',
-    'gpt4': 'polza/openai/gpt-4',
-    'gpt-4': 'polza/openai/gpt-4',
-    'o1': 'polza/openai/o1',
-    'o1-preview': 'polza/openai/o1-preview',
+    'gpt4o': 'openai/gpt-4o',
+    'gpt-4o': 'openai/gpt-4o',
+    'gpt4': 'openai/gpt-4',
+    'gpt-4': 'openai/gpt-4',
+    'o1': 'openai/o1',
+    'o1-preview': 'openai/o1-preview',
 
     // DeepSeek models via Polza
-    'deepseek-r1': 'polza/deepseek/deepseek-r1',
-    'deepseek': 'polza/deepseek/deepseek-chat',
+    'deepseek-r1': 'deepseek/deepseek-r1',
+    'deepseek': 'deepseek/deepseek-chat',
 
     // Google models via Polza
-    'gemini': 'polza/google/gemini-pro',
-    'gemini-pro': 'polza/google/gemini-pro'
+    'gemini': 'google/gemini-pro',
+    'gemini-pro': 'google/gemini-pro'
   };
 
-  // If the model already has polza/ prefix, return as-is
-  if (model.startsWith('polza/')) {
-    return model;
-  }
-
-  // Return mapped model ID if it's an alias, otherwise prepend polza/ prefix
-  return modelMap[model] || `polza/${model}`;
+  // Return mapped model ID if it's an alias, otherwise return as-is
+  return modelMap[model] || model;
 };
 
 // Function to validate Polza AI connection
@@ -71,56 +66,14 @@ export const validatePolzaConnection = async (model = 'sonnet') => {
     return false;
   }
 
-  // Step 2: Check if Bun is installed (required for agent CLI)
-  try {
-    const bunCheckResult = await $`which bun`;
-    if (bunCheckResult.code !== 0) {
-      await log('❌ Bun runtime not found', { level: 'error' });
-      await log('   💡 Polza integration requires Bun to be installed', { level: 'error' });
-      await log('   💡 Install Bun: curl -fsSL https://bun.sh/install | bash', { level: 'error' });
-      await log('   💡 Or visit: https://bun.sh/', { level: 'error' });
-      return false;
-    }
-    const bunPath = bunCheckResult.stdout?.toString().trim();
-    await log(`📦 Bun runtime found: ${bunPath}`);
-  } catch (error) {
-    await log('❌ Error checking for Bun runtime', { level: 'error' });
-    await log(`   ${error.message}`, { level: 'error' });
-    return false;
-  }
+  await log('✅ POLZA_API_KEY found');
 
-  // Step 3: Check if @deep-assistant/agent is installed
-  try {
-    const agentCheckResult = await $`which agent`;
-    if (agentCheckResult.code !== 0) {
-      await log('❌ Agent CLI not found', { level: 'error' });
-      await log('   💡 Please install @deep-assistant/agent:', { level: 'error' });
-      await log('   💡   bun install -g @deep-assistant/agent', { level: 'error' });
-      return false;
-    }
-    const agentPath = agentCheckResult.stdout?.toString().trim();
-    await log(`📦 Agent CLI found: ${agentPath}`);
-  } catch (error) {
-    await log('❌ Error checking for Agent CLI', { level: 'error' });
-    await log(`   ${error.message}`, { level: 'error' });
-    return false;
-  }
-
-  // Step 4: Get agent version
-  try {
-    const versionResult = await $`agent --version`;
-    if (versionResult.code === 0) {
-      const version = versionResult.stdout?.toString().trim();
-      await log(`📦 Polza Agent CLI version: ${version}`);
-    }
-  } catch (versionError) {
-    await log(`⚠️  Could not get agent version, but proceeding with validation...`);
-  }
-
-  // Step 5: Test API connectivity with a simple HTTP request to Polza API
-  // This is faster and more reliable than running the full agent CLI
+  // Step 2: Test API connectivity with a simple HTTP request to Polza API
   try {
     await log('🔗 Testing Polza API connectivity...');
+
+    // Map model to proper format
+    const mappedModel = mapModelToId(model);
 
     const response = await fetch('https://api.polza.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -129,11 +82,11 @@ export const validatePolzaConnection = async (model = 'sonnet') => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3-5-sonnet-20250219',
+        model: mappedModel,
         messages: [{ role: 'user', content: 'test' }],
         max_tokens: 5
       }),
-      signal: AbortSignal.timeout(10000) // 10 second timeout
+      signal: AbortSignal.timeout(15000) // 15 second timeout
     });
 
     if (!response.ok) {
@@ -145,6 +98,16 @@ export const validatePolzaConnection = async (model = 'sonnet') => {
         await log('   💡 Invalid API key. Please check your POLZA_API_KEY', { level: 'error' });
       } else if (response.status === 402) {
         await log('   💡 Insufficient balance. Please add funds to your Polza account', { level: 'error' });
+      } else if (response.status === 400) {
+        // Parse error to check if it's about model not found
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.error && errorData.error.message) {
+            await log(`   💡 ${errorData.error.message}`, { level: 'error' });
+          }
+        } catch {
+          // Ignore JSON parse error
+        }
       }
       return false;
     }
@@ -152,7 +115,7 @@ export const validatePolzaConnection = async (model = 'sonnet') => {
     const data = await response.json();
     await log('✅ Polza API connection validated successfully');
 
-    if (data.usage && data.usage.cost) {
+    if (data.usage && data.usage.cost !== undefined) {
       await log(`   💰 Test request cost: ${data.usage.cost} руб.`);
     }
 
@@ -168,8 +131,7 @@ export const validatePolzaConnection = async (model = 'sonnet') => {
 
 // Function to handle Polza AI runtime switching (if applicable)
 export const handlePolzaRuntimeSwitch = async () => {
-  // Polza is run as a CLI tool, runtime switching may not be applicable
-  // This function can be used for any runtime-specific configurations if needed
+  // Polza is accessed via HTTP API, no runtime switching needed
   await log('ℹ️  Polza AI runtime handling not required for this operation');
 };
 
@@ -193,7 +155,6 @@ export const executePolza = async (params) => {
     log,
     formatAligned,
     getResourceSnapshot,
-    polzaPath = 'agent',
     $
   } = params;
 
@@ -264,7 +225,6 @@ export const executePolza = async (params) => {
     getResourceSnapshot,
     forkedRepo,
     feedbackLines,
-    polzaPath,
     $
   });
 };
@@ -280,190 +240,97 @@ export const executePolzaCommand = async (params) => {
     formatAligned,
     getResourceSnapshot,
     forkedRepo,
-    feedbackLines,
-    polzaPath,
-    $
+    feedbackLines
   } = params;
 
-  // Retry configuration
-  const maxRetries = 3;
-  let retryCount = 0;
+  // Execute Polza AI via direct HTTP API calls (OpenAI-compatible)
+  await log(`\n${formatAligned('🤖', 'Executing Polza AI:', argv.model.toUpperCase())}`);
 
-  const executeWithRetry = async () => {
-    // Execute agent command from the cloned repository directory
-    if (retryCount === 0) {
-      await log(`\n${formatAligned('🤖', 'Executing Polza AI:', argv.model.toUpperCase())}`);
+  if (argv.verbose) {
+    await log(`   Model: ${argv.model}`, { verbose: true });
+    await log(`   Working directory: ${tempDir}`, { verbose: true });
+    await log(`   Branch: ${branchName}`, { verbose: true });
+    await log(`   Prompt length: ${prompt.length} chars`, { verbose: true });
+    await log(`   System prompt length: ${systemPrompt.length} chars`, { verbose: true });
+    if (feedbackLines && feedbackLines.length > 0) {
+      await log(`   Feedback info included: Yes (${feedbackLines.length} lines)`, { verbose: true });
     } else {
-      await log(`\n${formatAligned('🔄', 'Retry attempt:', `${retryCount}/${maxRetries}`)}`);
+      await log('   Feedback info included: No', { verbose: true });
     }
+  }
 
-    if (argv.verbose) {
-      await log(`   Model: ${argv.model}`, { verbose: true });
-      await log(`   Working directory: ${tempDir}`, { verbose: true });
-      await log(`   Branch: ${branchName}`, { verbose: true });
-      await log(`   Prompt length: ${prompt.length} chars`, { verbose: true });
-      await log(`   System prompt length: ${systemPrompt.length} chars`, { verbose: true });
-      if (feedbackLines && feedbackLines.length > 0) {
-        await log(`   Feedback info included: Yes (${feedbackLines.length} lines)`, { verbose: true });
-      } else {
-        await log('   Feedback info included: No', { verbose: true });
-      }
-    }
+  // Take resource snapshot before execution
+  const resourcesBefore = await getResourceSnapshot();
+  await log('📈 System resources before execution:', { verbose: true });
+  await log(`   Memory: ${resourcesBefore.memory.split('\n')[1]}`, { verbose: true });
+  await log(`   Load: ${resourcesBefore.load}`, { verbose: true });
 
-    // Take resource snapshot before execution
-    const resourcesBefore = await getResourceSnapshot();
-    await log('📈 System resources before execution:', { verbose: true });
-    await log(`   Memory: ${resourcesBefore.memory.split('\n')[1]}`, { verbose: true });
-    await log(`   Load: ${resourcesBefore.load}`, { verbose: true });
+  // Map model alias to full ID
+  const mappedModel = mapModelToId(argv.model);
 
-    // Build Polza AI command
-    let execCommand;
+  // Get API key
+  const apiKey = process.env.POLZA_API_KEY;
+  if (!apiKey) {
+    await log('❌ POLZA_API_KEY environment variable is not set', { level: 'error' });
+    return {
+      success: false,
+      sessionId: null,
+      limitReached: false,
+      limitResetTime: null
+    };
+  }
 
-    // Map model alias to full ID
-    const mappedModel = mapModelToId(argv.model);
+  // Build messages array for Polza API
+  const messages = [];
+  if (systemPrompt) {
+    messages.push({ role: 'system', content: systemPrompt });
+  }
+  messages.push({ role: 'user', content: prompt });
 
-    // Build agent command arguments
-    let agentArgs = `--model ${mappedModel}`;
+  await log(`${formatAligned('📋', 'Command details:', '')}`);
+  await log(formatAligned('📂', 'Working directory:', tempDir, 2));
+  await log(formatAligned('🌿', 'Branch:', branchName, 2));
+  await log(formatAligned('🤖', 'Model:', `Polza AI ${mappedModel}`, 2));
+  if (argv.fork && forkedRepo) {
+    await log(formatAligned('🍴', 'Fork:', forkedRepo, 2));
+  }
 
-    if (argv.resume) {
-      await log(`🔄 Resuming from session: ${argv.resume}`);
-      // Note: Check if agent supports resume flag, add if it does
-      agentArgs = `--model ${mappedModel}`;
-      await log(`⚠️  Warning: Resume functionality may not be supported by Polza Agent`, { level: 'warning' });
-    }
+  await log(`\n${formatAligned('▶️', 'Streaming output:', '')}\n`);
 
-    // For Polza AI agent, we pass the combined prompt via stdin
-    // We need to combine system and user prompts into a single message
-    const combinedPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
+  try {
+    // Make streaming request to Polza API
+    const response = await fetch('https://api.polza.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'Accept': 'text/event-stream'
+      },
+      body: JSON.stringify({
+        model: mappedModel,
+        messages,
+        stream: true,
+        max_tokens: 16000, // Reasonable limit for long responses
+        temperature: 0.7
+      })
+    });
 
-    // If there's a system prompt, we can use --append-system-message flag
-    // Write the prompts to files for piping
-    // Use OS temporary directory instead of repository workspace to avoid polluting the repo
-    const promptFile = path.join(os.tmpdir(), `polza_prompt_${Date.now()}_${process.pid}.txt`);
-    const systemPromptFile = systemPrompt ? path.join(os.tmpdir(), `polza_system_${Date.now()}_${process.pid}.txt`) : null;
+    if (!response.ok) {
+      const errorText = await response.text();
+      await log(`❌ Polza API request failed: ${response.status} ${response.statusText}`, { level: 'error' });
+      await log(`   Response: ${errorText}`, { level: 'error' });
 
-    await fs.writeFile(promptFile, prompt);
-    if (systemPromptFile) {
-      await fs.writeFile(systemPromptFile, systemPrompt);
-      agentArgs += ` --append-system-message-file ${systemPromptFile}`;
-    }
-
-    // Build the full command - pipe the prompt file to agent
-    const fullCommand = `(cd "${tempDir}" && cat "${promptFile}" | ${polzaPath} ${agentArgs})`;
-
-    await log(`\n${formatAligned('📝', 'Raw command:', '')}`);
-    await log(`${fullCommand}`);
-    await log('');
-
-    try {
-      // Pipe the prompt file to agent via stdin
-      if (systemPromptFile) {
-        execCommand = $({
-          cwd: tempDir,
-          mirror: false
-        })`cat ${promptFile} | ${polzaPath} --model ${mappedModel} --append-system-message-file ${systemPromptFile}`;
-      } else {
-        execCommand = $({
-          cwd: tempDir,
-          mirror: false
-        })`cat ${promptFile} | ${polzaPath} --model ${mappedModel}`;
+      if (response.status === 401) {
+        await log('   💡 Invalid API key. Please check your POLZA_API_KEY', { level: 'error' });
+      } else if (response.status === 402) {
+        await log('   💡 Insufficient balance. Please add funds to your Polza account', { level: 'error' });
       }
 
-      await log(`${formatAligned('📋', 'Command details:', '')}`);
-      await log(formatAligned('📂', 'Working directory:', tempDir, 2));
-      await log(formatAligned('🌿', 'Branch:', branchName, 2));
-      await log(formatAligned('🤖', 'Model:', `Polza AI ${argv.model.toUpperCase()}`, 2));
-      if (argv.fork && forkedRepo) {
-        await log(formatAligned('🍴', 'Fork:', forkedRepo, 2));
-      }
+      const resourcesAfter = await getResourceSnapshot();
+      await log('\n📈 System resources after execution:', { verbose: true });
+      await log(`   Memory: ${resourcesAfter.memory.split('\n')[1]}`, { verbose: true });
+      await log(`   Load: ${resourcesAfter.load}`, { verbose: true });
 
-      await log(`\n${formatAligned('▶️', 'Streaming output:', '')}\n`);
-
-      let exitCode = 0;
-      let sessionId = null;
-      let limitReached = false;
-      let limitResetTime = null;
-      let lastMessage = '';
-
-      for await (const chunk of execCommand.stream()) {
-        if (chunk.type === 'stdout') {
-          const output = chunk.data.toString();
-          await log(output);
-          lastMessage = output;
-        }
-
-        if (chunk.type === 'stderr') {
-          const errorOutput = chunk.data.toString();
-          if (errorOutput) {
-            await log(errorOutput, { stream: 'stderr' });
-          }
-        } else if (chunk.type === 'exit') {
-          exitCode = chunk.code;
-        }
-      }
-
-      // Clean up temporary files
-      try {
-        await fs.unlink(promptFile);
-        if (systemPromptFile) {
-          await fs.unlink(systemPromptFile);
-        }
-      } catch (cleanupError) {
-        // Ignore cleanup errors
-      }
-
-      if (exitCode !== 0) {
-        // Check for usage limit errors first (more specific)
-        const limitInfo = detectUsageLimit(lastMessage);
-        if (limitInfo.isUsageLimit) {
-          limitReached = true;
-          limitResetTime = limitInfo.resetTime;
-
-          // Format and display user-friendly message
-          const messageLines = formatUsageLimitMessage({
-            tool: 'Polza AI',
-            resetTime: limitInfo.resetTime,
-            sessionId,
-            resumeCommand: sessionId ? `${process.argv[0]} ${process.argv[1]} ${argv.url} --resume ${sessionId}` : null
-          });
-
-          for (const line of messageLines) {
-            await log(line, { level: 'warning' });
-          }
-        } else {
-          await log(`\n\n❌ Polza AI command failed with exit code ${exitCode}`, { level: 'error' });
-        }
-
-        const resourcesAfter = await getResourceSnapshot();
-        await log('\n📈 System resources after execution:', { verbose: true });
-        await log(`   Memory: ${resourcesAfter.memory.split('\n')[1]}`, { verbose: true });
-        await log(`   Load: ${resourcesAfter.load}`, { verbose: true });
-
-        return {
-          success: false,
-          sessionId,
-          limitReached,
-          limitResetTime
-        };
-      }
-
-      await log('\n\n✅ Polza AI command completed');
-
-      return {
-        success: true,
-        sessionId,
-        limitReached,
-        limitResetTime
-      };
-    } catch (error) {
-      reportError(error, {
-        context: 'execute_polza',
-        command: params.command,
-        polzaPath: params.polzaPath,
-        operation: 'run_polza_command'
-      });
-
-      await log(`\n\n❌ Error executing Polza AI command: ${error.message}`, { level: 'error' });
       return {
         success: false,
         sessionId: null,
@@ -471,10 +338,99 @@ export const executePolzaCommand = async (params) => {
         limitResetTime: null
       };
     }
-  };
 
-  // Start the execution with retry logic
-  return await executeWithRetry();
+    // Process streaming response
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullContent = '';
+    let usage = null;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+      for (const line of lines) {
+        if (!line.trim() || !line.startsWith('data: ')) continue;
+
+        const data = line.slice(6); // Remove 'data: ' prefix
+        if (data === '[DONE]') continue;
+
+        try {
+          const parsed = JSON.parse(data);
+
+          // Extract content delta
+          if (parsed.choices && parsed.choices[0] && parsed.choices[0].delta) {
+            const delta = parsed.choices[0].delta.content;
+            if (delta) {
+              fullContent += delta;
+              // Stream output to console
+              process.stdout.write(delta);
+            }
+          }
+
+          // Extract usage information
+          if (parsed.usage) {
+            usage = parsed.usage;
+          }
+        } catch (err) {
+          // Ignore JSON parse errors for malformed chunks
+          if (argv.verbose) {
+            await log(`   ⚠️  Failed to parse chunk: ${err.message}`, { verbose: true });
+          }
+        }
+      }
+    }
+
+    await log('\n\n✅ Polza AI command completed');
+
+    // Display usage information if available
+    if (usage) {
+      await log(`\n📊 Usage statistics:`);
+      await log(`   Total tokens: ${usage.total_tokens}`);
+      await log(`   Prompt tokens: ${usage.prompt_tokens}`);
+      await log(`   Completion tokens: ${usage.completion_tokens}`);
+      if (usage.cost !== undefined) {
+        await log(`   💰 Cost: ${usage.cost} руб.`);
+      }
+    }
+
+    const resourcesAfter = await getResourceSnapshot();
+    await log('\n📈 System resources after execution:', { verbose: true });
+    await log(`   Memory: ${resourcesAfter.memory.split('\n')[1]}`, { verbose: true });
+    await log(`   Load: ${resourcesAfter.load}`, { verbose: true });
+
+    return {
+      success: true,
+      sessionId: null,
+      limitReached: false,
+      limitResetTime: null
+    };
+  } catch (error) {
+    reportError(error, {
+      context: 'execute_polza',
+      model: mappedModel,
+      operation: 'api_request'
+    });
+
+    await log(`\n\n❌ Error executing Polza AI command: ${error.message}`, { level: 'error' });
+
+    const resourcesAfter = await getResourceSnapshot();
+    await log('\n📈 System resources after execution:', { verbose: true });
+    await log(`   Memory: ${resourcesAfter.memory.split('\n')[1]}`, { verbose: true });
+    await log(`   Load: ${resourcesAfter.load}`, { verbose: true });
+
+    return {
+      success: false,
+      sessionId: null,
+      limitReached: false,
+      limitResetTime: null
+    };
+  }
 };
 
 export const checkForUncommittedChanges = async (tempDir, owner, repo, branchName, $, log, autoCommit = false, autoRestartEnabled = true) => {
