@@ -6530,6 +6530,63 @@ function ja(t, { isActive: e, kittyProtocolEnabled: r = !1, config: n }) {
 var hDn = enUS,
 // Russian locale (previously ADn)
   ADn = ruRU;
+// Locale mapping object
+var nXt = { en: hDn, ru: ADn },
+  // I18n manager class (previously NUe)
+  NUe = class {
+    currentLanguage;
+    constructor(e) {
+      let r = e?.language;
+      r === 'en' || r === 'ru' ? (this.currentLanguage = r) : (this.currentLanguage = 'en');
+    }
+    setLanguage(e) {
+      this.currentLanguage = e;
+    }
+    getLanguage() {
+      return this.currentLanguage;
+    }
+    t(e, r) {
+      let n = e.split('.'),
+        i = nXt[this.currentLanguage],
+        a = !0;
+      for (let s of n)
+        if (typeof i == 'object' && i !== null && s in i) i = i[s];
+        else {
+          a = !1;
+          break;
+        }
+      if (a && typeof i == 'string') {
+        if (r) {
+          let s = i;
+          for (let [o, l] of Object.entries(r)) s = s.replace(new RegExp(`{${o}}`, 'g'), String(l));
+          return s;
+        }
+        return i;
+      }
+      if (this.currentLanguage !== 'en') {
+        let s = nXt.en,
+          o = !0;
+        for (let l of n)
+          if (typeof s == 'object' && s !== null && l in s) s = s[l];
+          else {
+            o = !1;
+            break;
+          }
+        if (o && typeof s == 'string') {
+          if (r) {
+            let l = s;
+            for (let [u, c] of Object.entries(r))
+              l = l.replace(new RegExp(`{${u}}`, 'g'), String(c));
+            return l;
+          }
+          return s;
+        }
+      }
+      return e;
+    }
+  },
+  // I18n instance (previously Ie)
+  Ie = new NUe();
 function dXt(t) {
   let e = {
       type: 'custom',
