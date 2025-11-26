@@ -12,7 +12,10 @@ export const initializeConfig = async (use) => {
   // Import yargs with specific version for hideBin support
   const yargsModule = await use('yargs@17.7.2');
   const yargs = yargsModule.default || yargsModule;
-  const { hideBin } = await use('yargs@17.7.2/helpers');
+
+  // Import helpers module and extract hideBin (handle both default and named exports)
+  const helpersModule = await use('yargs@17.7.2/helpers');
+  const hideBin = helpersModule.hideBin || helpersModule.default?.hideBin || helpersModule;
 
   return { yargs, hideBin };
 };
