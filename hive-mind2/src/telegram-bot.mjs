@@ -15,10 +15,10 @@ const { buildUserMention } = await import('./buildUserMention.lib.mjs');
 const { reportError, initializeSentry, addBreadcrumb } = await import('./sentry.lib.mjs');
 const { loadLenvConfig } = await import('./lenv-reader.lib.mjs');
 
-const dotenvxModule = await use('@dotenvx/dotenvx');
+const dotenvxModule = await globalThis.use('@dotenvx/dotenvx');
 const dotenvx = dotenvxModule.default || dotenvxModule;
 
-const getenv = await use('getenv');
+const getenv = await globalThis.use('getenv');
 
 // Load .env configuration as base
 dotenvx.config({ quiet: true });

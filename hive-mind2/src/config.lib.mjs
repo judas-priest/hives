@@ -18,7 +18,7 @@ if (typeof globalThis.use === 'undefined') {
   }
 }
 
-const getenv = await use('getenv');
+const getenv = await globalThis.use('getenv');
 
 // Import lino for parsing Links Notation format
 const { lino } = await import('./lino.lib.mjs');
