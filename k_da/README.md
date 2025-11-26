@@ -4,8 +4,45 @@
 
 K_DA is a deobfuscated and unminified version of the Koda Agent CLI application. Koda Agent is an interactive command-line interface tool built with Node.js and React that provides AI-powered coding assistance, authentication support, and IDE integration capabilities.
 
+## File Structure
+
+This repository contains the K_DA application split into multiple files for easier navigation and understanding:
+
+```
+k_da/
+├── k_da.js                     # Main executable (built from src/)
+├── k_da_deobfuscated.js        # Original deobfuscated file (backup)
+├── build.js                    # Build script to create k_da.js from src/
+├── src/                        # Split source files (for readability)
+│   ├── 01-webpack-runtime.js   # Webpack module system (~1.5 KB)
+│   ├── 02-react-bundle.js      # React library (~652 KB)
+│   ├── 03-npm-modules.js       # NPM dependencies (~7.8 MB)
+│   ├── 04-app-code.js          # Application logic (~1.2 MB)
+│   ├── 05-main.js              # Entry point (~4.4 KB)
+│   └── README.md               # Source structure documentation
+├── .env.example                # Environment variables reference
+├── README.md                   # This file
+├── DEOBFUSCATION_REPORT.md     # Deobfuscation process details
+└── SPLIT_STRUCTURE.md          # File split strategy documentation
+```
+
+**To build the executable:**
+```bash
+node k_da/build.js
+```
+
+**To run the application:**
+```bash
+./k_da/k_da.js [options]
+# or
+node k_da/k_da.js [options]
+```
+
+> **Note**: The source files in `src/` are split for readability only. They share a webpack bundle closure scope and cannot run independently. Use `build.js` to create a working executable.
+
 ## Table of Contents
 
+- [File Structure](#file-structure)
 - [Features](#features)
 - [Architecture](#architecture)
 - [Installation](#installation)
@@ -17,6 +54,7 @@ K_DA is a deobfuscated and unminified version of the Koda Agent CLI application.
 - [Sandbox Mode](#sandbox-mode)
 - [Development](#development)
 - [Deobfuscation Process](#deobfuscation-process)
+- [File Split Strategy](#file-split-strategy)
 - [Troubleshooting](#troubleshooting)
 
 ## Features
@@ -549,6 +587,74 @@ When reporting issues, include:
 - Relevant environment variables (redact secrets)
 - Complete error message and stack trace
 - Debug output: `DEBUG=* ./k_da.js --debug 2>&1 | tee debug.log`
+
+## File Split Strategy
+
+The original deobfuscated file (`k_da_deobfuscated.js`) is 278,000+ lines and 9.5 MB, making it difficult to navigate in most editors. To improve readability and maintainability, the file has been split into logical sections:
+
+### Source Files
+
+1. **01-webpack-runtime.js** (~1.5 KB, 33 lines)
+   - Webpack module system and runtime utilities
+   - Object manipulation helpers
+   - Module loader function (T)
+   - ES module compatibility layer
+
+2. **02-react-bundle.js** (~652 KB, 20,462 lines)
+   - Complete React 19.1.0 library bundle
+   - React JSX runtime
+   - React hooks and components
+   - React development and production modes
+
+3. **03-npm-modules.js** (~7.8 MB, 221,691 lines)
+   - All bundled npm packages and dependencies
+   - Emoji regex utilities
+   - WebSocket libraries
+   - gRPC modules
+   - Various utility libraries
+
+4. **04-app-code.js** (~1.2 MB, 35,994 lines)
+   - Node.js imports (stream, process, etc.)
+   - Application helper functions
+   - Configuration management
+   - Authentication handlers
+   - CLI argument parsing utilities
+   - IDE integration code
+   - Sandbox configuration
+
+5. **05-main.js** (~4.4 KB, 130 lines)
+   - Main async function `$ur()`
+   - Application bootstrap and initialization
+   - Interactive mode setup
+   - Error handling
+
+### Build Process
+
+The split files cannot run independently because they share the webpack bundle's closure scope. To create a working executable:
+
+```bash
+cd k_da
+node build.js
+```
+
+This concatenates all source files in order, maintaining the shared scope while producing a functionally identical executable.
+
+### Benefits of Split Structure
+
+- **Easier Navigation**: Quickly jump to React code, npm modules, or app logic
+- **Better Understanding**: Clear separation between framework, dependencies, and application code
+- **Improved Editing**: Smaller files load faster in editors
+- **Code Organization**: Logical boundaries make the codebase more approachable
+- **Line References**: Each file header shows original line numbers for cross-referencing
+
+### Technical Details
+
+- **Original File**: Lines in k_da_deobfuscated.js are preserved in file headers
+- **Shared Scope**: All variables and functions share the webpack bundle closure
+- **Build Script**: Automatically handles concatenation and cleanup
+- **Executable**: The built k_da.js is functionally identical to k_da_deobfuscated.js
+
+For more details, see [SPLIT_STRUCTURE.md](./SPLIT_STRUCTURE.md) and [src/README.md](./src/README.md).
 
 ## License
 
