@@ -19,100 +19,151 @@ import { timeouts } from './config.lib.mjs';
 import { detectUsageLimit, formatUsageLimitMessage } from './usage-limit.lib.mjs';
 
 // Model mapping to translate aliases to full model IDs for Polza AI
+// The agent CLI expects format: polza/provider/model-id
 export const mapModelToId = (model) => {
   const modelMap = {
     // Claude models via Polza
-    'sonnet': 'anthropic/claude-3-5-sonnet-20250219',
-    'claude-sonnet': 'anthropic/claude-3-5-sonnet-20250219',
-    'sonnet-4': 'anthropic/claude-sonnet-4-20250514',
-    'sonnet-4.5': 'anthropic/claude-sonnet-4-5-20250929',
-    'opus': 'anthropic/claude-opus-4-20250418',
-    'haiku': 'anthropic/claude-3-5-haiku-20250310',
+    'sonnet': 'polza/anthropic/claude-3-5-sonnet-20250219',
+    'claude-sonnet': 'polza/anthropic/claude-3-5-sonnet-20250219',
+    'sonnet-4': 'polza/anthropic/claude-sonnet-4-20250514',
+    'sonnet-4.5': 'polza/anthropic/claude-sonnet-4-5-20250929',
+    'opus': 'polza/anthropic/claude-opus-4-20250418',
+    'haiku': 'polza/anthropic/claude-3-5-haiku-20250310',
 
     // OpenAI models via Polza
-    'gpt4o': 'openai/gpt-4o',
-    'gpt-4o': 'openai/gpt-4o',
-    'gpt4': 'openai/gpt-4',
-    'gpt-4': 'openai/gpt-4',
-    'o1': 'openai/o1',
-    'o1-preview': 'openai/o1-preview',
+    'gpt4o': 'polza/openai/gpt-4o',
+    'gpt-4o': 'polza/openai/gpt-4o',
+    'gpt4': 'polza/openai/gpt-4',
+    'gpt-4': 'polza/openai/gpt-4',
+    'o1': 'polza/openai/o1',
+    'o1-preview': 'polza/openai/o1-preview',
 
     // DeepSeek models via Polza
-    'deepseek-r1': 'deepseek/deepseek-r1',
-    'deepseek': 'deepseek/deepseek-chat',
+    'deepseek-r1': 'polza/deepseek/deepseek-r1',
+    'deepseek': 'polza/deepseek/deepseek-chat',
 
     // Google models via Polza
-    'gemini': 'google/gemini-pro',
-    'gemini-pro': 'google/gemini-pro'
+    'gemini': 'polza/google/gemini-pro',
+    'gemini-pro': 'polza/google/gemini-pro'
   };
 
-  // Return mapped model ID if it's an alias, otherwise return as-is
-  return modelMap[model] || model;
+  // If the model already has polza/ prefix, return as-is
+  if (model.startsWith('polza/')) {
+    return model;
+  }
+
+  // Return mapped model ID if it's an alias, otherwise prepend polza/ prefix
+  return modelMap[model] || `polza/${model}`;
 };
 
 // Function to validate Polza AI connection
 export const validatePolzaConnection = async (model = 'sonnet') => {
-  // Map model alias to full ID
-  const mappedModel = mapModelToId(model);
+  await log('🔍 Validating Polza AI connection...');
 
-  // Retry configuration
-  const maxRetries = 3;
-  let retryCount = 0;
+  // Step 1: Check for POLZA_API_KEY environment variable
+  const apiKey = process.env.POLZA_API_KEY;
+  if (!apiKey) {
+    await log('❌ Polza AI authentication failed', { level: 'error' });
+    await log('   💡 POLZA_API_KEY environment variable is not set', { level: 'error' });
+    await log('   💡 Please set your Polza API key:', { level: 'error' });
+    await log('   💡   export POLZA_API_KEY="your-api-key"', { level: 'error' });
+    await log('   💡 Get your API key from: https://polza.ai/', { level: 'error' });
+    return false;
+  }
 
-  const attemptValidation = async () => {
-    try {
-      if (retryCount === 0) {
-        await log('🔍 Validating Polza AI connection...');
-      } else {
-        await log(`🔄 Retry attempt ${retryCount}/${maxRetries} for Polza AI validation...`);
-      }
-
-      // Check if agent-polza CLI is installed and get version
-      try {
-        const versionResult = await $`timeout ${Math.floor(timeouts.opencodeCli / 1000)} agent --version`;
-        if (versionResult.code === 0) {
-          const version = versionResult.stdout?.toString().trim();
-          if (retryCount === 0) {
-            await log(`📦 Polza Agent CLI version: ${version}`);
-          }
-        }
-      } catch (versionError) {
-        if (retryCount === 0) {
-          await log(`⚠️  Polza Agent CLI version check failed (${versionError.code}), proceeding with connection test...`);
-        }
-      }
-
-      // Test basic Polza AI functionality with a simple "hi" message
-      // The agent command accepts stdin input
-      const testResult = await $`printf "hi" | timeout ${Math.floor(timeouts.opencodeCli / 1000)} agent --model ${mappedModel}`;
-
-      if (testResult.code !== 0) {
-        const stderr = testResult.stderr?.toString() || '';
-
-        if (stderr.includes('auth') || stderr.includes('login') || stderr.includes('API') || stderr.includes('key')) {
-          await log('❌ Polza AI authentication failed', { level: 'error' });
-          await log('   💡 Please check your POLZA_API_KEY environment variable', { level: 'error' });
-          await log('   💡 Or set it in polza-config.json in your agent installation', { level: 'error' });
-          return false;
-        }
-
-        await log(`❌ Polza AI validation failed with exit code ${testResult.code}`, { level: 'error' });
-        if (stderr) await log(`   Error: ${stderr.trim()}`, { level: 'error' });
-        return false;
-      }
-
-      // Success
-      await log('✅ Polza AI connection validated successfully');
-      return true;
-    } catch (error) {
-      await log(`❌ Failed to validate Polza AI connection: ${error.message}`, { level: 'error' });
-      await log('   💡 Make sure @deep-assistant/agent is installed globally: bun install -g @deep-assistant/agent', { level: 'error' });
+  // Step 2: Check if Bun is installed (required for agent CLI)
+  try {
+    const bunCheckResult = await $`which bun`;
+    if (bunCheckResult.code !== 0) {
+      await log('❌ Bun runtime not found', { level: 'error' });
+      await log('   💡 Polza integration requires Bun to be installed', { level: 'error' });
+      await log('   💡 Install Bun: curl -fsSL https://bun.sh/install | bash', { level: 'error' });
+      await log('   💡 Or visit: https://bun.sh/', { level: 'error' });
       return false;
     }
-  };
+    const bunPath = bunCheckResult.stdout?.toString().trim();
+    await log(`📦 Bun runtime found: ${bunPath}`);
+  } catch (error) {
+    await log('❌ Error checking for Bun runtime', { level: 'error' });
+    await log(`   ${error.message}`, { level: 'error' });
+    return false;
+  }
 
-  // Start the validation
-  return await attemptValidation();
+  // Step 3: Check if @deep-assistant/agent is installed
+  try {
+    const agentCheckResult = await $`which agent`;
+    if (agentCheckResult.code !== 0) {
+      await log('❌ Agent CLI not found', { level: 'error' });
+      await log('   💡 Please install @deep-assistant/agent:', { level: 'error' });
+      await log('   💡   bun install -g @deep-assistant/agent', { level: 'error' });
+      return false;
+    }
+    const agentPath = agentCheckResult.stdout?.toString().trim();
+    await log(`📦 Agent CLI found: ${agentPath}`);
+  } catch (error) {
+    await log('❌ Error checking for Agent CLI', { level: 'error' });
+    await log(`   ${error.message}`, { level: 'error' });
+    return false;
+  }
+
+  // Step 4: Get agent version
+  try {
+    const versionResult = await $`agent --version`;
+    if (versionResult.code === 0) {
+      const version = versionResult.stdout?.toString().trim();
+      await log(`📦 Polza Agent CLI version: ${version}`);
+    }
+  } catch (versionError) {
+    await log(`⚠️  Could not get agent version, but proceeding with validation...`);
+  }
+
+  // Step 5: Test API connectivity with a simple HTTP request to Polza API
+  // This is faster and more reliable than running the full agent CLI
+  try {
+    await log('🔗 Testing Polza API connectivity...');
+
+    const response = await fetch('https://api.polza.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'anthropic/claude-3-5-sonnet-20250219',
+        messages: [{ role: 'user', content: 'test' }],
+        max_tokens: 5
+      }),
+      signal: AbortSignal.timeout(10000) // 10 second timeout
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      await log(`❌ Polza API test failed: ${response.status} ${response.statusText}`, { level: 'error' });
+      await log(`   Response: ${errorText}`, { level: 'error' });
+
+      if (response.status === 401) {
+        await log('   💡 Invalid API key. Please check your POLZA_API_KEY', { level: 'error' });
+      } else if (response.status === 402) {
+        await log('   💡 Insufficient balance. Please add funds to your Polza account', { level: 'error' });
+      }
+      return false;
+    }
+
+    const data = await response.json();
+    await log('✅ Polza API connection validated successfully');
+
+    if (data.usage && data.usage.cost) {
+      await log(`   💰 Test request cost: ${data.usage.cost} руб.`);
+    }
+
+    return true;
+  } catch (error) {
+    await log(`❌ Failed to validate Polza API connection: ${error.message}`, { level: 'error' });
+    if (error.name === 'AbortError') {
+      await log('   💡 Connection timed out. Please check your internet connection', { level: 'error' });
+    }
+    return false;
+  }
 };
 
 // Function to handle Polza AI runtime switching (if applicable)
