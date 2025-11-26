@@ -1,0 +1,59 @@
+🎯 Core Functionality
+
+The primary endpoint (POST /api/v1/chat/completions) allows you to interact with various language models. It's designed as an API aggregator, giving you access to multiple AI providers through a single, unified interface.
+💡 Key Features
+
+The API supports several advanced features essential for modern AI applications:
+
+    🤖 Provider Aggregation: Automatically selects the best provider for the model you request.
+
+    🛠️ Tool Calling: Models can call external functions you define.
+
+    🎨 Multimodal Input: Supports prompts containing both text and images.
+
+    ⚡ Streaming: Delivers responses in real-time using Server-Sent Events (SSE).
+
+    🧠 Reasoning Tokens: Works with models that can show their internal reasoning process.
+
+    💰 Ruble Billing & Detailed Accounting: Costs are calculated in rubles, with detailed token usage and cost breakdowns in responses.
+
+📝 Main Request Parameters
+
+To get a response, you need to structure your request with these core parameters:
+Parameter	Description
+model	(Required) The ID of the model you want to use (e.g., openai/gpt-4o).
+messages	(Recommended) An array of message objects that form the conversation history.
+max_tokens	The maximum number of tokens the model can generate in its response.
+temperature	Controls randomness (0 = deterministic, 2 = very creative).
+tools	An array of function definitions that the model can call.
+stream	A boolean to enable streaming mode for the response.
+🔑 Authentication
+
+All requests must include your API key in the header:
+http
+
+Authorization: Bearer YOUR_API_KEY
+
+💬 Structuring a Conversation
+
+Conversations are built using messages with specific roles in the messages array:
+
+    user: For messages from the end-user.
+
+    assistant: For previous responses from the AI.
+
+    system: To set initial instructions and context for the AI's behavior.
+
+    tool: To send back the results of a function call.
+
+🔌 OpenAI SDK Compatibility
+
+A significant advantage is its compatibility with the standard OpenAI SDK. You can integrate it easily by just changing the base_url:
+python
+
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.polza.ai/api/v1",  # Change this line
+    api_key="YOUR_POLZA_API_KEY"  # Use your Polza key
+)
