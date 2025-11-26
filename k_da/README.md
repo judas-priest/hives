@@ -225,11 +225,19 @@ Koda Agent uses numerous environment variables for configuration. A complete ref
 ```bash
 # API Authentication
 KODA_API_KEY=your_api_key_here
-KODA_API_BASE=https://api.koda.example.com
+KODA_API_BASE=https://api.kodacode.ru
+
+# Koda URLs (customizable)
+KODA_SITE_URL=https://kodacode.ru
+KODA_DOCS_URL=https://docs.kodacode.ru/koda-cli/
+KODA_COMMUNITY_URL=https://t.me/kodacommunity
+KODA_IDE_COMPANION_URL=https://cli-companion.kodacode.ru/
 
 # GitHub Integration
 KODA_GITHUB_TOKEN=ghp_your_token_here
 LOGIN_WITH_GITHUB=true
+GITHUB_DEVICE_CODE_URL=https://github.com/login/device/code
+GITHUB_OAUTH_TOKEN_URL=https://github.com/login/oauth/access_token
 
 # Google Cloud
 GOOGLE_API_KEY=your_google_api_key

@@ -7161,7 +7161,7 @@ Do NOT use this tool:
         footerLabel: 'trial requests {used}{limitPart}',
         limitReached: `\u26A1 You have used all available Koda trial requests.
 \u26A1 Further requests are paused until the trial resets.
-\u26A1 Configure permanent access with /auth or visit https://kodacode.ru .`,
+\u26A1 Configure permanent access with /auth or visit ${process.env.KODA_SITE_URL || 'https://kodacode.ru'} .`,
       },
       auth: {
         reauthRequired: 'Reauthentication required',
@@ -8340,7 +8340,7 @@ Do NOT use this tool:
           '\u043F\u0440\u043E\u0431\u043D\u044B\u0435 \u0437\u0430\u043F\u0440\u043E\u0441\u044B {used}{limitPart}',
         limitReached: `\u26A1 \u0412\u044B \u0438\u0437\u0440\u0430\u0441\u0445\u043E\u0434\u043E\u0432\u0430\u043B\u0438 \u0432\u0441\u0435 \u043F\u0440\u043E\u0431\u043D\u044B\u0435 \u0437\u0430\u043F\u0440\u043E\u0441\u044B Koda.
 \u26A1 \u0417\u0430\u043F\u0440\u043E\u0441\u044B \u0431\u0443\u0434\u0443\u0442 \u043F\u0440\u0438\u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u044B \u0434\u043E \u0441\u0431\u0440\u043E\u0441\u0430 \u043B\u0438\u043C\u0438\u0442\u0430.
-\u26A1 \u041D\u0430\u0441\u0442\u0440\u043E\u0439\u0442\u0435 \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u044B\u0439 \u0434\u043E\u0441\u0442\u0443\u043F \u0447\u0435\u0440\u0435\u0437 /auth \u0438\u043B\u0438 \u043E\u0444\u043E\u0440\u043C\u0438\u0442\u0435 \u0442\u0430\u0440\u0438\u0444: https://kodacode.ru `,
+\u26A1 \u041D\u0430\u0441\u0442\u0440\u043E\u0439\u0442\u0435 \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u044B\u0439 \u0434\u043E\u0441\u0442\u0443\u043F \u0447\u0435\u0440\u0435\u0437 /auth \u0438\u043B\u0438 \u043E\u0444\u043E\u0440\u043C\u0438\u0442\u0435 \u0442\u0430\u0440\u0438\u0444: ${process.env.KODA_SITE_URL || 'https://kodacode.ru'} `,
       },
       auth: {
         reauthRequired:
@@ -10862,8 +10862,8 @@ async function twn(t, e) {
       (await A9(t)).on('error', () => {});
     } catch {}
 }
-var rwn = 'https://github.com/login/device/code',
-  nwn = 'https://github.com/login/oauth/access_token';
+var rwn = process.env.GITHUB_DEVICE_CODE_URL || 'https://github.com/login/device/code',
+  nwn = process.env.GITHUB_OAUTH_TOKEN_URL || 'https://github.com/login/oauth/access_token';
 async function iwn(t, e) {
   let r = await fetch(rwn, {
     method: 'POST',
@@ -11649,9 +11649,9 @@ var qer = {
       }${Ie.t('bugCommand.bugReportDetails')}
 ${u}
 
-${Ie.t('bugCommand.telegramCommunity')} https://t.me/kodacommunity`;
+${Ie.t('bugCommand.telegramCommunity')} ${process.env.KODA_COMMUNITY_URL || 'https://t.me/kodacommunity'}`;
     t.ui.addItem({ type: 'info', text: c }, Date.now());
-    let p = 'https://t.me/kodacommunity';
+    let p = process.env.KODA_COMMUNITY_URL || 'https://t.me/kodacommunity';
     try {
       await A9(p);
     } catch (h) {
@@ -11926,7 +11926,7 @@ var Ker = {
   description: () => Ie.t('commandDescriptions.docs'),
   kind: 'built-in',
   action: async (t) => {
-    let e = 'https://docs.kodacode.ru/koda-cli/';
+    let e = process.env.KODA_DOCS_URL || 'https://docs.kodacode.ru/koda-cli/';
     Jer.env.SANDBOX && Jer.env.SANDBOX !== 'sandbox-exec'
       ? t.ui.addItem(
           { type: 'info', text: Ie.t('commandMessages.docs.openInBrowserMessage', { url: e }) },
@@ -12213,7 +12213,7 @@ var itr = (t) => {
         }),
       kind: 'built-in',
       action: async (u) => {
-        let c = 'https://cli-companion.kodacode.ru/';
+        let c = process.env.KODA_IDE_COMPANION_URL || 'https://cli-companion.kodacode.ru/';
         u.ui.addItem(
           { type: 'info', text: Ie.t('commandMessages.ide.openingBrowser', { url: c }) },
           Date.now()

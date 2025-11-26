@@ -285,5 +285,22 @@ As per issue #5 requirements, the following next steps have been completed:
 - ✅ **Split the file into multiple files**: Successfully split into 5 logical files with build script
 - ✅ **Output .env**: Complete `.env.example` created with 140+ documented environment variables
 - ✅ **Write documentation**: Comprehensive `README.md` created covering all aspects of the application
+- ✅ **Move variables to configuration file**: Extracted hardcoded URLs and moved to environment variables
 
-The deobfuscation work is now complete with file splitting, full documentation, and environment variable reference.
+### Configuration Externalization
+
+Following the requirement to "move the variables to the configuration file", the following hardcoded values have been externalized to environment variables:
+
+**Koda Service URLs:**
+- `KODA_SITE_URL` - Main Koda website (default: https://kodacode.ru)
+- `KODA_DOCS_URL` - Documentation URL (default: https://docs.kodacode.ru/koda-cli/)
+- `KODA_COMMUNITY_URL` - Telegram community (default: https://t.me/kodacommunity)
+- `KODA_IDE_COMPANION_URL` - IDE companion installer (default: https://cli-companion.kodacode.ru/)
+
+**GitHub OAuth URLs:**
+- `GITHUB_DEVICE_CODE_URL` - Device code authorization (default: https://github.com/login/device/code)
+- `GITHUB_OAUTH_TOKEN_URL` - OAuth token endpoint (default: https://github.com/login/oauth/access_token)
+
+All hardcoded URLs have been replaced with `process.env.VARIABLE_NAME || 'default_value'` patterns, allowing full customization while maintaining backward compatibility with default values.
+
+The deobfuscation work is now complete with file splitting, full documentation, environment variable reference, and configuration externalization.
