@@ -18,7 +18,9 @@ const { loadLenvConfig } = await import('./lenv-reader.lib.mjs');
 const dotenvxModule = await globalThis.use('@dotenvx/dotenvx');
 const dotenvx = dotenvxModule.default || dotenvxModule;
 
-const getenv = await globalThis.use('getenv');
+// Get getenv module and extract the function (handle both default and direct exports)
+const getenvModule = await globalThis.use('getenv');
+const getenv = getenvModule.default || getenvModule;
 
 // Load .env configuration as base
 dotenvx.config({ quiet: true });
