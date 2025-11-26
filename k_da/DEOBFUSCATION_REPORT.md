@@ -303,4 +303,26 @@ Following the requirement to "move the variables to the configuration file", the
 
 All hardcoded URLs have been replaced with `process.env.VARIABLE_NAME || 'default_value'` patterns, allowing full customization while maintaining backward compatibility with default values.
 
-The deobfuscation work is now complete with file splitting, full documentation, environment variable reference, and configuration externalization.
+### Internationalization (I18N) Improvements
+
+As part of the deobfuscation effort, significant improvements were made to make the codebase more readable and maintainable:
+
+**1. Cyrillic Text Readability**
+- Converted all Unicode escape sequences (e.g., `\u0410\u0441\u043D`) to readable Cyrillic characters
+- The Russian translation object (`ADn`) previously contained 1,100+ lines of Unicode escapes
+- All Russian strings are now displayed in native Cyrillic script
+- Example: `'\u041E\u0441\u043D\u043E\u0432\u044B:'` → `'Основы:'`
+
+**2. ASCII Art Banner I18N Integration**
+- Moved hardcoded ASCII art banners to the I18N translation system
+- Added `banner.large`, `banner.medium`, and `banner.small` entries to both English and Russian translations
+- The banner component now uses `Ie.t('banner.large')` instead of hardcoded variables
+- Enables potential future localization of banner art for different languages
+
+**Benefits:**
+- ✅ Improved code readability for Russian-speaking developers
+- ✅ Easier to maintain and update translations
+- ✅ Centralized ASCII art management through I18N system
+- ✅ No functionality changes - all features work as before
+
+The deobfuscation work is now complete with file splitting, full documentation, environment variable reference, configuration externalization, and I18N improvements.

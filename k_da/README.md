@@ -55,6 +55,7 @@ node k_da/k_da.js [options]
 - [Development](#development)
 - [Deobfuscation Process](#deobfuscation-process)
 - [File Split Strategy](#file-split-strategy)
+- [Internationalization](#internationalization)
 - [Troubleshooting](#troubleshooting)
 
 ## Features
@@ -497,6 +498,56 @@ Instead, this documentation provides:
 - Comprehensive documentation (this README)
 - Deobfuscation report
 - Usage guides and examples
+
+## Internationalization
+
+Koda Agent includes built-in internationalization (I18N) support for English and Russian languages.
+
+### Supported Languages
+
+- **English** (`en`) - Default language
+- **Russian** (`ru`) - Full translation with native Cyrillic text
+
+### Setting Language
+
+You can configure the language using:
+
+1. **Environment Variable:**
+```bash
+export KODA_RESPONSE_LANGUAGE=ru  # Russian
+export KODA_RESPONSE_LANGUAGE=en  # English
+./k_da.js
+```
+
+2. **CLI Command:**
+```bash
+./k_da.js language set ru  # Set to Russian
+./k_da.js language set en  # Set to English
+```
+
+### I18N Improvements
+
+As part of the deobfuscation process, significant I18N improvements were made:
+
+**1. Readable Cyrillic Text**
+- All Russian translations now use native Cyrillic characters instead of Unicode escape sequences
+- Before: `'\u041E\u0441\u043D\u043E\u0432\u044B:'`
+- After: `'Основы:'`
+- Makes the source code readable for Russian-speaking developers
+
+**2. Centralized ASCII Art**
+- Application banner art moved to I18N translation system
+- Supports three sizes: large, medium, and small (responsive to terminal width)
+- Accessible via `Ie.t('banner.large')`, `Ie.t('banner.medium')`, `Ie.t('banner.small')`
+- Enables potential future localization of banner art
+
+**Translation Coverage:**
+- All UI messages and prompts
+- Help text and documentation strings
+- Error messages and warnings
+- Command descriptions
+- Settings labels and descriptions
+- ASCII art banners
 
 ## Troubleshooting
 
