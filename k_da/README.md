@@ -35,25 +35,78 @@ k_da/
 └── SPLIT_STRUCTURE.md          # File split strategy documentation
 ```
 
-**To build the executable:**
+## Quick Start
+
+### 1. Customize Configuration (Optional)
+
+Create a `.env` file to customize your build:
+
 ```bash
-node k_da/build.js
+cd k_da
+cp .env.example .env
+nano .env  # Edit configuration
+```
+
+### 2. Customize Localization (Optional)
+
+Edit localization files to change UI text:
+
+```bash
+nano k_da/src/i18n/locales/en-US.js  # English
+nano k_da/src/i18n/locales/ru-RU.js  # Russian
+```
+
+### 3. Build the Executable
+
+```bash
+cd k_da
+node build.js              # Default: uses .env for defaults
+# or
+node build.js --inline-env # Inline: hardcodes .env values
+# or
+node build.js --no-env     # No .env: uses only runtime variables
 ```
 
 The build script:
-1. Reads all source files from `src/` directory
-2. Loads i18n locale data from `src/i18n/locales/`
-3. Inlines the i18n objects directly into the bundle (replacing ES6 imports)
-4. Concatenates all files into a single executable `k_da.js`
+1. ✅ Loads `.env` file (if exists) for configuration
+2. ✅ Reads all source files from `src/` directory
+3. ✅ Loads i18n locale data from `src/i18n/locales/`
+4. ✅ Inlines the i18n objects into the bundle
+5. ✅ Injects environment variable defaults from `.env`
+6. ✅ Concatenates all files into a single executable `k_da.js`
 
-**To run the application:**
-```bash
-./k_da/k_da.js [options]
-# or
-node k_da/k_da.js [options]
+**Build output:**
+```
+Building k_da.js from split sources...
+
+Loading .env file...
+   → Loaded 5 environment variables from .env
+Loading i18n locale data...
+[1/5] Adding src/01-webpack-runtime.js...
+[2/5] Adding src/02-react-bundle.js...
+[3/5] Adding src/03-npm-modules.js...
+[4/5] Adding src/04-app-code.js...
+   → Inlining i18n locale data...
+   → Inlining environment variables from .env...
+   → Set default values for 5 environment variable references
+[5/5] Adding src/05-main.js...
+
+✓ Built k_da.js (9.57 MB)
+✓ i18n locale data inlined successfully
+✓ Environment variables from .env set as defaults
 ```
 
-> **Note**: The source files in `src/` are split for readability only. They share a webpack bundle closure scope and cannot run independently. The build script automatically inlines the i18n data from the `src/i18n/` directory into the final bundle, ensuring all translations are available at runtime without requiring external module imports.
+### 4. Run the Application
+
+```bash
+./k_da.js [options]
+# or
+node k_da.js [options]
+```
+
+> **📚 For detailed build workflow, customization options, and troubleshooting, see [BUILD_WORKFLOW.md](BUILD_WORKFLOW.md)**
+
+> **Note**: The source files in `src/` are split for readability only. They share a webpack bundle closure scope and cannot run independently. The build script automatically inlines the i18n data and environment variable defaults from the `src/i18n/` directory and `.env` file into the final bundle.
 
 ## Table of Contents
 
