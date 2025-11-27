@@ -1,0 +1,669 @@
+#!/usr/bin/env node
+
+/**
+ * K_DA Tools - Integrated deobfuscation and build configuration tool
+ *
+ * This tool provides two main workflows:
+ * 1. Deobfuscation: Extracts source code, localization files, and banners from k_da.js
+ * 2. Configuration & Build: Configures .env, customizes localization, disables tracking, and builds
+ *
+ * Usage:
+ *   node k_da-tools.js deobfuscate [--input original.js]
+ *   node k_da-tools.js configure [options]
+ *   node k_da-tools.js build
+ *   node k_da-tools.js all [options]
+ */
+
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+// =============================================================================
+// UTILITIES
+// =============================================================================
+
+function log(message, prefix = '•') {
+  console.log(`${prefix} ${message}`);
+}
+
+function success(message) {
+  console.log(`✓ ${message}`);
+}
+
+function error(message) {
+  console.error(`✗ ${message}`);
+}
+
+function section(title) {
+  console.log('\n' + '='.repeat(80));
+  console.log(title);
+  console.log('='.repeat(80) + '\n');
+}
+
+function fileSize(bytes) {
+  return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+}
+
+// =============================================================================
+// STEP 1: DEOBFUSCATION
+// =============================================================================
+
+async function deobfuscate(inputFile = 'original.js') {
+  section('STEP 1: DEOBFUSCATION');
+
+  const inputPath = path.join(__dirname, inputFile);
+  const outputPath = path.join(__dirname, 'k_da_deobfuscated.js');
+
+  if (!fs.existsSync(inputPath)) {
+    error(`Input file not found: ${inputPath}`);
+    process.exit(1);
+  }
+
+  log(`Reading: ${inputFile}`);
+  const content = fs.readFileSync(inputPath, 'utf8');
+  const inputSize = content.length;
+
+  log(`Size: ${fileSize(inputSize)}`);
+  log(`Lines: ${content.split('\n').length.toLocaleString()}`);
+
+  // Apply prettier formatting
+  log('Applying prettier formatting...');
+  const prettier = require('prettier');
+  const formatted = await prettier.format(content, {
+    parser: 'babel',
+    printWidth: 100,
+    tabWidth: 2,
+    semi: true,
+    singleQuote: true,
+    trailingComma: 'es5',
+    arrowParens: 'always',
+  });
+
+  fs.writeFileSync(outputPath, formatted, 'utf8');
+  success(`Deobfuscated file written: ${outputPath}`);
+  success(`Output size: ${fileSize(formatted.length)}`);
+
+  return outputPath;
+}
+
+// =============================================================================
+// STEP 2: SPLIT FILE
+// =============================================================================
+
+function splitFile() {
+  section('STEP 2: SPLIT INTO SOURCE FILES');
+
+  const filePath = path.join(__dirname, 'k_da_deobfuscated.js');
+
+  if (!fs.existsSync(filePath)) {
+    error('k_da_deobfuscated.js not found. Run deobfuscate first.');
+    process.exit(1);
+  }
+
+  const content = fs.readFileSync(filePath, 'utf8');
+  const lines = content.split('\n');
+
+  log(`Total lines: ${lines.length.toLocaleString()}`);
+
+  // Create directory structure
+  const srcDir = path.join(__dirname, 'src');
+  if (fs.existsSync(srcDir)) {
+    fs.rmSync(srcDir, { recursive: true, force: true });
+  }
+  fs.mkdirSync(srcDir, { recursive: true });
+
+  // Define split boundaries
+  const splits = [
+    {
+      filename: 'src/01-webpack-runtime.js',
+      start: 5,
+      end: 39,
+      description: 'Webpack module system and runtime utilities',
+    },
+    {
+      filename: 'src/02-react-bundle.js',
+      start: 39,
+      end: 20500,
+      description: 'React library bundle (v19.1.0)',
+    },
+    {
+      filename: 'src/03-npm-modules.js',
+      start: 20500,
+      end: 242191,
+      description: 'Bundled npm packages and dependencies',
+    },
+    {
+      filename: 'src/04-app-code.js',
+      start: 242191,
+      end: 278185,
+      description: 'Application code, helpers, and configuration',
+    },
+    {
+      filename: 'src/05-main.js',
+      start: 278185,
+      end: lines.length,
+      description: 'Main entry function and bootstrap',
+    }
+  ];
+
+  // Extract each section
+  splits.forEach((split, index) => {
+    log(`[${index + 1}/${splits.length}] Creating ${split.filename}...`);
+
+    const sectionLines = lines.slice(split.start, split.end);
+    const sectionContent = sectionLines.join('\n');
+
+    const outputPath = path.join(__dirname, split.filename);
+
+    // Create file header comment
+    let fileContent = `/**\n * ${split.description}\n`;
+    fileContent += ` * Lines ${split.start + 1}-${split.end} from original k_da_deobfuscated.js\n`;
+    fileContent += ` * This file is part of the k_da application split from webpack bundle\n */\n\n`;
+    fileContent += sectionContent;
+
+    fs.writeFileSync(outputPath, fileContent);
+
+    const sizeMB = (fileContent.length / 1024 / 1024).toFixed(2);
+    success(`${split.filename.split('/')[1]} - ${sectionLines.length.toLocaleString()} lines, ${sizeMB} MB`);
+  });
+
+  success('Source files split successfully');
+}
+
+// =============================================================================
+// STEP 3: EXTRACT I18N
+// =============================================================================
+
+function extractI18n() {
+  section('STEP 3: EXTRACT LOCALIZATION FILES');
+
+  const appCodeFile = path.join(__dirname, 'src/04-app-code.js');
+
+  if (!fs.existsSync(appCodeFile)) {
+    error('src/04-app-code.js not found. Run split first.');
+    process.exit(1);
+  }
+
+  const content = fs.readFileSync(appCodeFile, 'utf8');
+  const lines = content.split('\n');
+
+  // Create directories
+  const i18nDir = path.join(__dirname, 'src/i18n');
+  const localesDir = path.join(i18nDir, 'locales');
+  const assetsDir = path.join(i18nDir, 'assets');
+
+  [i18nDir, localesDir, assetsDir].forEach(dir => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
+
+  // Find i18n objects in the code
+  log('Searching for i18n objects...');
+
+  // Find English i18n (var hDn = {)
+  const enStartIndex = lines.findIndex(line => line.trim().startsWith('var hDn = {'));
+  if (enStartIndex === -1) {
+    error('Could not find English i18n object (var hDn = {)');
+    process.exit(1);
+  }
+
+  // Find the end of English i18n (matching closing brace)
+  let braceCount = 0;
+  let enEndIndex = enStartIndex;
+  for (let i = enStartIndex; i < lines.length; i++) {
+    const line = lines[i];
+    braceCount += (line.match(/{/g) || []).length;
+    braceCount -= (line.match(/}/g) || []).length;
+    if (braceCount === 0 && i > enStartIndex) {
+      enEndIndex = i;
+      break;
+    }
+  }
+
+  const enLines = lines.slice(enStartIndex, enEndIndex + 1);
+  const enContent = enLines.join('\n').replace(/^var hDn = /, 'export const enUS = ').replace(/;$/, '');
+
+  fs.writeFileSync(path.join(localesDir, 'en-US.js'), enContent);
+  success('English locale extracted: src/i18n/locales/en-US.js');
+
+  // Find Russian i18n (ADn = {)
+  const ruStartIndex = lines.findIndex(line => line.trim().startsWith('ADn = {'));
+  if (ruStartIndex === -1) {
+    error('Could not find Russian i18n object (ADn = {)');
+    process.exit(1);
+  }
+
+  // Find the end of Russian i18n
+  braceCount = 0;
+  let ruEndIndex = ruStartIndex;
+  for (let i = ruStartIndex; i < lines.length; i++) {
+    const line = lines[i];
+    braceCount += (line.match(/{/g) || []).length;
+    braceCount -= (line.match(/}/g) || []).length;
+    if (braceCount === 0 && i > ruStartIndex) {
+      ruEndIndex = i;
+      break;
+    }
+  }
+
+  const ruLines = lines.slice(ruStartIndex, ruEndIndex + 1);
+  const ruContent = ruLines.join('\n').replace(/^\s*ADn = /, 'export const ruRU = ').replace(/;$/, '');
+
+  fs.writeFileSync(path.join(localesDir, 'ru-RU.js'), ruContent);
+  success('Russian locale extracted: src/i18n/locales/ru-RU.js');
+
+  // Extract banners from English locale
+  log('Extracting ASCII banners...');
+  const enFile = fs.readFileSync(path.join(localesDir, 'en-US.js'), 'utf8');
+
+  // Extract large banner
+  const largeBannerMatch = enFile.match(/large:\s*`([^`]+)`/s);
+  if (largeBannerMatch) {
+    fs.writeFileSync(path.join(assetsDir, 'banner-large.txt'), largeBannerMatch[1].trim());
+    success('Large banner extracted: src/i18n/assets/banner-large.txt');
+  }
+
+  // Extract medium banner
+  const mediumBannerMatch = enFile.match(/medium:\s*`([^`]+)`/s);
+  if (mediumBannerMatch) {
+    fs.writeFileSync(path.join(assetsDir, 'banner-medium.txt'), mediumBannerMatch[1].trim());
+    success('Medium banner extracted: src/i18n/assets/banner-medium.txt');
+  }
+
+  // Extract small banner
+  const smallBannerMatch = enFile.match(/small:\s*`([^`]+)`/s);
+  if (smallBannerMatch) {
+    fs.writeFileSync(path.join(assetsDir, 'banner-small.txt'), smallBannerMatch[1].trim());
+    success('Small banner extracted: src/i18n/assets/banner-small.txt');
+  }
+
+  success('Localization files extracted successfully');
+}
+
+// =============================================================================
+// STEP 4: EXTRACT STRINGS (Unicode, URLs, etc.)
+// =============================================================================
+
+function extractStrings() {
+  section('STEP 4: EXTRACT STRINGS AND URLS');
+
+  const appCodeFile = path.join(__dirname, 'src/04-app-code.js');
+
+  if (!fs.existsSync(appCodeFile)) {
+    error('src/04-app-code.js not found. Run split first.');
+    process.exit(1);
+  }
+
+  let content = fs.readFileSync(appCodeFile, 'utf8');
+  const originalSize = content.length;
+
+  // Convert Unicode escape sequences
+  log('Converting Unicode escape sequences...');
+  const unicodePattern = /\\u([0-9a-fA-F]{4})/g;
+  let unicodeCount = 0;
+  content = content.replace(unicodePattern, (match, code) => {
+    unicodeCount++;
+    return String.fromCharCode(parseInt(code, 16));
+  });
+
+  if (unicodeCount > 0) {
+    fs.writeFileSync(appCodeFile, content, 'utf8');
+    success(`Converted ${unicodeCount.toLocaleString()} Unicode escape sequences`);
+  } else {
+    log('No Unicode escape sequences found');
+  }
+
+  // Extract URLs
+  log('Extracting URLs...');
+  const httpsUrls = [];
+  const httpsPattern = /(https:\/\/[^\s'"`,)]+)/g;
+  let match;
+  while ((match = httpsPattern.exec(content)) !== null) {
+    const url = match[1].replace(/[.,;)]$/, '');
+    if (!httpsUrls.includes(url)) {
+      httpsUrls.push(url);
+    }
+  }
+
+  log(`Found ${httpsUrls.length} unique HTTPS URLs`);
+  httpsUrls.slice(0, 5).forEach(url => log(`  - ${url}`, '  '));
+  if (httpsUrls.length > 5) {
+    log(`  ... and ${httpsUrls.length - 5} more`, '  ');
+  }
+
+  // Extract environment variables
+  log('Extracting environment variables...');
+  const envVars = new Set();
+  const envPattern = /process\.env\.([A-Z_][A-Z0-9_]*)/g;
+  while ((match = envPattern.exec(content)) !== null) {
+    envVars.add(match[1]);
+  }
+
+  log(`Found ${envVars.size} unique environment variables`);
+
+  // Generate report
+  const reportPath = path.join(__dirname, 'STRING_EXTRACTION_REPORT.md');
+  const report = `# K_DA String Extraction Report
+
+Generated: ${new Date().toISOString()}
+
+## Summary
+
+- **Unicode Escape Sequences Converted**: ${unicodeCount.toLocaleString()}
+- **HTTPS URLs Found**: ${httpsUrls.length}
+- **Environment Variables Used**: ${envVars.size}
+
+## URLs
+
+${httpsUrls.map((url, i) => `${i + 1}. \`${url}\``).join('\n')}
+
+## Environment Variables
+
+${Array.from(envVars).sort().map((envVar, i) => `${i + 1}. \`${envVar}\``).join('\n')}
+
+## Recommendations
+
+1. All service URLs should be configurable via environment variables
+2. Test the build with different configurations
+3. Review environment variable usage for security
+
+---
+
+*This report was generated automatically by k_da-tools.js*
+`;
+
+  fs.writeFileSync(reportPath, report);
+  success(`Report written: ${reportPath}`);
+
+  success('String extraction complete');
+}
+
+// =============================================================================
+// STEP 5: CONFIGURE
+// =============================================================================
+
+function configure(options = {}) {
+  section('STEP 5: CONFIGURE ENVIRONMENT');
+
+  const {
+    appName = 'K_DA CLI',
+    companyName = 'Koda',
+    disableTelemetry = true,
+    disableTracking = true,
+  } = options;
+
+  log(`Application Name: ${appName}`);
+  log(`Company Name: ${companyName}`);
+  log(`Disable Telemetry: ${disableTelemetry ? 'Yes' : 'No'}`);
+  log(`Disable Tracking: ${disableTracking ? 'Yes' : 'No'}`);
+
+  // Create .env file
+  const envPath = path.join(__dirname, '.env');
+  const envExamplePath = path.join(__dirname, '.env.example');
+
+  let envContent = '';
+
+  if (fs.existsSync(envExamplePath)) {
+    envContent = fs.readFileSync(envExamplePath, 'utf8');
+  }
+
+  // Add custom configuration
+  envContent += `\n# Custom Configuration (generated by k_da-tools.js)\n`;
+  envContent += `# Generated: ${new Date().toISOString()}\n\n`;
+
+  if (disableTelemetry) {
+    envContent += `# Telemetry Disabled\n`;
+    envContent += `OTEL_SDK_DISABLED=true\n`;
+    envContent += `KODA_TELEMETRY_ENABLED=false\n`;
+    envContent += `OTEL_EXPORTER_OTLP_ENDPOINT=\n`;
+    envContent += `OTEL_EXPORTER_OTLP_HEADERS=\n\n`;
+  }
+
+  if (disableTracking) {
+    envContent += `# Tracking Disabled\n`;
+    envContent += `KODA_ANALYTICS_ENABLED=false\n`;
+    envContent += `KODA_CRASH_REPORTING_ENABLED=false\n\n`;
+  }
+
+  fs.writeFileSync(envPath, envContent);
+  success(`.env file created: ${envPath}`);
+
+  // Customize branding if requested
+  if (appName !== 'K_DA CLI' || companyName !== 'Koda') {
+    log('Customizing branding...');
+
+    const localesDir = path.join(__dirname, 'src/i18n/locales');
+    const enUSPath = path.join(localesDir, 'en-US.js');
+
+    if (fs.existsSync(enUSPath)) {
+      let content = fs.readFileSync(enUSPath, 'utf8');
+
+      // Replace Koda CLI with custom app name
+      content = content.replace(/Koda CLI/g, appName);
+      content = content.replace(/Koda Code/g, `${companyName} Code`);
+      content = content.replace(/\bKoda\b/g, companyName);
+
+      fs.writeFileSync(enUSPath, content);
+      success(`Branding customized in ${enUSPath}`);
+    }
+  }
+
+  success('Configuration complete');
+}
+
+// =============================================================================
+// STEP 6: BUILD
+// =============================================================================
+
+function build() {
+  section('STEP 6: BUILD k_da.js');
+
+  const buildScript = path.join(__dirname, 'build.js');
+
+  if (!fs.existsSync(buildScript)) {
+    error('build.js not found');
+    process.exit(1);
+  }
+
+  log('Running build script...');
+
+  try {
+    execSync(`node ${buildScript}`, {
+      cwd: __dirname,
+      stdio: 'inherit',
+    });
+
+    success('Build completed successfully');
+
+    // Check output
+    const outputPath = path.join(__dirname, 'k_da.js');
+    if (fs.existsSync(outputPath)) {
+      const stats = fs.statSync(outputPath);
+      success(`Output file: ${outputPath} (${fileSize(stats.size)})`);
+    }
+  } catch (err) {
+    error(`Build failed: ${err.message}`);
+    process.exit(1);
+  }
+}
+
+// =============================================================================
+// MAIN WORKFLOW
+// =============================================================================
+
+async function runAll(options = {}) {
+  console.log('\n' + '█'.repeat(80));
+  console.log('K_DA TOOLS - Complete Workflow');
+  console.log('█'.repeat(80));
+
+  try {
+    // Step 1: Deobfuscate
+    await deobfuscate(options.input);
+
+    // Step 2: Split file
+    splitFile();
+
+    // Step 3: Extract i18n
+    extractI18n();
+
+    // Step 4: Extract strings
+    extractStrings();
+
+    // Step 5: Configure
+    configure(options);
+
+    // Step 6: Build
+    build();
+
+    // Summary
+    section('COMPLETE!');
+    success('All steps completed successfully');
+    console.log('\nGenerated files:');
+    console.log('  • k_da_deobfuscated.js - Deobfuscated source');
+    console.log('  • src/ - Split source files');
+    console.log('  • src/i18n/ - Localization files');
+    console.log('  • .env - Configuration file');
+    console.log('  • k_da.js - Built executable');
+    console.log('  • STRING_EXTRACTION_REPORT.md - Extraction report');
+    console.log('\nTo run: node k_da.js --help\n');
+
+  } catch (err) {
+    error(`Workflow failed: ${err.message}`);
+    console.error(err);
+    process.exit(1);
+  }
+}
+
+// =============================================================================
+// CLI
+// =============================================================================
+
+async function main() {
+  const args = process.argv.slice(2);
+  const command = args[0];
+
+  // Parse options
+  const options = {};
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
+    if (arg.startsWith('--')) {
+      const key = arg.slice(2);
+      const value = args[i + 1];
+
+      if (value && !value.startsWith('--')) {
+        options[key] = value;
+        i++;
+      } else {
+        options[key] = true;
+      }
+    }
+  }
+
+  // Show help
+  if (!command || command === 'help' || command === '--help' || command === '-h') {
+    console.log(`
+K_DA Tools - Integrated deobfuscation and build configuration tool
+
+Usage:
+  node k_da-tools.js <command> [options]
+
+Commands:
+  deobfuscate    Deobfuscate original.js into readable format
+  split          Split deobfuscated file into source files
+  extract-i18n   Extract localization files and banners
+  extract-strings Extract Unicode strings and URLs
+  configure      Configure environment and customization
+  build          Build k_da.js from source files
+  all            Run complete workflow (all steps)
+  help           Show this help message
+
+Options (for 'all' or 'configure'):
+  --input <file>         Input file for deobfuscation (default: original.js)
+  --app-name <name>      Custom application name (default: K_DA CLI)
+  --company-name <name>  Custom company name (default: Koda)
+  --disable-telemetry    Disable telemetry (default: true)
+  --disable-tracking     Disable tracking (default: true)
+
+Examples:
+  # Complete workflow
+  node k_da-tools.js all
+
+  # Custom branding
+  node k_da-tools.js all --app-name "My CLI" --company-name "MyCompany"
+
+  # Individual steps
+  node k_da-tools.js deobfuscate
+  node k_da-tools.js split
+  node k_da-tools.js extract-i18n
+  node k_da-tools.js configure --app-name "My CLI"
+  node k_da-tools.js build
+
+Workflow:
+  1. Deobfuscate: Extracts source code from original.js
+  2. Split: Splits into manageable source files (webpack, react, npm, app, main)
+  3. Extract i18n: Extracts localization files and ASCII banners
+  4. Extract strings: Converts Unicode, extracts URLs
+  5. Configure: Sets up .env, customizes branding, disables tracking
+  6. Build: Builds final k_da.js executable
+
+For more information, see the documentation in k_da/ directory.
+`);
+    process.exit(0);
+  }
+
+  // Execute command
+  switch (command) {
+    case 'deobfuscate':
+      await deobfuscate(options.input || 'original.js');
+      break;
+
+    case 'split':
+      splitFile();
+      break;
+
+    case 'extract-i18n':
+      extractI18n();
+      break;
+
+    case 'extract-strings':
+      extractStrings();
+      break;
+
+    case 'configure':
+      configure(options);
+      break;
+
+    case 'build':
+      build();
+      break;
+
+    case 'all':
+      await runAll(options);
+      break;
+
+    default:
+      error(`Unknown command: ${command}`);
+      console.log('Run "node k_da-tools.js help" for usage information');
+      process.exit(1);
+  }
+}
+
+// Run CLI
+if (require.main === module) {
+  main().catch(err => {
+    error(`Fatal error: ${err.message}`);
+    console.error(err);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  deobfuscate,
+  splitFile,
+  extractI18n,
+  extractStrings,
+  configure,
+  build,
+  runAll,
+};
