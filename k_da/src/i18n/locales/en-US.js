@@ -1,6 +1,3 @@
-// English (US) locale for k_da
-// Extracted from 04-app-code.js
-
 export const enUS = {
     help: {
       basics: 'Basics:',
@@ -438,11 +435,11 @@ If the browser does not open automatically, please copy and paste this link to a
       mcpAuthHint: '(type: "/mcp auth {serverName}" to authenticate this server)',
       mcpStatusBlocked: 'Blocked',
       mcpTipsTitle: '\u{1F4A1} Tips:',
-      mcpTipsDesc: '  \u2022 Use {command} to show server and tool descriptions',
-      mcpTipsSchema: '  \u2022 Use {command} to show tool parameter schemas',
-      mcpTipsNoDesc: '  \u2022 Use {command} to hide descriptions',
-      mcpTipsAuth: '  \u2022 Use {command} to authenticate with OAuth-enabled servers',
-      mcpTipsToggle: '  \u2022 Press {command} to toggle tool descriptions on/off',
+      mcpTipsDesc: '  • Use {command} to show server and tool descriptions',
+      mcpTipsSchema: '  • Use {command} to show tool parameter schemas',
+      mcpTipsNoDesc: '  • Use {command} to hide descriptions',
+      mcpTipsAuth: '  • Use {command} to authenticate with OAuth-enabled servers',
+      mcpTipsToggle: '  • Press {command} to toggle tool descriptions on/off',
       mcpNoOauthServers: 'No MCP servers configured with OAuth authentication.',
       mcpOAuthServersList: `MCP servers with OAuth authentication:
 {serverList}
@@ -450,7 +447,7 @@ If the browser does not open automatically, please copy and paste this link to a
 Use /mcp auth <server-name> to authenticate.`,
       mcpServerNotFound: "MCP server '{serverName}' not found.",
       mcpAuthStarting: "Starting OAuth authentication for MCP server '{serverName}'...",
-      mcpAuthSuccess: "\u2705 Successfully authenticated with MCP server '{serverName}'!",
+      mcpAuthSuccess: "✅ Successfully authenticated with MCP server '{serverName}'!",
       mcpAuthRediscovering: "Re-discovering tools from '{serverName}'...",
       mcpAuthRefreshSuccess: "Successfully authenticated and refreshed tools for '{serverName}'.",
       mcpAuthFailure: "Failed to authenticate with MCP server '{serverName}': {error}",
@@ -621,24 +618,24 @@ Do NOT use this tool:
         validationNonEmpty: 'Parameter "fact" must be a non-empty string.',
       },
       flashFallback: {
-        proQuotaExceeded: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        freeQuotaExceeded: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        proGenericQuota: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        freeGenericQuota: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        proDefault: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        freeDefault: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
+        proQuotaExceeded: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        freeQuotaExceeded: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        proGenericQuota: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        freeGenericQuota: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        proDefault: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        freeDefault: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
       },
       trial: {
         footerLabel: 'trial requests {used}{limitPart}',
-        limitReached: `\u26A1 You have used all available Koda trial requests.
-\u26A1 Further requests are paused until the trial resets.
-\u26A1 Configure permanent access with /auth or visit https://kodacode.ru .`,
+        limitReached: `⚡ You have used all available Koda trial requests.
+⚡ Further requests are paused until the trial resets.
+⚡ Configure permanent access with /auth or visit https://kodacode.ru .`,
       },
       auth: {
         reauthRequired: 'Reauthentication required',

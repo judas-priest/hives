@@ -1,2 +1,8 @@
+/**
+ * Shebang and module setup
+ * Lines 1-2 from original k_da_deobfuscated.js
+ * This file contains the Node.js shebang and ES module compatibility setup
+ */
+
 #!/usr/bin/env node
-import { createRequire } from 'module'; const require = createRequire(import.meta.url); globalThis.__filename = require('url').fileURLToPath(import.meta.url); globalThis.__dirname = require('path').dirname(globalThis.__filename);
+import { createRequire } from 'module';

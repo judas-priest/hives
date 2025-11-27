@@ -4,6 +4,100 @@
  * This file is part of the k_da application split from webpack bundle
  */
 
+var qur = qe(or(), 1);
+import { Stream as xfr } from 'node:stream';
+import cX from 'node:process';
+var Lze = qe(or(), 1);
+import Tfr from 'node:process';
+function z$e(t, e, { signal: r, edges: n } = {}) {
+  let i,
+    a = null,
+    s = n != null && n.includes('leading'),
+    o = n == null || n.includes('trailing'),
+    l = () => {
+      a !== null && (t.apply(i, a), (i = void 0), (a = null));
+    },
+    u = () => {
+      (o && l(), m());
+    },
+    c = null,
+    p = () => {
+      (c != null && clearTimeout(c),
+        (c = setTimeout(() => {
+          ((c = null), u());
+        }, e)));
+    },
+    h = () => {
+      c !== null && (clearTimeout(c), (c = null));
+    },
+    m = () => {
+      (h(), (i = void 0), (a = null));
+    },
+    E = () => {
+      (h(), l());
+    },
+    v = function (...g) {
+      if (r?.aborted) return;
+      ((i = this), (a = g));
+      let _ = c == null;
+      (p(), s && _ && l());
+    };
+  return (
+    (v.schedule = p),
+    (v.cancel = m),
+    (v.flush = E),
+    r?.addEventListener('abort', m, { once: !0 }),
+    v
+  );
+}
+function J$e(t, e = 0, r = {}) {
+  typeof r != 'object' && (r = {});
+  let { leading: n = !1, trailing: i = !0, maxWait: a } = r,
+    s = Array(2);
+  (n && (s[0] = 'leading'), i && (s[1] = 'trailing'));
+  let o,
+    l = null,
+    u = z$e(
+      function (...h) {
+        ((o = t.apply(this, h)), (l = null));
+      },
+      e,
+      { edges: s }
+    ),
+    c = function (...h) {
+      return a != null && (l === null && (l = Date.now()), Date.now() - l >= a)
+        ? ((o = t.apply(this, h)), (l = Date.now()), u.cancel(), u.schedule(), o)
+        : (u.apply(this, h), o);
+    },
+    p = () => (u.flush(), o);
+  return ((c.cancel = u.cancel), (c.flush = p), c);
+}
+function cK(t, e = 0, r = {}) {
+  typeof r != 'object' && (r = {});
+  let { leading: n = !0, trailing: i = !0 } = r;
+  return J$e(t, e, { leading: n, trailing: i, maxWait: e });
+}
+var x5 = {};
+$R(x5, {
+  beep: () => Xcr,
+  clearScreen: () => Wcr,
+  clearTerminal: () => zcr,
+  cursorBackward: () => Ocr,
+  cursorDown: () => Rcr,
+  cursorForward: () => Ncr,
+  cursorGetPosition: () => Fcr,
+  cursorHide: () => kcr,
+  cursorLeft: () => Z$e,
+  cursorMove: () => Bcr,
+  cursorNextLine: () => Pcr,
+  cursorPrevLine: () => Qcr,
+  cursorRestorePosition: () => Lcr,
+  cursorSavePosition: () => Mcr,
+  cursorShow: () => Ucr,
+  cursorTo: () => xcr,
+  cursorUp: () => X$e,
+  enterAlternativeScreen: () => Jcr,
+  eraseDown: () => qcr,
   eraseEndLine: () => Vcr,
   eraseLine: () => eje,
   eraseLines: () => Hcr,
@@ -1683,6 +1777,7 @@ var idr = (() => {
               for (
                 typeof r.postRun == 'function' && (r.postRun = [r.postRun]);
                 r.postRun.length;
+
               ) {
                 var Me = r.postRun.shift();
                 z.unshift(Me);
@@ -2022,7 +2117,7 @@ import p1r from 'node:process';
 var AWe = qe(or(), 1);
 function G2e({ onlyFirst: t = !1 } = {}) {
   let r = [
-    '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?(?:\\u0007|\\u001B\\u005C|\\u009C))',
+    '[\\][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?(?:\|\\\|\))',
     '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))',
   ].join('|');
   return new RegExp(r, t ? void 0 : 'g');
@@ -2868,7 +2963,7 @@ function Ddr() {
 }
 var wdr = Ddr(),
   z2e = wdr;
-var Idr = /^[\uD800-\uDBFF][\uDC00-\uDFFF]$/,
+var Idr = /^[�-�][�-�]$/,
   Jje = ['\x1B', '\x9B'],
   _K = (t) => `${Jje[0]}[${t}m`,
   zje = (t, e, r) => {
@@ -2965,7 +3060,7 @@ function SK(t, e, r) {
 }
 function J2e(t, e, r = {}) {
   let { position: n = 'end', space: i = !1, preferTruncationOnSpace: a = !1 } = r,
-    { truncationCharacter: s = '\u2026' } = r;
+    { truncationCharacter: s = '…' } = r;
   if (typeof t != 'string')
     throw new TypeError(`Expected \`input\` to be a string, got ${typeof t}`);
   if (typeof e != 'number')
@@ -3254,7 +3349,7 @@ var fWe = (t, e) => {
     shouldSetTextContent: () => !1,
     createInstance(t, e, r, n) {
       if (n.isInsideText && t === 'ink-box')
-        throw new Error('<Box> can\u2019t be nested inside <Text> component');
+        throw new Error('<Box> can’t be nested inside <Text> component');
       let i = t === 'ink-text' && n.isInsideText ? 'ink-virtual-text' : t,
         a = wK(i);
       for (let [s, o] of Object.entries(e))
@@ -6863,11 +6958,11 @@ If the browser does not open automatically, please copy and paste this link to a
       mcpAuthHint: '(type: "/mcp auth {serverName}" to authenticate this server)',
       mcpStatusBlocked: 'Blocked',
       mcpTipsTitle: '\u{1F4A1} Tips:',
-      mcpTipsDesc: '  \u2022 Use {command} to show server and tool descriptions',
-      mcpTipsSchema: '  \u2022 Use {command} to show tool parameter schemas',
-      mcpTipsNoDesc: '  \u2022 Use {command} to hide descriptions',
-      mcpTipsAuth: '  \u2022 Use {command} to authenticate with OAuth-enabled servers',
-      mcpTipsToggle: '  \u2022 Press {command} to toggle tool descriptions on/off',
+      mcpTipsDesc: '  • Use {command} to show server and tool descriptions',
+      mcpTipsSchema: '  • Use {command} to show tool parameter schemas',
+      mcpTipsNoDesc: '  • Use {command} to hide descriptions',
+      mcpTipsAuth: '  • Use {command} to authenticate with OAuth-enabled servers',
+      mcpTipsToggle: '  • Press {command} to toggle tool descriptions on/off',
       mcpNoOauthServers: 'No MCP servers configured with OAuth authentication.',
       mcpOAuthServersList: `MCP servers with OAuth authentication:
 {serverList}
@@ -6875,7 +6970,7 @@ If the browser does not open automatically, please copy and paste this link to a
 Use /mcp auth <server-name> to authenticate.`,
       mcpServerNotFound: "MCP server '{serverName}' not found.",
       mcpAuthStarting: "Starting OAuth authentication for MCP server '{serverName}'...",
-      mcpAuthSuccess: "\u2705 Successfully authenticated with MCP server '{serverName}'!",
+      mcpAuthSuccess: "✅ Successfully authenticated with MCP server '{serverName}'!",
       mcpAuthRediscovering: "Re-discovering tools from '{serverName}'...",
       mcpAuthRefreshSuccess: "Successfully authenticated and refreshed tools for '{serverName}'.",
       mcpAuthFailure: "Failed to authenticate with MCP server '{serverName}': {error}",
@@ -7046,24 +7141,24 @@ Do NOT use this tool:
         validationNonEmpty: 'Parameter "fact" must be a non-empty string.',
       },
       flashFallback: {
-        proQuotaExceeded: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        freeQuotaExceeded: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        proGenericQuota: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        freeGenericQuota: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        proDefault: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
-        freeDefault: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
-\u26A1 Use /auth to configure another access token if you prefer a different model.`,
+        proQuotaExceeded: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        freeQuotaExceeded: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        proGenericQuota: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        freeGenericQuota: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        proDefault: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
+        freeDefault: `⚡ Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+⚡ Use /auth to configure another access token if you prefer a different model.`,
       },
       trial: {
         footerLabel: 'trial requests {used}{limitPart}',
-        limitReached: `\u26A1 You have used all available Koda trial requests.
-\u26A1 Further requests are paused until the trial resets.
-\u26A1 Configure permanent access with /auth or visit https://kodacode.ru .`,
+        limitReached: `⚡ You have used all available Koda trial requests.
+⚡ Further requests are paused until the trial resets.
+⚡ Configure permanent access with /auth or visit https://kodacode.ru .`,
       },
       auth: {
         reauthRequired: 'Reauthentication required',
@@ -7183,1127 +7278,1127 @@ Do NOT use this tool:
   },
   ADn = {
     help: {
-      basics: '\u041E\u0441\u043D\u043E\u0432\u044B:',
+      basics: 'Основы:',
       addContext:
-        '\u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430',
+        'Добавление контекста',
       addContextDescription:
-        '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {at}, \u0447\u0442\u043E\u0431\u044B \u0443\u043A\u0430\u0437\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B \u0434\u043B\u044F \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, {example}), \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u043D\u044B\u0435 \u0444\u0430\u0439\u043B\u044B \u0438\u043B\u0438 \u043F\u0430\u043F\u043A\u0438',
-      shellMode: '\u0420\u0435\u0436\u0438\u043C \u043E\u0431\u043E\u043B\u043E\u0447\u043A\u0438',
+        'Используйте {at}, чтобы указать файлы для контекста (например, {example}), чтобы выбрать определенные файлы или папки',
+      shellMode: 'Режим оболочки',
       shellModeDescription:
-        '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u0439\u0442\u0435 \u043A\u043E\u043C\u0430\u043D\u0434\u044B \u043E\u0431\u043E\u043B\u043E\u0447\u043A\u0438 \u0447\u0435\u0440\u0435\u0437 {exclamation} (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, {example}) \u0438\u043B\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0435\u0441\u0442\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439 \u044F\u0437\u044B\u043A (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, {naturalLanguage})',
+        'Выполняйте команды оболочки через {exclamation} (например, {example}) или используйте естественный язык (например, {naturalLanguage})',
       shellModeNaturalLanguageExample:
-        '\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C \u0441\u0435\u0440\u0432\u0435\u0440',
-      commands: '\u041A\u043E\u043C\u0430\u043D\u0434\u044B:',
+        'запустить сервер',
+      commands: 'Команды:',
       shellCommand:
-        '\u043A\u043E\u043C\u0430\u043D\u0434\u0430 \u043E\u0431\u043E\u043B\u043E\u0447\u043A\u0438',
+        'команда оболочки',
       shortcuts:
-        '\u0413\u043E\u0440\u044F\u0447\u0438\u0435 \u043A\u043B\u0430\u0432\u0438\u0448\u0438:',
+        'Горячие клавиши:',
       jumpWords:
-        '\u041F\u0435\u0440\u0435\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u043E \u0441\u043B\u043E\u0432\u0430\u043C \u0432\u043E \u0432\u0432\u043E\u0434\u0438\u043C\u043E\u043C \u0442\u0435\u043A\u0441\u0442\u0435',
+        'Перемещение по словам во вводимом тексте',
       quitApp:
-        '\u0412\u044B\u0439\u0442\u0438 \u0438\u0437 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F',
-      newLine: '\u041D\u043E\u0432\u0430\u044F \u0441\u0442\u0440\u043E\u043A\u0430',
+        'Выйти из приложения',
+      newLine: 'Новая строка',
       newLineLinux:
-        '\u041D\u043E\u0432\u0430\u044F \u0441\u0442\u0440\u043E\u043A\u0430 (Alt+Enter \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0432 \u043D\u0435\u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u0434\u0438\u0441\u0442\u0440\u0438\u0431\u0443\u0442\u0438\u0432\u0430\u0445 Linux)',
+        'Новая строка (Alt+Enter работает в некоторых дистрибутивах Linux)',
       clearScreen:
-        '\u041E\u0447\u0438\u0441\u0442\u0438\u0442\u044C \u044D\u043A\u0440\u0430\u043D',
+        'Очистить экран',
       openEditor:
-        '\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0432\u0432\u043E\u0434 \u0432\u043E \u0432\u043D\u0435\u0448\u043D\u0435\u043C \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0435',
+        'Открыть ввод во внешнем редакторе',
       toggleYolo:
-        '\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u0436\u0438\u043C YOLO',
+        'Переключить режим YOLO',
       sendMessage:
-        '\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435',
+        'Отправить сообщение',
       cancelOperation:
-        '\u041E\u0442\u043C\u0435\u043D\u0438\u0442\u044C \u043E\u043F\u0435\u0440\u0430\u0446\u0438\u044E',
+        'Отменить операцию',
       autoAcceptEdits:
-        '\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u043F\u0440\u0438\u043C\u0435\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0430\u0432\u043E\u043A',
+        'Переключить автоматическое применение правок',
       cycleHistory:
-        '\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435 \u043F\u043E \u0438\u0441\u0442\u043E\u0440\u0438\u0438 \u0437\u0430\u043F\u0440\u043E\u0441\u043E\u0432',
+        'Переключение по истории запросов',
       fullList:
-        '\u041F\u043E\u043B\u043D\u044B\u0439 \u0441\u043F\u0438\u0441\u043E\u043A \u0433\u043E\u0440\u044F\u0447\u0438\u0445 \u043A\u043B\u0430\u0432\u0438\u0448 \u0441\u043C\u043E\u0442\u0440\u0438\u0442\u0435 \u0432 {file}',
+        'Полный список горячих клавиш смотрите в {file}',
     },
     commandMessages: {
       docs: {
         openingInBrowser:
-          '\u041E\u0442\u043A\u0440\u044B\u0442\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u0438 \u0432 \u0432\u0430\u0448\u0435\u043C \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435: {url}',
-        openInBrowserMessage: `\u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u043E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 URL-\u0430\u0434\u0440\u0435\u0441 \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435 \u0434\u043B\u044F \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u0438:
+          'Открытие документации в вашем браузере: {url}',
+        openInBrowserMessage: `Пожалуйста, откройте следующий URL-адрес в браузере для просмотра документации:
 {url}
 
-\u0415\u0441\u043B\u0438 \u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u043D\u0435 \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438, \u0441\u043A\u043E\u043F\u0438\u0440\u0443\u0439\u0442\u0435 \u0438 \u0432\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u044D\u0442\u0443 \u0441\u0441\u044B\u043B\u043A\u0443 \u0434\u043B\u044F \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u043A \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u0438: {url}`,
+Если браузер не открывается автоматически, скопируйте и вставьте эту ссылку для доступа к документации: {url}`,
       },
       init: {
         configNotAvailable:
-          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.',
+          'Конфигурация недоступна.',
         fileAlreadyExists:
-          '\u0424\u0430\u0439\u043B KODA.md \u0443\u0436\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442 \u0432 \u044D\u0442\u043E\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438. \u0418\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u043D\u0435 \u0432\u043D\u0435\u0441\u0435\u043D\u044B.',
+          'Файл KODA.md уже существует в этой директории. Изменения не внесены.',
         fileCreated:
-          '\u041F\u0443\u0441\u0442\u043E\u0439 \u0444\u0430\u0439\u043B KODA.md \u0441\u043E\u0437\u0434\u0430\u043D. \u0412\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442\u0441\u044F \u0430\u043D\u0430\u043B\u0438\u0437 \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0434\u043B\u044F \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u044F.',
+          'Пустой файл KODA.md создан. Выполняется анализ проекта для заполнения.',
       },
       ide: {
         notSupported:
-          '\u0418\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044F \u0441 IDE \u043D\u0435 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u0432 \u0432\u0430\u0448\u0435\u0439 \u0442\u0435\u043A\u0443\u0449\u0435\u0439 \u0441\u0440\u0435\u0434\u0435. \u0427\u0442\u043E\u0431\u044B \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u044D\u0442\u0443 \u0444\u0443\u043D\u043A\u0446\u0438\u044E, \u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 Koda CLI \u0432 \u043E\u0434\u043D\u043E\u0439 \u0438\u0437 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u043C\u044B\u0445 IDE: {supportedList}',
+          'Интеграция с IDE не поддерживается в вашей текущей среде. Чтобы использовать эту функцию, запустите Koda CLI в одной из поддерживаемых IDE: {supportedList}',
         noInstaller:
-          "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0433\u043E \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0449\u0438\u043A\u0430 \u0434\u043B\u044F {ideName}. \u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0435 \u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u0435 '{extensionName}' \u0432\u0440\u0443\u0447\u043D\u0443\u044E \u0438\u0437 \u043C\u0430\u0440\u043A\u0435\u0442\u0430.",
+          "Нет доступного установщика для {ideName}. Установите расширение '{extensionName}' вручную из маркета.",
         installing:
-          '\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0430 \u043A\u043E\u043C\u043F\u0430\u043D\u044C\u043E\u043D\u0430 IDE...',
-        connected: '\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043E \u043A {ideName}',
-        connecting: '\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435...',
-        disconnected: '\u041E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u043E',
+          'Установка компаньона IDE...',
+        connected: 'Подключено к {ideName}',
+        connecting: 'Подключение...',
+        disconnected: 'Отключено',
         disconnectedWithDetails:
-          '\u041E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u043E: {details}',
+          'Отключено: {details}',
         openFilesTitle:
-          '\u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0435 \u0444\u0430\u0439\u043B\u044B:',
+          'Открытые файлы:',
         fileLimitNote:
-          '(\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435: \u0441\u043F\u0438\u0441\u043E\u043A \u0444\u0430\u0439\u043B\u043E\u0432 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E\u043C \u043D\u0435\u0434\u0430\u0432\u043D\u043E \u043E\u0442\u043A\u0440\u044B\u0442\u044B\u0445 \u0444\u0430\u0439\u043B\u043E\u0432 \u0432 \u0432\u0430\u0448\u0435\u0439 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438 \u0438 \u0432\u043A\u043B\u044E\u0447\u0430\u0435\u0442 \u0442\u043E\u043B\u044C\u043A\u043E \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0435 \u0444\u0430\u0439\u043B\u044B \u043D\u0430 \u0434\u0438\u0441\u043A\u0435)',
+          '(Примечание: список файлов ограничен количеством недавно открытых файлов в вашей рабочей области и включает только локальные файлы на диске)',
         openingBrowser:
-          '\u041E\u0442\u043A\u0440\u044B\u0432\u0430\u044E \u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u0434\u043B\u044F \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0438 \u043A\u043E\u043C\u043F\u0430\u043D\u044C\u043E\u043D\u0430 IDE: {url}',
+          'Открываю браузер для установки компаньона IDE: {url}',
         browserOpened:
-          '\u0411\u0440\u0430\u0443\u0437\u0435\u0440 \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043E\u0442\u043A\u0440\u044B\u0442. \u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0441\u043B\u0435\u0434\u0443\u0439\u0442\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u044F\u043C \u043F\u043E \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0435 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435.',
+          'Браузер успешно открыт. Пожалуйста, следуйте инструкциям по установке на сайте.',
         openUrlError:
-          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u044C URL \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435: ',
+          'Не удалось открыть URL в браузере: ',
       },
       vim: {
         enteredMode:
-          '\u0412\u043E\u0448\u043B\u0438 \u0432 \u0440\u0435\u0436\u0438\u043C Vim. \u0412\u044B\u043F\u043E\u043B\u043D\u0438\u0442\u0435 /vim \u0441\u043D\u043E\u0432\u0430 \u0434\u043B\u044F \u0432\u044B\u0445\u043E\u0434\u0430.',
+          'Вошли в режим Vim. Выполните /vim снова для выхода.',
         exitedMode:
-          '\u0412\u044B\u0448\u043B\u0438 \u0438\u0437 \u0440\u0435\u0436\u0438\u043C\u0430 Vim.',
+          'Вышли из режима Vim.',
       },
     },
     statsDisplay: {
       sessionStats:
-        '\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u0441\u0435\u0441\u0441\u0438\u0438',
+        'Статистика сессии',
       interactionSummary:
-        '\u0421\u0432\u043E\u0434\u043A\u0430 \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F',
-      sessionId: 'ID \u0441\u0435\u0441\u0441\u0438\u0438:',
+        'Сводка взаимодействия',
+      sessionId: 'ID сессии:',
       toolCalls:
-        '\u0412\u044B\u0437\u043E\u0432\u044B \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432:',
-      successRate: '\u0423\u0441\u043F\u0435\u0448\u043D\u043E\u0441\u0442\u044C:',
+        'Вызовы инструментов:',
+      successRate: 'Успешность:',
       userAgreement:
-        '\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F:',
-      userAgreementReviewed: '({count} \u043E\u0446\u0435\u043D\u0435\u043D\u043E)',
+        'Согласие пользователя:',
+      userAgreementReviewed: '({count} оценено)',
       performance:
-        '\u041F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C',
-      wallTime: '\u041E\u0431\u0449\u0435\u0435 \u0432\u0440\u0435\u043C\u044F:',
+        'Производительность',
+      wallTime: 'Общее время:',
       agentActive:
-        '\u0410\u043A\u0442\u0438\u0432\u043D\u043E\u0441\u0442\u044C \u0430\u0433\u0435\u043D\u0442\u0430:',
-      apiTime: 'API-\u0432\u0440\u0435\u043C\u044F:',
+        'Активность агента:',
+      apiTime: 'API-время:',
       toolTime:
-        '\u0412\u0440\u0435\u043C\u044F \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432:',
+        'Время инструментов:',
       modelUsage:
-        '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435 \u043C\u043E\u0434\u0435\u043B\u0435\u0439',
-      requests: '\u0417\u0430\u043F\u0440\u043E\u0441\u044B',
+        'Использование моделей',
+      requests: 'Запросы',
       inputTokens:
-        '\u0412\u0445\u043E\u0434\u043D\u044B\u0435 \u0442\u043E\u043A\u0435\u043D\u044B',
+        'Входные токены',
       outputTokens:
-        '\u0412\u044B\u0445\u043E\u0434\u043D\u044B\u0435 \u0442\u043E\u043A\u0435\u043D\u044B',
-      savingsHighlight: '\u042D\u043A\u043E\u043D\u043E\u043C\u0438\u044F:',
+        'Выходные токены',
+      savingsHighlight: 'Экономия:',
       savingsDetail:
-        '{tokens} ({percent}%) \u0432\u0445\u043E\u0434\u043D\u044B\u0445 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u0431\u044B\u043B\u0438 \u043E\u0431\u0441\u043B\u0443\u0436\u0435\u043D\u044B \u0438\u0437 \u043A\u044D\u0448\u0430, \u0441\u043D\u0438\u0436\u0430\u044F \u0437\u0430\u0442\u0440\u0430\u0442\u044B.',
+        '{tokens} ({percent}%) входных токенов были обслужены из кэша, снижая затраты.',
       tipFullStats:
-        '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430: \u041F\u043E\u043B\u043D\u0443\u044E \u0440\u0430\u0437\u0431\u0438\u0432\u043A\u0443 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u043C\u043E\u0436\u043D\u043E \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u043A\u043E\u043C\u0430\u043D\u0434\u043E\u0439 {command}.',
+        'Подсказка: Полную разбивку токенов можно получить командой {command}.',
     },
     sessionSummary: {
       poweringDown:
-        '\u0410\u0433\u0435\u043D\u0442 \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442 \u0440\u0430\u0431\u043E\u0442\u0443. \u0414\u043E \u0441\u0432\u0438\u0434\u0430\u043D\u0438\u044F!',
+        'Агент завершает работу. До свидания!',
     },
     settings: {
       theme: {
-        label: '\u0422\u0435\u043C\u0430',
+        label: 'Тема',
         description:
-          '\u0426\u0432\u0435\u0442\u043E\u0432\u0430\u044F \u0442\u0435\u043C\u0430 \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430.',
+          'Цветовая тема интерфейса.',
       },
       customThemes: {
         label:
-          '\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0435 \u0442\u0435\u043C\u044B',
+          'Пользовательские темы',
         description:
-          '\u041E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0445 \u0442\u0435\u043C.',
+          'Определения пользовательских тем.',
       },
       hideWindowTitle: {
         label:
-          '\u0421\u043A\u0440\u044B\u0442\u044C \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u043E\u043A\u043D\u0430',
+          'Скрыть заголовок окна',
         description:
-          '\u0421\u043A\u0440\u044B\u0442\u044C \u0441\u0442\u0440\u043E\u043A\u0443 \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043A\u0430 \u043E\u043A\u043D\u0430',
+          'Скрыть строку заголовка окна',
       },
       hideTips: {
         label:
-          '\u0421\u043A\u0440\u044B\u0442\u044C \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438',
+          'Скрыть подсказки',
         description:
-          '\u0421\u043A\u0440\u044B\u0442\u044C \u043F\u043E\u043B\u0435\u0437\u043D\u044B\u0435 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438 \u0432 \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0435',
+          'Скрыть полезные подсказки в интерфейсе',
       },
       hideBanner: {
-        label: '\u0421\u043A\u0440\u044B\u0442\u044C \u0431\u0430\u043D\u043D\u0435\u0440',
+        label: 'Скрыть баннер',
         description:
-          '\u0421\u043A\u0440\u044B\u0442\u044C \u0431\u0430\u043D\u043D\u0435\u0440 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F',
+          'Скрыть баннер приложения',
       },
       showMemoryUsage: {
         label:
-          '\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435 \u043F\u0430\u043C\u044F\u0442\u0438',
+          'Показывать использование памяти',
         description:
-          '\u041E\u0442\u043E\u0431\u0440\u0430\u0436\u0430\u0442\u044C \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044E \u043E\u0431 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0438 \u043F\u0430\u043C\u044F\u0442\u0438 \u0432 \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0435',
+          'Отображать информацию об использовании памяти в интерфейсе',
       },
       usageStatisticsEnabled: {
         label:
-          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0443 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F',
+          'Включить статистику использования',
         description:
-          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0431\u043E\u0440 \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F',
+          'Включить сбор статистики использования',
       },
       autoConfigureMaxOldSpaceSize: {
         label:
-          '\u0410\u0432\u0442\u043E\u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430 Max Old Space Size',
+          'Автонастройка Max Old Space Size',
         description:
-          '\u0410\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0442\u044C \u043B\u0438\u043C\u0438\u0442\u044B \u043F\u0430\u043C\u044F\u0442\u0438 Node.js',
+          'Автоматически настраивать лимиты памяти Node.js',
       },
       preferredEditor: {
         label:
-          '\u041F\u0440\u0435\u0434\u043F\u043E\u0447\u0438\u0442\u0430\u0435\u043C\u044B\u0439 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440',
+          'Предпочитаемый редактор',
         description:
-          '\u041F\u0440\u0435\u0434\u043F\u043E\u0447\u0438\u0442\u0430\u0435\u043C\u044B\u0439 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440 \u0434\u043B\u044F \u043E\u0442\u043A\u0440\u044B\u0442\u0438\u044F \u0444\u0430\u0439\u043B\u043E\u0432.',
+          'Предпочитаемый редактор для открытия файлов.',
       },
       maxSessionTurns: {
         label:
-          '\u041C\u0430\u043A\u0441. \u0447\u0438\u0441\u043B\u043E \u0445\u043E\u0434\u043E\u0432 \u0441\u0435\u0441\u0441\u0438\u0438',
+          'Макс. число ходов сессии',
         description:
-          '\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435 \u0447\u0438\u0441\u043B\u043E \u0445\u043E\u0434\u043E\u0432 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F/\u043C\u043E\u0434\u0435\u043B\u0438/\u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432, \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u043C\u044B\u0445 \u0432 \u0441\u0435\u0441\u0441\u0438\u0438.',
+          'Максимальное число ходов пользователя/модели/инструментов, сохраняемых в сессии.',
       },
       memoryImportFormat: {
         label:
-          '\u0424\u043E\u0440\u043C\u0430\u0442 \u0438\u043C\u043F\u043E\u0440\u0442\u0430 \u043F\u0430\u043C\u044F\u0442\u0438',
+          'Формат импорта памяти',
         description:
-          '\u0424\u043E\u0440\u043C\u0430\u0442, \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u043C\u044B\u0439 \u043F\u0440\u0438 \u0438\u043C\u043F\u043E\u0440\u0442\u0435 \u043F\u0430\u043C\u044F\u0442\u0438.',
+          'Формат, используемый при импорте памяти.',
       },
       memoryDiscoveryMaxDirs: {
         label:
-          '\u041C\u0430\u043A\u0441. \u0447\u0438\u0441\u043B\u043E \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439 \u0434\u043B\u044F \u043F\u043E\u0438\u0441\u043A\u0430 \u043F\u0430\u043C\u044F\u0442\u0438',
+          'Макс. число директорий для поиска памяти',
         description:
-          '\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435 \u0447\u0438\u0441\u043B\u043E \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439 \u0434\u043B\u044F \u043F\u043E\u0438\u0441\u043A\u0430 \u043F\u0430\u043C\u044F\u0442\u0438.',
+          'Максимальное число директорий для поиска памяти.',
       },
       contextFileName: {
         label:
-          '\u0418\u043C\u044F \u0444\u0430\u0439\u043B\u0430 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430',
+          'Имя файла контекста',
         description:
-          '\u0418\u043C\u044F \u0444\u0430\u0439\u043B\u0430 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430.',
+          'Имя файла контекста.',
       },
       vimMode: {
-        label: '\u0420\u0435\u0436\u0438\u043C Vim',
+        label: 'Режим Vim',
         description:
-          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0430\u0441\u043A\u043B\u0430\u0434\u043A\u0443 \u043A\u043B\u0430\u0432\u0438\u0448 Vim',
+          'Включить раскладку клавиш Vim',
       },
       ideMode: {
-        label: '\u0420\u0435\u0436\u0438\u043C IDE',
+        label: 'Режим IDE',
         description:
-          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u0436\u0438\u043C \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438 \u0441 IDE',
+          'Включить режим интеграции с IDE',
       },
       accessibility: {
         label:
-          '\u0421\u043F\u0435\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0435 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438',
+          'Специальные возможности',
         description:
-          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0441\u043F\u0435\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0445 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0435\u0439.',
+          'Настройки специальных возможностей.',
         disableLoadingPhrases: {
           label:
-            '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0440\u0430\u0437\u044B \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438',
+            'Отключить фразы загрузки',
           description:
-            '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0440\u0430\u0437\u044B \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438 \u0434\u043B\u044F \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0441\u0442\u0438',
+            'Отключить фразы загрузки для улучшения доступности',
         },
       },
       checkpointing: {
         label:
-          '\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0435 \u0442\u043E\u0447\u043A\u0438',
+          'Контрольные точки',
         description:
-          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0445 \u0442\u043E\u0447\u0435\u043A \u0441\u0435\u0441\u0441\u0438\u0438.',
+          'Настройки контрольных точек сессии.',
         enabled: {
           label:
-            '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0435 \u0442\u043E\u0447\u043A\u0438',
+            'Включить контрольные точки',
           description:
-            '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0435 \u0442\u043E\u0447\u043A\u0438 \u0441\u0435\u0441\u0441\u0438\u0438 \u0434\u043B\u044F \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F',
+            'Включить контрольные точки сессии для восстановления',
         },
       },
       fileFiltering: {
         label:
-          '\u0424\u0438\u043B\u044C\u0442\u0440\u0430\u0446\u0438\u044F \u0444\u0430\u0439\u043B\u043E\u0432',
+          'Фильтрация файлов',
         description:
-          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0444\u0438\u043B\u044C\u0442\u0440\u0430\u0446\u0438\u0438 \u0444\u0430\u0439\u043B\u043E\u0432 \u0441 \u0443\u0447\u0435\u0442\u043E\u043C git.',
+          'Настройки фильтрации файлов с учетом git.',
         respectGitIgnore: {
-          label: '\u0423\u0447\u0438\u0442\u044B\u0432\u0430\u0442\u044C .gitignore',
+          label: 'Учитывать .gitignore',
           description:
-            '\u0423\u0447\u0438\u0442\u044B\u0432\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B .gitignore \u043F\u0440\u0438 \u043F\u043E\u0438\u0441\u043A\u0435',
+            'Учитывать файлы .gitignore при поиске',
         },
         respectGeminiIgnore: {
-          label: '\u0423\u0447\u0438\u0442\u044B\u0432\u0430\u0442\u044C .kodaignore',
+          label: 'Учитывать .kodaignore',
           description:
-            '\u0423\u0447\u0438\u0442\u044B\u0432\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B .kodaignore \u043F\u0440\u0438 \u043F\u043E\u0438\u0441\u043A\u0435',
+            'Учитывать файлы .kodaignore при поиске',
         },
         enableRecursiveFileSearch: {
           label:
-            '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u043A\u0443\u0440\u0441\u0438\u0432\u043D\u044B\u0439 \u043F\u043E\u0438\u0441\u043A \u0444\u0430\u0439\u043B\u043E\u0432',
+            'Включить рекурсивный поиск файлов',
           description:
-            '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0443\u043D\u043A\u0446\u0438\u044E \u0440\u0435\u043A\u0443\u0440\u0441\u0438\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0438\u0441\u043A\u0430 \u0444\u0430\u0439\u043B\u043E\u0432',
+            'Включить функцию рекурсивного поиска файлов',
         },
       },
       disableAutoUpdate: {
         label:
-          '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0430\u0432\u0442\u043E\u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435',
+          'Отключить автообновление',
         description:
-          '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F',
+          'Отключить автоматические обновления',
       },
       selectedAuthType: {
         label:
-          '\u0412\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0439 \u0442\u0438\u043F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438',
+          'Выбранный тип аутентификации',
         description:
-          '\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0439 \u0442\u0438\u043F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438.',
+          'Текущий выбранный тип аутентификации.',
       },
       useExternalAuth: {
         label:
-          '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u0432\u043D\u0435\u0448\u043D\u044E\u044E \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044E',
+          'Использовать внешнюю аутентификацию',
         description:
-          '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u043B\u0438 \u0432\u043D\u0435\u0448\u043D\u0438\u0439 \u043F\u043E\u0442\u043E\u043A \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438.',
+          'Использовать ли внешний поток аутентификации.',
       },
       sandbox: {
-        label: '\u041F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u0430',
+        label: 'Песочница',
         description:
-          '\u0421\u0440\u0435\u0434\u0430 \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u044F \u0432 \u043F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u0435 (\u043C\u043E\u0436\u0435\u0442 \u0431\u044B\u0442\u044C \u0431\u0443\u043B\u0435\u0432\u044B\u043C \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435\u043C \u0438\u043B\u0438 \u043F\u0443\u0442\u0435\u043C).',
+          'Среда выполнения в песочнице (может быть булевым значением или путем).',
       },
       coreTools: {
         label:
-          '\u0411\u0430\u0437\u043E\u0432\u044B\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B',
+          'Базовые инструменты',
         description:
-          '\u041F\u0443\u0442\u0438 \u043A \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u044F\u043C \u0431\u0430\u0437\u043E\u0432\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+          'Пути к определениям базовых инструментов.',
       },
       excludeTools: {
         label:
-          '\u0418\u0441\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B',
+          'Исключить инструменты',
         description:
-          '\u0418\u043C\u0435\u043D\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0434\u043B\u044F \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u044F \u0438\u0437 \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F.',
+          'Имена инструментов для исключения из обнаружения.',
       },
       toolDiscoveryCommand: {
         label:
-          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+          'Команда обнаружения инструментов',
         description:
-          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0434\u043B\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430 \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+          'Команда для запуска обнаружения инструментов.',
       },
       toolCallCommand: {
         label:
-          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0432\u044B\u0437\u043E\u0432\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430',
+          'Команда вызова инструмента',
         description:
-          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0434\u043B\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430 \u0432\u044B\u0437\u043E\u0432\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+          'Команда для запуска вызова инструментов.',
       },
       mcpServerCommand: {
         label:
-          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP',
+          'Команда сервера MCP',
         description:
-          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0434\u043B\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP.',
+          'Команда для запуска сервера MCP.',
       },
       mcpServers: {
-        label: '\u0421\u0435\u0440\u0432\u0435\u0440\u044B MCP',
+        label: 'Серверы MCP',
         description:
-          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 MCP.',
+          'Конфигурация серверов MCP.',
       },
       allowMCPServers: {
         label:
-          '\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043D\u043D\u044B\u0435 \u0441\u0435\u0440\u0432\u0435\u0440\u044B MCP',
+          'Разрешенные серверы MCP',
         description:
-          '\u0421\u043F\u0438\u0441\u043E\u043A (allowlist) \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 MCP, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043D\u044B.',
+          'Список (allowlist) серверов MCP, которые разрешены.',
       },
       excludeMCPServers: {
         label:
-          '\u0418\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044B\u0435 \u0441\u0435\u0440\u0432\u0435\u0440\u044B MCP',
+          'Исключенные серверы MCP',
         description:
-          '\u0421\u043F\u0438\u0441\u043E\u043A (blocklist) \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 MCP, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u044B.',
+          'Список (blocklist) серверов MCP, которые исключены.',
       },
       telemetry: {
-        label: '\u0422\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044F',
+        label: 'Телеметрия',
         description:
-          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u0438.',
+          'Конфигурация телеметрии.',
       },
       bugCommand: {
         label:
-          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u043E\u0442\u0447\u0435\u0442\u0430 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435',
+          'Команда отчета об ошибке',
         description:
-          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u043A\u043E\u043C\u0430\u043D\u0434\u044B \u043E\u0442\u043F\u0440\u0430\u0432\u043A\u0438 \u043E\u0442\u0447\u0435\u0442\u0430 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435.',
+          'Конфигурация команды отправки отчета об ошибке.',
       },
       summarizeToolOutput: {
         label:
-          '\u0421\u0443\u043C\u043C\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0432\u044B\u0432\u043E\u0434 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+          'Суммировать вывод инструментов',
         description:
-          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0441\u0443\u043C\u043C\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u0432\u044B\u0432\u043E\u0434\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+          'Настройки суммирования вывода инструментов.',
       },
       dnsResolutionOrder: {
         label:
-          '\u041F\u043E\u0440\u044F\u0434\u043E\u043A \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043D\u0438\u044F DNS',
+          'Порядок разрешения DNS',
         description:
-          '\u041F\u043E\u0440\u044F\u0434\u043E\u043A \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043D\u0438\u044F DNS.',
+          'Порядок разрешения DNS.',
       },
       excludedProjectEnvVars: {
         label:
-          '\u0418\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044B\u0435 \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0435 \u043E\u043A\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430',
+          'Исключенные переменные окружения проекта',
         description:
-          '\u041F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0435 \u043E\u043A\u0440\u0443\u0436\u0435\u043D\u0438\u044F, \u0438\u0441\u043A\u043B\u044E\u0447\u0430\u0435\u043C\u044B\u0435 \u0438\u0437 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430 \u043F\u0440\u043E\u0435\u043A\u0442\u0430.',
+          'Переменные окружения, исключаемые из контекста проекта.',
       },
       disableUpdateNag: {
         label:
-          '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u043D\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u044F \u043E\u0431 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0438',
+          'Отключить напоминания об обновлении',
         description:
-          '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F \u043E \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u043E\u0441\u0442\u0438 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F.',
+          'Отключить уведомления о необходимости обновления.',
       },
       includeDirectories: {
         label:
-          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438',
+          'Включить директории',
         description:
-          '\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0435 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438, \u0432\u043A\u043B\u044E\u0447\u0430\u0435\u043C\u044B\u0435 \u0432 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438.',
+          'Дополнительные директории, включаемые в контекст рабочей области.',
       },
       loadMemoryFromIncludeDirectories: {
         label:
-          '\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0442\u044C \u043F\u0430\u043C\u044F\u0442\u044C \u0438\u0437 \u0432\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044B\u0445 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439',
+          'Загружать память из включенных директорий',
         description:
-          '\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0442\u044C \u043B\u0438 \u0444\u0430\u0439\u043B\u044B \u043F\u0430\u043C\u044F\u0442\u0438 \u0438\u0437 \u0432\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044B\u0445 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439.',
+          'Загружать ли файлы памяти из включенных директорий.',
       },
       model: {
-        label: '\u041C\u043E\u0434\u0435\u043B\u044C',
+        label: 'Модель',
         description:
-          '\u041C\u043E\u0434\u0435\u043B\u044C Koda \u0434\u043B\u044F \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432.',
+          'Модель Koda для диалогов.',
       },
       hasSeenIdeIntegrationNudge: {
         label:
-          '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438 \u0441 IDE \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u0430',
+          'Подсказка интеграции с IDE показана',
         description:
-          '\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u043B\u0430\u0441\u044C \u043B\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u043E\u0431 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438 IDE.',
+          'Показывалась ли пользователю подсказка об интеграции IDE.',
       },
       folderTrustFeature: {
         label:
-          '\u0424\u0443\u043D\u043A\u0446\u0438\u044F \u0434\u043E\u0432\u0435\u0440\u0438\u044F \u043A \u043F\u0430\u043F\u043A\u0430\u043C',
+          'Функция доверия к папкам',
         description:
-          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0443\u043D\u043A\u0446\u0438\u044E \u0434\u043E\u0432\u0435\u0440\u0438\u044F \u043A \u043F\u0430\u043F\u043A\u0430\u043C \u0434\u043B\u044F \u043F\u043E\u0432\u044B\u0448\u0435\u043D\u0438\u044F \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438.',
+          'Включить функцию доверия к папкам для повышения безопасности.',
       },
       folderTrust: {
-        label: '\u0414\u043E\u0432\u0435\u0440\u0438\u0435 \u043A \u043F\u0430\u043F\u043A\u0435',
+        label: 'Доверие к папке',
         description:
-          '\u041E\u0442\u0441\u043B\u0435\u0436\u0438\u0432\u0430\u0442\u044C, \u0432\u043A\u043B\u044E\u0447\u0435\u043D\u043E \u043B\u0438 \u0434\u043E\u0432\u0435\u0440\u0438\u0435 \u043A \u043F\u0430\u043F\u043A\u0435.',
+          'Отслеживать, включено ли доверие к папке.',
       },
       chatCompression: {
-        label: '\u0421\u0436\u0430\u0442\u0438\u0435 \u0447\u0430\u0442\u0430',
+        label: 'Сжатие чата',
         description:
-          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0441\u0436\u0430\u0442\u0438\u044F \u0447\u0430\u0442\u0430.',
+          'Настройки сжатия чата.',
       },
       showLineNumbers: {
         label:
-          '\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u043E\u043C\u0435\u0440\u0430 \u0441\u0442\u0440\u043E\u043A',
+          'Показывать номера строк',
         description:
-          '\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u043E\u043C\u0435\u0440\u0430 \u0441\u0442\u0440\u043E\u043A \u0432 \u0447\u0430\u0442\u0435.',
+          'Показывать номера строк в чате.',
       },
       language: {
-        label: '\u042F\u0437\u044B\u043A',
+        label: 'Язык',
         description:
-          '\u042F\u0437\u044B\u043A \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u043E\u0433\u043E \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430.',
+          'Язык пользовательского интерфейса.',
       },
     },
     languageSetting: {
-      selectLanguage: '\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u044F\u0437\u044B\u043A:',
-      english: '\u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439',
-      russian: '\u0420\u0443\u0441\u0441\u043A\u0438\u0439',
+      selectLanguage: 'Выберите язык:',
+      english: 'Английский',
+      russian: 'Русский',
       pressToSelect:
-        '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 {key} \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430',
+        'Нажмите {key} для выбора',
       pressEscToCancel:
-        '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 ESC \u0434\u043B\u044F \u043E\u0442\u043C\u0435\u043D\u044B',
+        'Нажмите ESC для отмены',
       pressEnterToChange:
-        '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 Enter \u0434\u043B\u044F \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F',
+        'Нажмите Enter для изменения',
     },
     authDialog: {
-      loginWithGithub: '\u0412\u043E\u0439\u0442\u0438 \u0447\u0435\u0440\u0435\u0437 GitHub',
+      loginWithGithub: 'Войти через GitHub',
       continueWithoutAuth:
-        '\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0431\u0435\u0437 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438',
-      getTitle: '\u041D\u0430\u0447\u0430\u043B\u043E \u0440\u0430\u0431\u043E\u0442\u044B',
+        'Продолжить без аутентификации',
+      getTitle: 'Начало работы',
       authQuestion:
-        '\u041A\u0430\u043A \u0432\u044B \u0445\u043E\u0442\u0438\u0442\u0435 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u0446\u0438\u0440\u043E\u0432\u0430\u0442\u044C\u0441\u044F?',
+        'Как вы хотите аутентифицироваться?',
       useEnterToSelect:
-        '(\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 Enter \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430)',
+        '(Используйте Enter для выбора)',
       existingApiKeyDetected:
-        '\u041E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0439 API-\u043A\u043B\u044E\u0447 (KODA_API_KEY)',
+        'Обнаружен существующий API-ключ (KODA_API_KEY)',
       authenticateLater:
-        '\u0412\u044B \u043C\u043E\u0436\u0435\u0442\u0435 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u0446\u0438\u0440\u043E\u0432\u0430\u0442\u044C\u0441\u044F \u043F\u043E\u0437\u0436\u0435 \u0447\u0435\u0440\u0435\u0437 \u043C\u0435\u043D\u044E.',
+        'Вы можете аутентифицироваться позже через меню.',
       termsOfService:
-        '\u0423\u0441\u043B\u043E\u0432\u0438\u044F \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F \u0438 \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0435 \u043E \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438 \u0434\u043B\u044F Koda CLI',
+        'Условия использования и уведомление о конфиденциальности для Koda CLI',
     },
     authInProgress: {
       waitingMessage:
-        '\u041E\u0436\u0438\u0434\u0430\u043D\u0438\u0435 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438... (\u041D\u0430\u0436\u043C\u0438\u0442\u0435 ESC \u0438\u043B\u0438 CTRL+C \u0434\u043B\u044F \u043E\u0442\u043C\u0435\u043D\u044B)',
-      openUrlMessage: '\u041E\u0442\u043A\u0440\u044B\u0442\u044C: ',
-      codeMessage: '\u041A\u043E\u0434: ',
+        'Ожидание аутентификации... (Нажмите ESC или CTRL+C для отмены)',
+      openUrlMessage: 'Открыть: ',
+      codeMessage: 'Код: ',
       timeoutMessage:
-        '\u0412\u0440\u0435\u043C\u044F \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u0438\u0441\u0442\u0435\u043A\u043B\u043E. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0435 \u0440\u0430\u0437.',
+        'Время ожидания аутентификации истекло. Попробуйте еще раз.',
     },
     contextSummary: {
-      using: '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442\u0441\u044F:',
-      openFile: '\u043E\u0442\u043A\u0440\u044B\u0442\u044B\u0439 \u0444\u0430\u0439\u043B',
-      openFiles: '\u043E\u0442\u043A\u0440\u044B\u0442\u044B\u0445 \u0444\u0430\u0439\u043B\u0430',
+      using: 'Используется:',
+      openFile: 'открытый файл',
+      openFiles: 'открытых файла',
       contextFile:
-        '\u0444\u0430\u0439\u043B \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430',
+        'файл контекста',
       contextFiles:
-        '\u0444\u0430\u0439\u043B\u0430 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430',
-      mcpServer: '\u0441\u0435\u0440\u0432\u0435\u0440 MCP',
-      mcpServers: '\u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP',
+        'файла контекста',
+      mcpServer: 'сервер MCP',
+      mcpServers: 'сервера MCP',
       blockedMcpServer:
-        '\u0417\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0439 \u0441\u0435\u0440\u0432\u0435\u0440 MCP',
+        'Заблокированный сервер MCP',
       blockedMcpServers:
-        '\u0417\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP',
+        'Заблокированных сервера MCP',
       viewOpenFiles:
-        'ctrl+g \u0434\u043B\u044F \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430',
-      viewMcp: 'ctrl+t \u0434\u043B\u044F \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430',
+        'ctrl+g для просмотра',
+      viewMcp: 'ctrl+t для просмотра',
       toggleMcp:
-        'ctrl+t \u0434\u043B\u044F \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u044F',
+        'ctrl+t для переключения',
     },
     loading: {
       activity: {
         processingResponse:
-          '\u041E\u0431\u0440\u0430\u0431\u0430\u0442\u044B\u0432\u0430\u044E \u0432\u0430\u0448 \u0437\u0430\u043F\u0440\u043E\u0441...',
+          'Обрабатываю ваш запрос...',
         awaitingUserConfirmation:
-          '\u041E\u0436\u0438\u0434\u0430\u044E \u0432\u0430\u0448\u0435\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F...',
+          'Ожидаю вашего подтверждения...',
         executing: {
           withDescription:
-            '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u044E {tool} - {description}',
-          withoutDescription: '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u044E {tool}',
+            'Выполняю {tool} - {description}',
+          withoutDescription: 'Выполняю {tool}',
         },
         validating: {
           withDescription:
-            '\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u044E \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B {tool} - {description}',
+            'Проверяю параметры {tool} - {description}',
           withoutDescription:
-            '\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u044E \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B {tool}',
+            'Проверяю параметры {tool}',
         },
         scheduled: {
-          withDescription: '\u0413\u043E\u0442\u043E\u0432\u043B\u044E {tool} - {description}',
-          withoutDescription: '\u0413\u043E\u0442\u043E\u0432\u043B\u044E {tool}',
+          withDescription: 'Готовлю {tool} - {description}',
+          withoutDescription: 'Готовлю {tool}',
         },
         awaitingApproval: {
           withDescription:
-            '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u0434\u043B\u044F {tool} - {description}',
+            'Нужно подтверждение для {tool} - {description}',
           withoutDescription:
-            '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u0434\u043B\u044F {tool}',
+            'Нужно подтверждение для {tool}',
         },
         success: {
           withDescription:
-            '\u0417\u0430\u0432\u0435\u0440\u0448\u0438\u043B {tool} - {description}',
-          withoutDescription: '\u0417\u0430\u0432\u0435\u0440\u0448\u0438\u043B {tool}',
+            'Завершил {tool} - {description}',
+          withoutDescription: 'Завершил {tool}',
         },
         error: {
-          withDescription: '\u041E\u0448\u0438\u0431\u043A\u0430 \u0432 {tool} - {description}',
-          withoutDescription: '\u041E\u0448\u0438\u0431\u043A\u0430 \u0432 {tool}',
+          withDescription: 'Ошибка в {tool} - {description}',
+          withoutDescription: 'Ошибка в {tool}',
         },
         cancelled: {
-          withDescription: '\u041E\u0442\u043C\u0435\u043D\u0438\u043B {tool} - {description}',
-          withoutDescription: '\u041E\u0442\u043C\u0435\u043D\u0438\u043B {tool}',
+          withDescription: 'Отменил {tool} - {description}',
+          withoutDescription: 'Отменил {tool}',
         },
         tool: {
           read_file: {
             executing: {
               withDescription:
-                '\u0427\u0438\u0442\u0430\u044E \u0444\u0430\u0439\u043B {description}',
-              withoutDescription: '\u0427\u0438\u0442\u0430\u044E \u0444\u0430\u0439\u043B',
+                'Читаю файл {description}',
+              withoutDescription: 'Читаю файл',
             },
             success: {
               withDescription:
-                '\u041F\u0440\u043E\u0447\u0438\u0442\u0430\u043B \u0444\u0430\u0439\u043B {description}',
+                'Прочитал файл {description}',
               withoutDescription:
-                '\u041F\u0440\u043E\u0447\u0438\u0442\u0430\u043B \u0444\u0430\u0439\u043B',
+                'Прочитал файл',
             },
           },
           read_many_files: {
             executing: {
               withDescription:
-                '\u0427\u0438\u0442\u0430\u044E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0444\u0430\u0439\u043B\u043E\u0432 - {description}',
+                'Читаю несколько файлов - {description}',
               withoutDescription:
-                '\u0427\u0438\u0442\u0430\u044E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0444\u0430\u0439\u043B\u043E\u0432',
+                'Читаю несколько файлов',
             },
             success: {
               withDescription:
-                '\u041F\u0440\u043E\u0447\u0438\u0442\u0430\u043B \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0444\u0430\u0439\u043B\u043E\u0432 - {description}',
+                'Прочитал несколько файлов - {description}',
               withoutDescription:
-                '\u041F\u0440\u043E\u0447\u0438\u0442\u0430\u043B \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0444\u0430\u0439\u043B\u043E\u0432',
+                'Прочитал несколько файлов',
             },
           },
           write_file: {
             awaiting_approval: {
               withDescription:
-                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u0437\u0430\u043F\u0438\u0441\u044C \u0444\u0430\u0439\u043B\u0430 {description}',
+                'Нужно подтверждение на запись файла {description}',
               withoutDescription:
-                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u0437\u0430\u043F\u0438\u0441\u044C \u0444\u0430\u0439\u043B\u0430',
+                'Нужно подтверждение на запись файла',
             },
             executing: {
               withDescription:
-                '\u0417\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u044E \u0444\u0430\u0439\u043B {description}',
+                'Записываю файл {description}',
               withoutDescription:
-                '\u0417\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u044E \u0444\u0430\u0439\u043B',
+                'Записываю файл',
             },
             success: {
               withDescription:
-                '\u0417\u0430\u043F\u0438\u0441\u0430\u043B \u0444\u0430\u0439\u043B {description}',
+                'Записал файл {description}',
               withoutDescription:
-                '\u0417\u0430\u043F\u0438\u0441\u0430\u043B \u0444\u0430\u0439\u043B',
+                'Записал файл',
             },
           },
           replace: {
             awaiting_approval: {
               withDescription:
-                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 {description}',
+                'Нужно подтверждение на обновление {description}',
               withoutDescription:
-                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u0444\u0430\u0439\u043B\u0430',
+                'Нужно подтверждение на обновление файла',
             },
             executing: {
-              withDescription: '\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u044E {description}',
+              withDescription: 'Обновляю {description}',
               withoutDescription:
-                '\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u044E \u0444\u0430\u0439\u043B',
+                'Обновляю файл',
             },
             success: {
-              withDescription: '\u041E\u0431\u043D\u043E\u0432\u0438\u043B {description}',
+              withDescription: 'Обновил {description}',
               withoutDescription:
-                '\u041E\u0431\u043D\u043E\u0432\u0438\u043B \u0444\u0430\u0439\u043B',
+                'Обновил файл',
             },
           },
           edit: {
             awaiting_approval: {
               withDescription:
-                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u043F\u0440\u0430\u0432\u043A\u0443 {description}',
+                'Нужно подтверждение на правку {description}',
               withoutDescription:
-                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u043F\u0440\u0430\u0432\u043A\u0443 \u0444\u0430\u0439\u043B\u0430',
+                'Нужно подтверждение на правку файла',
             },
             executing: {
-              withDescription: '\u041F\u0440\u0430\u0432\u043B\u044E {description}',
-              withoutDescription: '\u041F\u0440\u0430\u0432\u043B\u044E \u0444\u0430\u0439\u043B',
+              withDescription: 'Правлю {description}',
+              withoutDescription: 'Правлю файл',
             },
             success: {
-              withDescription: '\u0418\u0441\u043F\u0440\u0430\u0432\u0438\u043B {description}',
+              withDescription: 'Исправил {description}',
               withoutDescription:
-                '\u0418\u0441\u043F\u0440\u0430\u0432\u0438\u043B \u0444\u0430\u0439\u043B',
+                'Исправил файл',
             },
           },
         },
       },
-      cancelAndTimer: '(esc \u0434\u043B\u044F \u043E\u0442\u043C\u0435\u043D\u044B, {time})',
+      cancelAndTimer: '(esc для отмены, {time})',
     },
     commandDescriptions: {
       about:
-        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044E \u043E \u0432\u0435\u0440\u0441\u0438\u0438',
-      auth: '\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043C\u0435\u0442\u043E\u0434 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438',
-      chat: '\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0440\u0438\u0435\u0439 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u043E\u0432',
+        'Показать информацию о версии',
+      auth: 'Изменить метод аутентификации',
+      chat: 'Управление историей разговоров',
       chatList:
-        '\u0421\u043F\u0438\u0441\u043E\u043A \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043D\u044B\u0445 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0445 \u0442\u043E\u0447\u0435\u043A \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430',
+        'Список сохраненных контрольных точек разговора',
       chatSave:
-        '\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0442\u0435\u043A\u0443\u0449\u0438\u0439 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440 \u043A\u0430\u043A \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0443\u044E \u0442\u043E\u0447\u043A\u0443. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /chat save <\u0442\u0435\u0433>',
+        'Сохранить текущий разговор как контрольную точку. Использование: /chat save <тег>',
       chatResume:
-        '\u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0443\u044E \u0442\u043E\u0447\u043A\u0443 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /chat resume <\u0442\u0435\u0433>',
+        'Возобновить контрольную точку разговора. Использование: /chat resume <тег>',
       chatDelete:
-        '\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0443\u044E \u0442\u043E\u0447\u043A\u0443 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /chat delete <\u0442\u0435\u0433>',
+        'Удалить контрольную точку разговора. Использование: /chat delete <тег>',
       clear:
-        '\u041E\u0447\u0438\u0441\u0442\u0438\u0442\u044C \u044D\u043A\u0440\u0430\u043D \u0438 \u0438\u0441\u0442\u043E\u0440\u0438\u044E \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u043E\u0432',
+        'Очистить экран и историю разговоров',
       compress:
-        '\u0421\u0436\u0438\u043C\u0430\u0435\u0442 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442, \u0437\u0430\u043C\u0435\u043D\u044F\u044F \u0435\u0433\u043E \u0440\u0435\u0437\u044E\u043C\u0435',
+        'Сжимает контекст, заменяя его резюме',
       alreadyCompressing:
-        '\u0412\u044B \u0443\u0436\u0435 \u0441\u0436\u0438\u043C\u0430\u0435\u0442\u0435 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442, \u043F\u043E\u0434\u043E\u0436\u0434\u0438\u0442\u0435 \u043F\u043E\u043A\u0430 \u043E\u043D \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u0441\u044F',
-      copy: '\u0421\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442 \u0438\u043B\u0438 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u043A\u043E\u0434\u0430 \u0432 \u0431\u0443\u0444\u0435\u0440 \u043E\u0431\u043C\u0435\u043D\u0430',
+        'Вы уже сжимаете контекст, подождите пока он завершится',
+      copy: 'Скопировать последний результат или фрагмент кода в буфер обмена',
       corgi:
-        '\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u0435\u0442 \u0440\u0435\u0436\u0438\u043C \u043A\u043E\u0440\u0433\u0438',
+        'Переключает режим корги',
       directory:
-        '\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430\u043C\u0438 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438',
+        'Управление каталогами рабочей области',
       directoryAdd:
-        '\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0438 \u0432 \u0440\u0430\u0431\u043E\u0447\u0443\u044E \u043E\u0431\u043B\u0430\u0441\u0442\u044C. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0437\u0430\u043F\u044F\u0442\u0443\u044E \u0434\u043B\u044F \u0440\u0430\u0437\u0434\u0435\u043B\u0435\u043D\u0438\u044F \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u0438\u0445 \u043F\u0443\u0442\u0435\u0439',
+        'Добавить каталоги в рабочую область. Используйте запятую для разделения нескольких путей',
       directoryShow:
-        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432\u0441\u0435 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0438 \u0432 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438',
-      docs: '\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u044E \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435',
+        'Показать все каталоги в рабочей области',
+      docs: 'Открыть документацию в браузере',
       editor:
-        '\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0435\u043D\u0438\u044F \u0432\u043D\u0435\u0448\u043D\u0435\u0433\u043E \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0430',
+        'Установить предпочтения внешнего редактора',
       extensions:
-        '\u0421\u043F\u0438\u0441\u043E\u043A \u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0445 \u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u0439',
-      help: '\u0421\u043F\u0440\u0430\u0432\u043A\u0430 \u043F\u043E koda-cli',
-      ide: '\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0435\u0439 IDE',
+        'Список активных расширений',
+      help: 'Справка по koda-cli',
+      ide: 'Управление интеграцией IDE',
       ideStatus:
-        '\u041F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0441\u0442\u0430\u0442\u0443\u0441 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438 IDE',
+        'Проверить статус интеграции IDE',
       ideInstall:
-        '\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u044B\u0439 \u043A\u043E\u043C\u043F\u0430\u043D\u044C\u043E\u043D IDE \u0434\u043B\u044F {ideName}',
+        'Установить необходимый компаньон IDE для {ideName}',
       ideEnable:
-        '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044E IDE',
+        'Включить интеграцию IDE',
       ideDisable:
-        '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044E IDE',
-      init: '\u0410\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u043F\u0440\u043E\u0435\u043A\u0442 \u0438 \u0441\u043E\u0437\u0434\u0430\u0435\u0442 \u0438\u043D\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043B\u044C\u043D\u044B\u0439 \u0444\u0430\u0439\u043B KODA.md',
+        'Отключить интеграцию IDE',
+      init: 'Анализирует проект и создает индивидуальный файл KODA.md',
       memory:
-        '\u041A\u043E\u043C\u0430\u043D\u0434\u044B \u0434\u043B\u044F \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F \u0441 \u043F\u0430\u043C\u044F\u0442\u044C\u044E',
+        'Команды для взаимодействия с памятью',
       memoryShow:
-        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0442\u0435\u043A\u0443\u0449\u0435\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043F\u0430\u043C\u044F\u0442\u0438',
+        'Показать текущее содержимое памяти',
       memoryAdd:
-        '\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u0432 \u043F\u0430\u043C\u044F\u0442\u044C',
+        'Добавить содержимое в память',
       memoryRefresh:
-        '\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u0430\u043C\u044F\u0442\u044C \u0438\u0437 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430',
-      mcp: '\u0421\u043F\u0438\u0441\u043E\u043A \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u043D\u044B\u0445 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 \u0438 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 MCP',
+        'Обновить память из источника',
+      mcp: 'Список настроенных серверов и инструментов MCP',
       mcpAuth:
-        '\u0410\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C MCP \u0441 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u043E\u0439 OAuth',
+        'Аутентификация с сервером MCP с поддержкой OAuth',
       mcpRefresh:
-        '\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0441\u043F\u0438\u0441\u043E\u043A \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 \u0438 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 MCP',
+        'Обновить список серверов и инструментов MCP',
       mcpConfigNotLoaded:
-        '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u0430.',
+        'Конфигурация не загружена.',
       mcpToolRegistryError:
-        '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0440\u0435\u0435\u0441\u0442\u0440 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+        'Не удалось получить реестр инструментов.',
       mcpNoServersConfigured:
-        '\u0421\u0435\u0440\u0432\u0435\u0440\u044B MCP \u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u044B.',
+        'Серверы MCP не настроены.',
       mcpServersStarting:
-        '\u0421\u0435\u0440\u0432\u0435\u0440\u044B MCP \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u044E\u0442\u0441\u044F ({count} \u0438\u043D\u0438\u0446\u0438\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442\u0441\u044F)...',
+        'Серверы MCP запускаются ({count} инициализируется)...',
       mcpServersStartingNote:
-        '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435: \u043F\u0435\u0440\u0432\u044B\u0439 \u0437\u0430\u043F\u0443\u0441\u043A \u043C\u043E\u0436\u0435\u0442 \u0437\u0430\u043D\u044F\u0442\u044C \u0431\u043E\u043B\u044C\u0448\u0435 \u0432\u0440\u0435\u043C\u0435\u043D\u0438. \u0414\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0441\u0442\u044C \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u043E\u0431\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.',
+        'Примечание: первый запуск может занять больше времени. Доступность инструментов обновится автоматически.',
       mcpConfiguredServersTitle:
-        '\u041D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u043D\u044B\u0435 \u0441\u0435\u0440\u0432\u0435\u0440\u044B MCP:',
+        'Настроенные серверы MCP:',
       mcpStatusStarting:
-        '\u0417\u0430\u043F\u0443\u0441\u043A... (\u043F\u0435\u0440\u0432\u044B\u0439 \u0437\u0430\u043F\u0443\u0441\u043A \u043C\u043E\u0436\u0435\u0442 \u0437\u0430\u043D\u044F\u0442\u044C \u0431\u043E\u043B\u044C\u0448\u0435 \u0432\u0440\u0435\u043C\u0435\u043D\u0438)',
-      mcpStatusDisconnected: '\u041E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u043E',
-      mcpStatusReady: '\u0413\u043E\u0442\u043E\u0432',
-      mcpAuthExpired: '(OAuth \u0442\u043E\u043A\u0435\u043D \u0438\u0441\u0442\u0435\u043A)',
+        'Запуск... (первый запуск может занять больше времени)',
+      mcpStatusDisconnected: 'Отключено',
+      mcpStatusReady: 'Готов',
+      mcpAuthExpired: '(OAuth токен истек)',
       mcpAuthAuthenticated:
-        '(OAuth \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430)',
+        '(OAuth аутентификация пройдена)',
       mcpAuthNotAuthenticated:
-        '(OAuth \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u043D\u0435 \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430)',
-      mcpToolSingular: '\u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442',
-      mcpToolPlural: '\u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B',
-      mcpPromptSingular: '\u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430',
-      mcpPromptPlural: '\u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438',
-      mcpZeroTools: '(0 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432)',
+        '(OAuth аутентификация не пройдена)',
+      mcpToolSingular: 'инструмент',
+      mcpToolPlural: 'инструменты',
+      mcpPromptSingular: 'подсказка',
+      mcpPromptPlural: 'подсказки',
+      mcpZeroTools: '(0 инструментов)',
       mcpToolsLoading:
-        '(\u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B \u0438 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F, \u043A\u043E\u0433\u0434\u0430 \u0431\u0443\u0434\u0443\u0442 \u0433\u043E\u0442\u043E\u0432\u044B)',
+        '(инструменты и подсказки появятся, когда будут готовы)',
       mcpToolsCached:
-        '({count} \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0432 \u043A\u044D\u0448\u0435)',
-      mcpToolsTitle: '\u0418\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B:',
-      mcpParametersTitle: '\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B:',
-      mcpPromptsTitle: '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438:',
+        '({count} инструментов в кэше)',
+      mcpToolsTitle: 'Инструменты:',
+      mcpParametersTitle: 'Параметры:',
+      mcpPromptsTitle: 'Подсказки:',
       mcpNoToolsOrPrompts:
-        '\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0438\u043B\u0438 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043E\u043A',
+        'Нет доступных инструментов или подсказок',
       mcpNoToolsAvailable:
-        '\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+        'Нет доступных инструментов',
       mcpAuthHint:
-        '(\u0432\u0432\u0435\u0434\u0438\u0442\u0435: "/mcp auth {serverName}" \u0434\u043B\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u044D\u0442\u043E\u0433\u043E \u0441\u0435\u0440\u0432\u0435\u0440\u0430)',
-      mcpStatusBlocked: '\u0417\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D',
-      mcpTipsTitle: '\u{1F4A1} \u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438:',
+        '(введите: "/mcp auth {serverName}" для аутентификации этого сервера)',
+      mcpStatusBlocked: 'Заблокирован',
+      mcpTipsTitle: '\u{1F4A1} Подсказки:',
       mcpTipsDesc:
-        '  \u2022 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {command} \u0434\u043B\u044F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0439 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 \u0438 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+        '  • Используйте {command} для отображения описаний серверов и инструментов',
       mcpTipsSchema:
-        '  \u2022 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {command} \u0434\u043B\u044F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u0441\u0445\u0435\u043C \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u043E\u0432 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+        '  • Используйте {command} для отображения схем параметров инструментов',
       mcpTipsNoDesc:
-        '  \u2022 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {command} \u0434\u043B\u044F \u0441\u043A\u0440\u044B\u0442\u0438\u044F \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0439',
+        '  • Используйте {command} для скрытия описаний',
       mcpTipsAuth:
-        '  \u2022 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {command} \u0434\u043B\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u0430\u043C\u0438, \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u044E\u0449\u0438\u043C\u0438 OAuth',
+        '  • Используйте {command} для аутентификации с серверами, поддерживающими OAuth',
       mcpTipsToggle:
-        '  \u2022 \u041D\u0430\u0436\u043C\u0438\u0442\u0435 {command} \u0434\u043B\u044F \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u044F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+        '  • Нажмите {command} для переключения отображения описаний инструментов',
       mcpNoOauthServers:
-        '\u041D\u0435\u0442 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 MCP, \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u043D\u044B\u0445 \u0441 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0435\u0439 OAuth.',
-      mcpOAuthServersList: `\u0421\u0435\u0440\u0432\u0435\u0440\u044B MCP \u0441 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0435\u0439 OAuth:
+        'Нет серверов MCP, настроенных с аутентификацией OAuth.',
+      mcpOAuthServersList: `Серверы MCP с аутентификацией OAuth:
 {serverList}
 
-\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /mcp auth <\u0438\u043C\u044F-\u0441\u0435\u0440\u0432\u0435\u0440\u0430> \u0434\u043B\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438.`,
+Используйте /mcp auth <имя-сервера> для аутентификации.`,
       mcpServerNotFound:
-        "\u0421\u0435\u0440\u0432\u0435\u0440 MCP '{serverName}' \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D.",
+        "Сервер MCP '{serverName}' не найден.",
       mcpAuthStarting:
-        "\u0417\u0430\u043F\u0443\u0441\u043A OAuth \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u0434\u043B\u044F \u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP '{serverName}'...",
+        "Запуск OAuth аутентификации для сервера MCP '{serverName}'...",
       mcpAuthSuccess:
-        "\u2705 \u0423\u0441\u043F\u0435\u0448\u043D\u043E \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C MCP '{serverName}'!",
+        "✅ Успешно пройдена аутентификация с сервером MCP '{serverName}'!",
       mcpAuthRediscovering:
-        "\u041F\u043E\u0432\u0442\u043E\u0440\u043D\u043E\u0435 \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0438\u0437 '{serverName}'...",
+        "Повторное обнаружение инструментов из '{serverName}'...",
       mcpAuthRefreshSuccess:
-        "\u0423\u0441\u043F\u0435\u0448\u043D\u043E \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u0438 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u044B \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B \u0434\u043B\u044F '{serverName}'.",
+        "Успешно пройдена аутентификация и обновлены инструменты для '{serverName}'.",
       mcpAuthFailure:
-        "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0439\u0442\u0438 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044E \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C MCP '{serverName}': {error}",
+        "Не удалось пройти аутентификацию с сервером MCP '{serverName}': {error}",
       mcpRefreshing:
-        '\u041E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 \u0438 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 MCP...',
+        'Обновление серверов и инструментов MCP...',
       privacy:
-        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0435 \u043E \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438',
-      quit: '\u0412\u044B\u0439\u0442\u0438 \u0438\u0437 cli',
+        'Показать уведомление о конфиденциальности',
+      quit: 'Выйти из cli',
       restore:
-        '\u0412\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0443\u044E \u0432\u0435\u0440\u0441\u0438\u044E \u0444\u0430\u0439\u043B\u0430. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /restore <\u043F\u0443\u0442\u044C_\u043A_\u0444\u0430\u0439\u043B\u0443>',
+        'Восстановить предыдущую версию файла. Использование: /restore <путь_к_файлу>',
       restoreCommand: {
         noCheckpointDir:
-          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C \u043F\u0443\u0442\u044C \u043A \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 .kodacli.',
+          'Не удалось определить путь к директории .kodacli.',
         noRestorableCalls:
-          '\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0434\u043B\u044F \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F.',
+          'Не найдено инструментов для восстановления.',
         availableCalls:
-          '\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0435 \u0432\u044B\u0437\u043E\u0432\u044B \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0434\u043B\u044F \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F:\\n\\n{fileList}',
+          'Доступные вызовы инструментов для восстановления:\\n\\n{fileList}',
         fileNotFound:
-          '\u0424\u0430\u0439\u043B \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D: {fileName}',
+          'Файл не найден: {fileName}',
         loadHistoryNotAvailable:
-          '\u0424\u0443\u043D\u043A\u0446\u0438\u044F loadHistory \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.',
+          'Функция loadHistory недоступна.',
         projectRestored:
-          '\u041F\u0440\u043E\u0435\u043A\u0442 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D \u0434\u043E \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u043F\u0435\u0440\u0435\u0434 \u0432\u044B\u0437\u043E\u0432\u043E\u043C \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430.',
+          'Проект восстановлен до состояния перед вызовом инструмента.',
         readError:
-          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C \u0432\u044B\u0437\u043E\u0432\u044B \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0434\u043B\u044F \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F. \u041E\u0448\u0438\u0431\u043A\u0430: {error}',
+          'Не удалось прочитать вызовы инструментов для восстановления. Ошибка: {error}',
       },
       settings:
-        '\u041F\u0440\u043E\u0441\u043C\u043E\u0442\u0440 \u0438 \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043A Koda CLI',
-      setupGithub: '\u041D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C GitHub Actions',
+        'Просмотр и редактирование настроек Koda CLI',
+      setupGithub: 'Настроить GitHub Actions',
       stats:
-        '\u041F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0443 \u0441\u0435\u0441\u0441\u0438\u0438',
+        'Проверить статистику сессии',
       statsModel:
-        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0443 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F \u043F\u043E \u043C\u043E\u0434\u0435\u043B\u044F\u043C',
+        'Показать статистику использования по моделям',
       statsTools:
-        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0443 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F \u043F\u043E \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430\u043C',
-      theme: '\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u0442\u0435\u043C\u0443',
+        'Показать статистику использования по инструментам',
+      theme: 'Изменить тему',
       tools:
-        '\u0421\u043F\u0438\u0441\u043E\u043A \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 Koda CLI',
-      vim: '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C/\u0432\u044B\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u0436\u0438\u043C vim',
-      model: '\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C',
+        'Список доступных инструментов Koda CLI',
+      vim: 'Включить/выключить режим vim',
+      model: 'Выбрать модель',
       terminalSetup:
-        '\u041D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0442\u0435\u0440\u043C\u0438\u043D\u0430\u043B',
-      bug: '\u0421\u043E\u043E\u0431\u0449\u0438\u0442\u044C \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435 \u0438\u043B\u0438 \u043F\u0440\u043E\u0431\u043B\u0435\u043C\u0435',
+        'Настроить терминал',
+      bug: 'Сообщить об ошибке или проблеме',
     },
     bugCommand: {
-      browserInstruction: `\u041E\u0442\u043A\u0440\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043E\u0442\u0447\u0435\u0442 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435 \u0432 \u0432\u0430\u0448\u0435\u043C \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435 \u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E...
+      browserInstruction: `Открывается отчет об ошибке в вашем браузере по умолчанию...
 `,
       bugReportDetails:
-        '\u0421\u0432\u0435\u0434\u0435\u043D\u0438\u044F \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435:',
+        'Сведения об ошибке:',
       openUrlError:
-        '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u044C URL-\u0430\u0434\u0440\u0435\u0441 \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435: ',
+        'Не удалось открыть URL-адрес в браузере: ',
       telegramCommunity:
-        '\u0421\u043E\u043E\u0431\u0449\u0435\u0441\u0442\u0432\u043E \u0432 Telegram:',
+        'Сообщество в Telegram:',
     },
     commandPrompts: {
       init: `
-\u0422\u044B \u2014 \u0418\u0418-\u0430\u0433\u0435\u043D\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438 Koda \u043F\u0440\u044F\u043C\u043E \u0432 \u0442\u0435\u0440\u043C\u0438\u043D\u0430\u043B. \u0422\u0432\u043E\u044F \u0437\u0430\u0434\u0430\u0447\u0430 \u2014 \u043F\u0440\u043E\u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0442\u0435\u043A\u0443\u0449\u0443\u044E \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u044E \u0438 \u0441\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E\u0434\u0440\u043E\u0431\u043D\u044B\u0439 \u0444\u0430\u0439\u043B KODA.md, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0431\u0443\u0434\u0435\u0442 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C\u0441\u044F \u043A\u0430\u043A \u0438\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u043E\u043D\u043D\u044B\u0439 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0434\u043B\u044F \u0431\u0443\u0434\u0443\u0449\u0438\u0445 \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0439.
+Ты — ИИ-агент, который приносит возможности Koda прямо в терминал. Твоя задача — проанализировать текущую директорию и сгенерировать подробный файл KODA.md, который будет использоваться как инструкционный контекст для будущих взаимодействий.
 
-**\u0422\u0440\u0435\u0431\u043E\u0432\u0430\u043D\u0438\u0435 \u044F\u0437\u044B\u043A\u0430:** \u0412\u0435\u0441\u044C \u0430\u043D\u0430\u043B\u0438\u0437 \u0438 \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u0444\u0430\u0439\u043B \u0434\u043E\u043B\u0436\u043D\u044B \u0431\u044B\u0442\u044C \u043F\u043E\u043B\u043D\u043E\u0441\u0442\u044C\u044E \u043D\u0430\u043F\u0438\u0441\u0430\u043D\u044B \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u043E\u043C \u044F\u0437\u044B\u043A\u0435 \u2014 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0440\u0443\u0441\u0441\u043A\u0438\u0435 \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043A\u0438, \u0444\u043E\u0440\u043C\u0443\u043B\u0438\u0440\u043E\u0432\u043A\u0438 \u0438 \u0442\u0435\u0440\u043C\u0438\u043D\u044B.
+**Требование языка:** Весь анализ и финальный файл должны быть полностью написаны на русском языке — используйте русские заголовки, формулировки и термины.
 
-**\u041F\u0440\u043E\u0446\u0435\u0441\u0441 \u0430\u043D\u0430\u043B\u0438\u0437\u0430:**
+**Процесс анализа:**
 
-1.  **\u041F\u0435\u0440\u0432\u0438\u0447\u043D\u043E\u0435 \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435:**
-    *   \u041D\u0430\u0447\u043D\u0438 \u0441 \u0432\u044B\u0432\u043E\u0434\u0430 \u0441\u043F\u0438\u0441\u043A\u0430 \u0444\u0430\u0439\u043B\u043E\u0432 \u0438 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439, \u0447\u0442\u043E\u0431\u044B \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u043E\u0431\u0449\u0435\u0435 \u043F\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043E \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0435.
-    *   \u041F\u0440\u043E\u0447\u0438\u0442\u0430\u0439 \u0444\u0430\u0439\u043B README (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \`README.md\`, \`README.txt\`), \u0435\u0441\u043B\u0438 \u043E\u043D \u0435\u0441\u0442\u044C. \u042D\u0442\u043E \u0447\u0430\u0441\u0442\u043E \u043B\u0443\u0447\u0448\u0438\u0439 \u0441\u0442\u0430\u0440\u0442.
+1.  **Первичное исследование:**
+    *   Начни с вывода списка файлов и директорий, чтобы получить общее представление о структуре.
+    *   Прочитай файл README (например, \`README.md\`, \`README.txt\`), если он есть. Это часто лучший старт.
 
-2.  **\u0418\u0442\u0435\u0440\u0430\u0442\u0438\u0432\u043D\u043E\u0435 \u043F\u043E\u0433\u0440\u0443\u0436\u0435\u043D\u0438\u0435 (\u0434\u043E 10 \u0444\u0430\u0439\u043B\u043E\u0432):**
-    *   \u041F\u043E \u0438\u0442\u043E\u0433\u0430\u043C \u043F\u0435\u0440\u0432\u0438\u0447\u043D\u044B\u0445 \u043D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0439 \u0432\u044B\u0431\u0435\u0440\u0438 \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043D\u0430\u0438\u0431\u043E\u043B\u0435\u0435 \u0432\u0430\u0436\u043D\u044B\u0445 \u0444\u0430\u0439\u043B\u043E\u0432 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \u043A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u043E\u043D\u043D\u044B\u0435 \u0444\u0430\u0439\u043B\u044B, \u043E\u0441\u043D\u043E\u0432\u043D\u044B\u0435 \u0438\u0441\u0445\u043E\u0434\u043D\u0438\u043A\u0438, \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u044E).
-    *   \u041F\u0440\u043E\u0447\u0438\u0442\u0430\u0439 \u0438\u0445. \u041F\u043E \u043C\u0435\u0440\u0435 \u0442\u043E\u0433\u043E \u043A\u0430\u043A \u0442\u044B \u0443\u0437\u043D\u0430\u0435\u0448\u044C \u0431\u043E\u043B\u044C\u0448\u0435, \u0443\u0442\u043E\u0447\u043D\u044F\u0439 \u043F\u043E\u043D\u0438\u043C\u0430\u043D\u0438\u0435 \u0438 \u0440\u0435\u0448\u0430\u0439, \u043A\u0430\u043A\u0438\u0435 \u0444\u0430\u0439\u043B\u044B \u0447\u0438\u0442\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435. \u041D\u0435 \u043D\u0443\u0436\u043D\u043E \u0432\u044B\u0431\u0438\u0440\u0430\u0442\u044C \u0432\u0441\u0435 10 \u0441\u0440\u0430\u0437\u0443 \u2014 \u043F\u0443\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0438\u044F \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u044F\u044E\u0442 \u0434\u0430\u043B\u044C\u043D\u0435\u0439\u0448\u0438\u0435 \u0448\u0430\u0433\u0438.
+2.  **Итеративное погружение (до 10 файлов):**
+    *   По итогам первичных наблюдений выбери несколько наиболее важных файлов (например, конфигурационные файлы, основные исходники, документацию).
+    *   Прочитай их. По мере того как ты узнаешь больше, уточняй понимание и решай, какие файлы читать дальше. Не нужно выбирать все 10 сразу — пусть открытия направляют дальнейшие шаги.
 
-3.  **\u041E\u043F\u0440\u0435\u0434\u0435\u043B\u0438 \u0442\u0438\u043F \u043F\u0440\u043E\u0435\u043A\u0442\u0430:**
-    *   **\u041F\u0440\u043E\u0435\u043A\u0442 \u0441 \u043A\u043E\u0434\u043E\u043C:** \u0418\u0449\u0438 \u043F\u0440\u0438\u0437\u043D\u0430\u043A\u0438 \u0432\u0440\u043E\u0434\u0435 \`package.json\`, \`requirements.txt\`, \`pom.xml\`, \`go.mod\`, \`Cargo.toml\`, \`build.gradle\` \u0438\u043B\u0438 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 \`src\`. \u0415\u0441\u043B\u0438 \u043E\u043D\u0438 \u0435\u0441\u0442\u044C, \u0441\u043A\u043E\u0440\u0435\u0435 \u0432\u0441\u0435\u0433\u043E \u044D\u0442\u043E \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u043D\u044B\u0439 \u043F\u0440\u043E\u0435\u043A\u0442.
-    *   **\u041F\u0440\u043E\u0435\u043A\u0442 \u0431\u0435\u0437 \u043A\u043E\u0434\u0430:** \u0415\u0441\u043B\u0438 \u043A\u043E\u0434\u043E\u0432\u044B\u0445 \u0444\u0430\u0439\u043B\u043E\u0432 \u043D\u0435\u0442, \u043A\u0430\u0442\u0430\u043B\u043E\u0433 \u043C\u043E\u0436\u0435\u0442 \u0441\u043E\u0434\u0435\u0440\u0436\u0430\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u044E, \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u044F, \u0437\u0430\u043C\u0435\u0442\u043A\u0438 \u0438\u043B\u0438 \u0434\u0440\u0443\u0433\u043E\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435.
+3.  **Определи тип проекта:**
+    *   **Проект с кодом:** Ищи признаки вроде \`package.json\`, \`requirements.txt\`, \`pom.xml\`, \`go.mod\`, \`Cargo.toml\`, \`build.gradle\` или директории \`src\`. Если они есть, скорее всего это программный проект.
+    *   **Проект без кода:** Если кодовых файлов нет, каталог может содержать документацию, исследования, заметки или другое содержимое.
 
-**\u0421\u043E\u0437\u0434\u0430\u043D\u0438\u0435 KODA.md:**
+**Создание KODA.md:**
 
-**\u0414\u043B\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0441 \u043A\u043E\u0434\u043E\u043C:**
+**Для проекта с кодом:**
 
-*   **\u041E\u0431\u0437\u043E\u0440 \u043F\u0440\u043E\u0435\u043A\u0442\u0430:** \u041A\u0440\u0430\u0442\u043A\u043E \u043E\u043F\u0438\u0448\u0438 \u043D\u0430\u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u043F\u0440\u043E\u0435\u043A\u0442\u0430, \u043E\u0441\u043D\u043E\u0432\u043D\u044B\u0435 \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0438 \u0438 \u0430\u0440\u0445\u0438\u0442\u0435\u043A\u0442\u0443\u0440\u0443.
-*   **\u0421\u0431\u043E\u0440\u043A\u0430 \u0438 \u0437\u0430\u043F\u0443\u0441\u043A:** \u0417\u0430\u0444\u0438\u043A\u0441\u0438\u0440\u0443\u0439 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0435 \u043A\u043E\u043C\u0430\u043D\u0434\u044B \u0434\u043B\u044F \u0441\u0431\u043E\u0440\u043A\u0438, \u0437\u0430\u043F\u0443\u0441\u043A\u0430 \u0438 \u0442\u0435\u0441\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430. \u0421\u0434\u0435\u043B\u0430\u0439 \u0432\u044B\u0432\u043E\u0434\u044B \u043F\u043E \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u043D\u043D\u044B\u043C \u0444\u0430\u0439\u043B\u0430\u043C (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \u0440\u0430\u0437\u0434\u0435\u043B \`scripts\` \u0432 \`package.json\`, \`Makefile\` \u0438 \u0442.\u043F.). \u0415\u0441\u043B\u0438 \u044F\u0432\u043D\u044B\u0445 \u043A\u043E\u043C\u0430\u043D\u0434 \u043D\u0435\u0442, \u0434\u043E\u0431\u0430\u0432\u044C \u0437\u0430\u0433\u043B\u0443\u0448\u043A\u0443 \u0441 TODO.
-*   **\u041F\u0440\u0430\u0432\u0438\u043B\u0430 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0438:** \u041E\u043F\u0438\u0448\u0438 \u0441\u0442\u0438\u043B\u044C \u043A\u043E\u0434\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F, \u043F\u0440\u0430\u043A\u0442\u0438\u043A\u0438 \u0442\u0435\u0441\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u0438\u043B\u0438 \u043F\u0440\u0430\u0432\u0438\u043B\u0430 \u043A\u043E\u043D\u0442\u0440\u0438\u0431\u0443\u0446\u0438\u0438, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043C\u043E\u0436\u043D\u043E \u0432\u044B\u0432\u0435\u0441\u0442\u0438 \u0438\u0437 \u043A\u043E\u0434\u043E\u0432\u043E\u0439 \u0431\u0430\u0437\u044B.
+*   **Обзор проекта:** Кратко опиши назначение проекта, основные технологии и архитектуру.
+*   **Сборка и запуск:** Зафиксируй ключевые команды для сборки, запуска и тестирования проекта. Сделай выводы по прочитанным файлам (например, раздел \`scripts\` в \`package.json\`, \`Makefile\` и т.п.). Если явных команд нет, добавь заглушку с TODO.
+*   **Правила разработки:** Опиши стиль кодирования, практики тестирования или правила контрибуции, которые можно вывести из кодовой базы.
 
-**\u0414\u043B\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0431\u0435\u0437 \u043A\u043E\u0434\u0430:**
+**Для проекта без кода:**
 
-*   **\u041E\u0431\u0437\u043E\u0440 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430:** \u041E\u043F\u0438\u0448\u0438 \u043D\u0430\u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0438 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438. \u0414\u043B\u044F \u0447\u0435\u0433\u043E \u043E\u043D\u0430? \u041A\u0430\u043A\u0438\u0435 \u0442\u0438\u043F\u044B \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432 \u0445\u0440\u0430\u043D\u0438\u0442?
-*   **\u041A\u043B\u044E\u0447\u0435\u0432\u044B\u0435 \u0444\u0430\u0439\u043B\u044B:** \u041F\u0435\u0440\u0435\u0447\u0438\u0441\u043B\u0438 \u0432\u0430\u0436\u043D\u044B\u0435 \u0444\u0430\u0439\u043B\u044B \u0438 \u043A\u0440\u0430\u0442\u043A\u043E \u043F\u043E\u044F\u0441\u043D\u0438, \u0447\u0442\u043E \u0432 \u043D\u0438\u0445 \u043D\u0430\u0445\u043E\u0434\u0438\u0442\u0441\u044F.
-*   **\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435:** \u041E\u0431\u044A\u044F\u0441\u043D\u0438, \u043A\u0430\u043A \u043F\u0440\u0435\u0434\u043F\u043E\u043B\u0430\u0433\u0430\u0435\u0442\u0441\u044F \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430.
+*   **Обзор каталога:** Опиши назначение и содержимое директории. Для чего она? Какие типы материалов хранит?
+*   **Ключевые файлы:** Перечисли важные файлы и кратко поясни, что в них находится.
+*   **Использование:** Объясни, как предполагается использовать содержимое каталога.
 
-**\u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442:**
+**Финальный результат:**
 
-\u0417\u0430\u043F\u0438\u0448\u0438 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0442\u0435\u043A\u0441\u0442 \u0432 \u0444\u0430\u0439\u043B \`KODA.md\`. \u0412\u044B\u0445\u043E\u0434 \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u043E \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u043D\u044B\u043C Markdown.
-\u041D\u0435 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439 \u044F\u0437\u044B\u043A \u043D\u0438 \u0432 \u043A\u0430\u043A\u0438\u0445 \u0440\u0430\u0437\u0434\u0435\u043B\u0430\u0445.
+Запиши готовый текст в файл \`KODA.md\`. Выход должен быть корректно оформленным Markdown.
+Не используй английский язык ни в каких разделах.
 `,
     },
     toolDescriptions: {
       search_file_content:
-        '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u043F\u043E\u0438\u0441\u043A \u043F\u043E \u0440\u0435\u0433\u0443\u043B\u044F\u0440\u043D\u043E\u043C\u0443 \u0432\u044B\u0440\u0430\u0436\u0435\u043D\u0438\u044E \u0432 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u043C \u0444\u0430\u0439\u043B\u043E\u0432 \u0432 \u0443\u043A\u0430\u0437\u0430\u043D\u043D\u043E\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 (\u0438\u043B\u0438 \u0442\u0435\u043A\u0443\u0449\u0435\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438). \u041C\u043E\u0436\u0435\u0442 \u0444\u0438\u043B\u044C\u0442\u0440\u043E\u0432\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B \u043F\u043E glob-\u0448\u0430\u0431\u043B\u043E\u043D\u0443. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 \u0441\u0442\u0440\u043E\u043A\u0438, \u0441\u043E\u0434\u0435\u0440\u0436\u0430\u0449\u0438\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u044F, \u0432\u043C\u0435\u0441\u0442\u0435 \u0441 \u043F\u0443\u0442\u044F\u043C\u0438 \u043A \u0444\u0430\u0439\u043B\u0430\u043C \u0438 \u043D\u043E\u043C\u0435\u0440\u0430\u043C\u0438 \u0441\u0442\u0440\u043E\u043A.',
+        'Выполняет поиск по регулярному выражению в содержимом файлов в указанной директории (или текущей директории). Может фильтровать файлы по glob-шаблону. Возвращает строки, содержащие совпадения, вместе с путями к файлам и номерами строк.',
       list_directory:
-        '\u0412\u044B\u0432\u043E\u0434\u0438\u0442 \u0438\u043C\u0435\u043D\u0430 \u0444\u0430\u0439\u043B\u043E\u0432 \u0438 \u043F\u043E\u0434\u043A\u0430\u0442\u0430\u043B\u043E\u0433\u043E\u0432 \u043D\u0435\u043F\u043E\u0441\u0440\u0435\u0434\u0441\u0442\u0432\u0435\u043D\u043D\u043E \u0432 \u0443\u043A\u0430\u0437\u0430\u043D\u043D\u043E\u043C \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0435. \u041C\u043E\u0436\u0435\u0442 \u0438\u0433\u043D\u043E\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u0438, \u0441\u043E\u043E\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u0437\u0430\u0434\u0430\u043D\u043D\u044B\u043C glob-\u0448\u0430\u0431\u043B\u043E\u043D\u0430\u043C.',
-      glob: '\u042D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u043E \u043D\u0430\u0445\u043E\u0434\u0438\u0442 \u0444\u0430\u0439\u043B\u044B, \u0441\u043E\u043E\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u043D\u044B\u043C glob-\u0448\u0430\u0431\u043B\u043E\u043D\u0430\u043C (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, `src/**/*.ts`, `**/*.md`), \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u044F \u0430\u0431\u0441\u043E\u043B\u044E\u0442\u043D\u044B\u0435 \u043F\u0443\u0442\u0438, \u043E\u0442\u0441\u043E\u0440\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0435 \u043F\u043E \u0432\u0440\u0435\u043C\u0435\u043D\u0438 \u043C\u043E\u0434\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 (\u043D\u043E\u0432\u044B\u0435 \u043F\u0435\u0440\u0432\u044B\u043C\u0438). \u0418\u0434\u0435\u0430\u043B\u044C\u043D\u043E \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u0434\u043B\u044F \u0431\u044B\u0441\u0442\u0440\u043E\u0433\u043E \u043F\u043E\u0438\u0441\u043A\u0430 \u0444\u0430\u0439\u043B\u043E\u0432 \u043F\u043E \u0438\u043C\u0435\u043D\u0438 \u0438\u043B\u0438 \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0435 \u043F\u0443\u0442\u0438, \u043E\u0441\u043E\u0431\u0435\u043D\u043D\u043E \u0432 \u0431\u043E\u043B\u044C\u0448\u0438\u0445 \u043A\u043E\u0434\u043E\u0432\u044B\u0445 \u0431\u0430\u0437\u0430\u0445.',
+        'Выводит имена файлов и подкаталогов непосредственно в указанном каталоге. Может игнорировать записи, соответствующие заданным glob-шаблонам.',
+      glob: 'Эффективно находит файлы, соответствующие определенным glob-шаблонам (например, `src/**/*.ts`, `**/*.md`), возвращая абсолютные пути, отсортированные по времени модификации (новые первыми). Идеально подходит для быстрого поиска файлов по имени или структуре пути, особенно в больших кодовых базах.',
       google_web_search:
-        '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0432\u0435\u0431-\u043F\u043E\u0438\u0441\u043A \u0441 \u043F\u043E\u043C\u043E\u0449\u044C\u044E API Serper \u0438 \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 \u043B\u0443\u0447\u0448\u0438\u0435 \u043E\u0440\u0433\u0430\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B.',
-      save_memory: `\u0421\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u0442 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u044B\u0439 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438 \u0438\u043B\u0438 \u0444\u0430\u043A\u0442 \u0432 \u0432\u0430\u0448\u0443 \u0434\u043E\u043B\u0433\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u0443\u044E \u043F\u0430\u043C\u044F\u0442\u044C.
+        'Выполняет веб-поиск с помощью API Serper и возвращает лучшие органические результаты.',
+      save_memory: `Сохраняет конкретный фрагмент информации или факт в вашу долговременную память.
 
-\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u044D\u0442\u043E\u0442 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442:
+Используйте этот инструмент:
 
-- \u041A\u043E\u0433\u0434\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u044F\u0432\u043D\u043E \u043F\u0440\u043E\u0441\u0438\u0442 \u0432\u0430\u0441 \u0447\u0442\u043E-\u0442\u043E \u0437\u0430\u043F\u043E\u043C\u043D\u0438\u0442\u044C (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, "\u0417\u0430\u043F\u043E\u043C\u043D\u0438, \u0447\u0442\u043E \u044F \u043B\u044E\u0431\u043B\u044E \u043F\u0438\u0446\u0446\u0443 \u0441 \u0430\u043D\u0430\u043D\u0430\u0441\u043E\u043C", "\u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u0435: \u0438\u043C\u044F \u043C\u043E\u0435\u0433\u043E \u043A\u043E\u0442\u0430 - \u0412\u0430\u0441\u044C\u043A\u0430").
-- \u041A\u043E\u0433\u0434\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u0441\u043E\u043E\u0431\u0449\u0430\u0435\u0442 \u044F\u0441\u043D\u044B\u0439, \u043A\u0440\u0430\u0442\u043A\u0438\u0439 \u0444\u0430\u043A\u0442 \u043E \u0441\u0435\u0431\u0435, \u0441\u0432\u043E\u0438\u0445 \u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0435\u043D\u0438\u044F\u0445 \u0438\u043B\u0438 \u0441\u0432\u043E\u0435\u0439 \u0441\u0440\u0435\u0434\u0435, \u043A\u043E\u0442\u043E\u0440\u044B\u0439, \u043A\u0430\u0436\u0435\u0442\u0441\u044F, \u0432\u0430\u0436\u0435\u043D \u0434\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0432 \u0431\u0443\u0434\u0443\u0449\u0438\u0445 \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F\u0445, \u0447\u0442\u043E\u0431\u044B \u043E\u0431\u0435\u0441\u043F\u0435\u0447\u0438\u0442\u044C \u0431\u043E\u043B\u0435\u0435 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u0443\u044E \u0438 \u044D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u0443\u044E \u043F\u043E\u043C\u043E\u0449\u044C.
+- Когда пользователь явно просит вас что-то запомнить (например, "Запомни, что я люблю пиццу с ананасом", "Пожалуйста, сохраните: имя моего кота - Васька").
+- Когда пользователь сообщает ясный, краткий факт о себе, своих предпочтениях или своей среде, который, кажется, важен для сохранения в будущих взаимодействиях, чтобы обеспечить более персонализированную и эффективную помощь.
 
-\u041D\u0415 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u044D\u0442\u043E\u0442 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442:
+НЕ используйте этот инструмент:
 
-- \u0414\u043B\u044F \u0437\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u044F \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0430\u043A\u0442\u0443\u0430\u043B\u0435\u043D \u0442\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F \u0442\u0435\u043A\u0443\u0449\u0435\u0439 \u0441\u0435\u0441\u0441\u0438\u0438.
-- \u0414\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0434\u043B\u0438\u043D\u043D\u043E\u0433\u043E, \u0441\u043B\u043E\u0436\u043D\u043E\u0433\u043E \u0438\u043B\u0438 \u0440\u0430\u0437\u0432\u0435\u0440\u043D\u0443\u0442\u043E\u0433\u043E \u0442\u0435\u043A\u0441\u0442\u0430. \u0424\u0430\u043A\u0442 \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u043A\u043E\u0440\u043E\u0442\u043A\u0438\u043C \u0438 \u043F\u043E \u0434\u0435\u043B\u0443.
-- \u0415\u0441\u043B\u0438 \u0432\u044B \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u044B, \u0441\u0442\u043E\u0438\u0442 \u043B\u0438 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044E \u0437\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u0442\u044C \u043D\u0430 \u0434\u043E\u043B\u0433\u043E\u0441\u0440\u043E\u0447\u043D\u043E\u0439 \u043E\u0441\u043D\u043E\u0432\u0435. \u0415\u0441\u043B\u0438 \u0441\u043E\u043C\u043D\u0435\u0432\u0430\u0435\u0442\u0435\u0441\u044C, \u043C\u043E\u0436\u0435\u0442\u0435 \u0441\u043F\u0440\u043E\u0441\u0438\u0442\u044C \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F: "\u041C\u043D\u0435 \u0437\u0430\u043F\u043E\u043C\u043D\u0438\u0442\u044C \u044D\u0442\u043E \u0434\u043B\u044F \u0432\u0430\u0441?"
+- Для запоминания контекста разговора, который актуален только для текущей сессии.
+- Для сохранения длинного, сложного или развернутого текста. Факт должен быть относительно коротким и по делу.
+- Если вы не уверены, стоит ли информацию запоминать на долгосрочной основе. Если сомневаетесь, можете спросить пользователя: "Мне запомнить это для вас?"
 
-## \u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B
+## Параметры
 
-- \`fact\` (string, required): \u041A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u044B\u0439 \u0444\u0430\u043A\u0442 \u0438\u043B\u0438 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438 \u0434\u043B\u044F \u0437\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u044F. \u0414\u043E\u043B\u0436\u043D\u043E \u0431\u044B\u0442\u044C \u044F\u0441\u043D\u044B\u043C, \u0441\u0430\u043C\u043E\u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u044B\u043C \u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435\u043C. \u041D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \u0435\u0441\u043B\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u0433\u043E\u0432\u043E\u0440\u0438\u0442 "\u041C\u043E\u0439 \u043B\u044E\u0431\u0438\u043C\u044B\u0439 \u0446\u0432\u0435\u0442 - \u0441\u0438\u043D\u0438\u0439", \u0442\u043E \u0444\u0430\u043A\u0442 \u0431\u0443\u0434\u0435\u0442 "\u041C\u043E\u0439 \u043B\u044E\u0431\u0438\u043C\u044B\u0439 \u0446\u0432\u0435\u0442 - \u0441\u0438\u043D\u0438\u0439".`,
+- \`fact\` (string, required): Конкретный факт или фрагмент информации для запоминания. Должно быть ясным, самодостаточным утверждением. Например, если пользователь говорит "Мой любимый цвет - синий", то факт будет "Мой любимый цвет - синий".`,
       run_shell_command:
-        '\u042D\u0442\u043E\u0442 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442 \u0432\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0437\u0430\u0434\u0430\u043D\u043D\u0443\u044E \u043A\u043E\u043C\u0430\u043D\u0434\u0443 \u043E\u0431\u043E\u043B\u043E\u0447\u043A\u0438 \u043A\u0430\u043A `bash -c <command>`. \u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u043C\u043E\u0436\u0435\u0442 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0442\u044C \u0444\u043E\u043D\u043E\u0432\u044B\u0435 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u044B \u0441 \u043F\u043E\u043C\u043E\u0449\u044C\u044E `&`. \u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0432\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442\u0441\u044F \u043A\u0430\u043A \u043F\u043E\u0434\u043F\u0440\u043E\u0446\u0435\u0441\u0441, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0432\u0435\u0434\u0435\u0442 \u0441\u0432\u043E\u044E \u0441\u043E\u0431\u0441\u0442\u0432\u0435\u043D\u043D\u0443\u044E \u0433\u0440\u0443\u043F\u043F\u0443 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432. \u0413\u0440\u0443\u043F\u043F\u0443 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432 \u043C\u043E\u0436\u043D\u043E \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u044C \u0441 \u043F\u043E\u043C\u043E\u0449\u044C\u044E `kill -- -PGID` \u0438\u043B\u0438 \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0441\u0438\u0433\u043D\u0430\u043B `kill -s SIGNAL -- -PGID`.\n\n      \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442\u0441\u044F \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044F:\n\n      \u041A\u043E\u043C\u0430\u043D\u0434\u0430: \u0412\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0430\u044F \u043A\u043E\u043C\u0430\u043D\u0434\u0430.\n      \u041A\u0430\u0442\u0430\u043B\u043E\u0433: \u041A\u0430\u0442\u0430\u043B\u043E\u0433 (\u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u043A\u043E\u0440\u043D\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430), \u0433\u0434\u0435 \u0431\u044B\u043B\u0430 \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u0430 \u043A\u043E\u043C\u0430\u043D\u0434\u0430, \u0438\u043B\u0438 `(root)`.\n      Stdout: \u0412\u044B\u0432\u043E\u0434 \u0432 \u043F\u043E\u0442\u043E\u043A stdout. \u041C\u043E\u0436\u0435\u0442 \u0431\u044B\u0442\u044C `(\u043F\u0443\u0441\u0442\u043E)` \u0438\u043B\u0438 \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u044B\u043C \u043F\u0440\u0438 \u043E\u0448\u0438\u0431\u043A\u0435 \u0438 \u0434\u043B\u044F \u043B\u044E\u0431\u044B\u0445 \u043D\u0435\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u043D\u043D\u044B\u0445 \u0444\u043E\u043D\u043E\u0432\u044B\u0445 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432.\n      Stderr: \u0412\u044B\u0432\u043E\u0434 \u0432 \u043F\u043E\u0442\u043E\u043A stderr. \u041C\u043E\u0436\u0435\u0442 \u0431\u044B\u0442\u044C `(\u043F\u0443\u0441\u0442\u043E)` \u0438\u043B\u0438 \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u044B\u043C \u043F\u0440\u0438 \u043E\u0448\u0438\u0431\u043A\u0435 \u0438 \u0434\u043B\u044F \u043B\u044E\u0431\u044B\u0445 \u043D\u0435\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u043D\u043D\u044B\u0445 \u0444\u043E\u043D\u043E\u0432\u044B\u0445 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432.',
+        'Этот инструмент выполняет заданную команду оболочки как `bash -c <command>`. Команда может запускать фоновые процессы с помощью `&`. Команда выполняется как подпроцесс, который ведет свою собственную группу процессов. Группу процессов можно завершить с помощью `kill -- -PGID` или отправить сигнал `kill -s SIGNAL -- -PGID`.\n\n      Возвращается следующая информация:\n\n      Команда: Выполненная команда.\n      Каталог: Каталог (относительно корня проекта), где была выполнена команда, или `(root)`.\n      Stdout: Вывод в поток stdout. Может быть `(пусто)` или частичным при ошибке и для любых непрочитанных фоновых процессов.\n      Stderr: Вывод в поток stderr. Может быть `(пусто)` или частичным при ошибке и для любых непрочитанных фоновых процессов.',
     },
     tips: {
       title:
-        '\u0421\u043E\u0432\u0435\u0442\u044B \u0434\u043B\u044F \u043D\u0430\u0447\u0430\u043B\u0430 \u0440\u0430\u0431\u043E\u0442\u044B:',
-      tip1: '1. \u0417\u0430\u0434\u0430\u0432\u0430\u0439\u0442\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u044B, \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u0443\u0439\u0442\u0435 \u0444\u0430\u0439\u043B\u044B \u0438\u043B\u0438 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0439\u0442\u0435 \u043A\u043E\u043C\u0430\u043D\u0434\u044B',
-      tip2: '2. \u0411\u0443\u0434\u044C\u0442\u0435 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u044B \u0434\u043B\u044F \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F \u043D\u0430\u0438\u043B\u0443\u0447\u0448\u0438\u0445 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432',
-      tip3: '3. \u0421\u043E\u0437\u0434\u0430\u0439\u0442\u0435 \u0444\u0430\u0439\u043B\u044B {fileName} \u0434\u043B\u044F \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F \u0441 Koda',
-      tip4: '4. {command} \u0434\u043B\u044F \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F \u0434\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0439 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438',
+        'Советы для начала работы:',
+      tip1: '1. Задавайте вопросы, редактируйте файлы или запускайте команды',
+      tip2: '2. Будьте конкретны для получения наилучших результатов',
+      tip3: '3. Создайте файлы {fileName} для настройки взаимодействия с Koda',
+      tip4: '4. {command} для получения дополнительной информации',
       tip3noFile:
-        '3. {command} \u0434\u043B\u044F \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F \u0434\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0439 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438',
+        '3. {command} для получения дополнительной информации',
     },
     startupWarnings: {
       homeDirectory: {
         message:
-          '\u0412\u044B \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u0442\u0435 Koda CLI \u0432 \u0432\u0430\u0448\u0435\u0439 \u0434\u043E\u043C\u0430\u0448\u043D\u0435\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438. \u0420\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0443\u0435\u0442\u0441\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0442\u044C \u0432 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E\u0433\u043E \u043F\u0440\u043E\u0435\u043A\u0442\u0430.',
+          'Вы запускаете Koda CLI в вашей домашней директории. Рекомендуется запускать в директории конкретного проекта.',
       },
       rootDirectory: {
         message:
-          '\u041F\u0440\u0435\u0434\u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u0435: \u0412\u044B \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u0442\u0435 Koda CLI \u0432 \u043A\u043E\u0440\u043D\u0435\u0432\u043E\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438. \u0412\u0441\u044F \u0432\u0430\u0448\u0430 \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0430 \u043F\u0430\u043F\u043E\u043A \u0431\u0443\u0434\u0435\u0442 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C\u0441\u044F \u0434\u043B\u044F \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430. \u041D\u0430\u0441\u0442\u043E\u044F\u0442\u0435\u043B\u044C\u043D\u043E \u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0443\u0435\u0442\u0441\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0442\u044C \u0432 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E\u0433\u043E \u043F\u0440\u043E\u0435\u043A\u0442\u0430.',
+          'Предупреждение: Вы запускаете Koda CLI в корневой директории. Вся ваша структура папок будет использоваться для контекста. Настоятельно рекомендуется запускать в директории конкретного проекта.',
       },
       fileSystemError: {
         message:
-          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0442\u0435\u043A\u0443\u0449\u0443\u044E \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u044E \u0438\u0437-\u0437\u0430 \u043E\u0448\u0438\u0431\u043A\u0438 \u0444\u0430\u0439\u043B\u043E\u0432\u043E\u0439 \u0441\u0438\u0441\u0442\u0435\u043C\u044B.',
+          'Не удалось проверить текущую директорию из-за ошибки файловой системы.',
       },
     },
     app: {
       context: {
         contextLeft:
-          '{percentLeft}% \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430 \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C',
+          '{percentLeft}% контекста осталось',
       },
       requestCancelled:
-        '\u0417\u0430\u043F\u0440\u043E\u0441 \u043E\u0442\u043C\u0435\u043D\u0435\u043D.',
-      docs: { seeDocs: '\u0441\u043C. /docs' },
+        'Запрос отменен.',
+      docs: { seeDocs: 'см. /docs' },
       settings: {
-        title: '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438',
-        applyTo: '\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A',
+        title: 'Настройки',
+        applyTo: 'Применить к',
         enterSelectTabFocus:
-          '(\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 Enter \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430, Tab \u0434\u043B\u044F \u0441\u043C\u0435\u043D\u044B \u0444\u043E\u043A\u0443\u0441\u0430)',
+          '(Используйте Enter для выбора, Tab для смены фокуса)',
         restartRequired:
-          '\u0427\u0442\u043E\u0431\u044B \u0443\u0432\u0438\u0434\u0435\u0442\u044C \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F, \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u043E \u043F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C Koda CLI. \u041D\u0430\u0436\u043C\u0438\u0442\u0435 r \u0434\u043B\u044F \u0432\u044B\u0445\u043E\u0434\u0430 \u0438 \u043F\u0440\u0438\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0439.',
+          'Чтобы увидеть изменения, необходимо перезапустить Koda CLI. Нажмите r для выхода и применения изменений.',
       },
       about: {
-        title: '\u041E Koda CLI',
-        cliVersion: '\u0412\u0435\u0440\u0441\u0438\u044F CLI',
-        gitCommit: 'Git \u043A\u043E\u043C\u043C\u0438\u0442',
-        model: '\u041C\u043E\u0434\u0435\u043B\u044C',
-        sandbox: '\u041F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u0430',
-        os: '\u041E\u0421',
+        title: 'О Koda CLI',
+        cliVersion: 'Версия CLI',
+        gitCommit: 'Git коммит',
+        model: 'Модель',
+        sandbox: 'Песочница',
+        os: 'ОС',
         authMethod:
-          '\u041C\u0435\u0442\u043E\u0434 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438',
-        gcpProject: '\u041F\u0440\u043E\u0435\u043A\u0442 GCP',
+          'Метод аутентификации',
+        gcpProject: 'Проект GCP',
       },
       compression: {
         compressing:
-          '\u0421\u0436\u0430\u0442\u0438\u0435 \u0438\u0441\u0442\u043E\u0440\u0438\u0438 \u0447\u0430\u0442\u0430',
+          'Сжатие истории чата',
         compressed:
-          '\u0418\u0441\u0442\u043E\u0440\u0438\u044F \u0447\u0430\u0442\u0430 \u0441\u0436\u0430\u0442\u0430 \u0441 {original} \u0434\u043E {new} \u0442\u043E\u043A\u0435\u043D\u043E\u0432.',
+          'История чата сжата с {original} до {new} токенов.',
       },
       chat: {
         noCheckpoints:
-          '\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043D\u044B\u0445 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0445 \u0442\u043E\u0447\u0435\u043A \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430.',
+          'Не найдено сохраненных контрольных точек разговора.',
         listTitle:
-          '\u0421\u043F\u0438\u0441\u043E\u043A \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043D\u044B\u0445 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u043E\u0432:',
-        savedOn: '\u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D',
+          'Список сохраненных разговоров:',
+        savedOn: 'сохранен',
         noteNewestLast:
-          '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435: \u041D\u043E\u0432\u044B\u0435 \u0432 \u043A\u043E\u043D\u0446\u0435, \u0441\u0442\u0430\u0440\u044B\u0435 \u0432 \u043D\u0430\u0447\u0430\u043B\u0435',
+          'Примечание: Новые в конце, старые в начале',
         missingTag:
-          '\u041E\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442 \u0442\u0435\u0433. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /chat save <\u0442\u0435\u0433>',
+          'Отсутствует тег. Использование: /chat save <тег>',
         conversationSaved:
-          '\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0430 \u0441 \u0442\u0435\u0433\u043E\u043C: {tag}.',
+          'Контрольная точка разговора сохранена с тегом: {tag}.',
         noConversation:
-          '\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430 \u0434\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F.',
+          'Не найдено разговора для сохранения.',
         noCheckpoint:
-          '\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u0441 \u0442\u0435\u0433\u043E\u043C: {tag}.',
+          'Не найдена контрольная точка с тегом: {tag}.',
         overwritePrompt:
-          '\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u0441 \u0442\u0435\u0433\u043E\u043C {tag} \u0443\u0436\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442. \u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0435\u0451?',
+          'Контрольная точка с тегом {tag} уже существует. Перезаписать её?',
       },
       copy: {
         noOutput:
-          '\u041D\u0435\u0442 \u0432\u044B\u0432\u043E\u0434\u0430 \u0432 \u0438\u0441\u0442\u043E\u0440\u0438\u0438',
+          'Нет вывода в истории',
         copied:
-          '\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0439 \u0432\u044B\u0432\u043E\u0434 \u0441\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u043D \u0432 \u0431\u0443\u0444\u0435\u0440 \u043E\u0431\u043C\u0435\u043D\u0430',
+          'Последний вывод скопирован в буфер обмена',
         failed:
-          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0432 \u0431\u0443\u0444\u0435\u0440 \u043E\u0431\u043C\u0435\u043D\u0430.',
+          'Не удалось скопировать в буфер обмена.',
         noText:
-          '\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0439 \u0432\u044B\u0432\u043E\u0434 \u0418\u0418 \u043D\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u0442 \u0442\u0435\u043A\u0441\u0442\u0430 \u0434\u043B\u044F \u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F.',
+          'Последний вывод ИИ не содержит текста для копирования.',
       },
       directory: {
         configNotAvailable:
-          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.',
+          'Конфигурация недоступна.',
         providePath:
-          '\u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0443\u043A\u0430\u0436\u0438\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u0438\u043D \u043F\u0443\u0442\u044C \u0434\u043B\u044F \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u0438\u044F.',
+          'Пожалуйста, укажите хотя бы один путь для добавления.',
         notSupported:
-          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 /directory add \u043D\u0435 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u0432 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0445 \u043F\u0440\u043E\u0444\u0438\u043B\u044F\u0445 \u043F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u044B. \u0412\u043C\u0435\u0441\u0442\u043E \u044D\u0442\u043E\u0433\u043E \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 --include-directories \u043F\u0440\u0438 \u0437\u0430\u043F\u0443\u0441\u043A\u0435 \u0441\u0435\u0441\u0441\u0438\u0438.',
-        successfullyAddedFiles: `\u0423\u0441\u043F\u0435\u0448\u043D\u043E \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u044B \u0444\u0430\u0439\u043B\u044B KODA.md \u0438\u0437 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0445 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439, \u0435\u0441\u043B\u0438 \u043E\u043D\u0438 \u0435\u0441\u0442\u044C:
+          'Команда /directory add не поддерживается в ограничительных профилях песочницы. Вместо этого используйте --include-directories при запуске сессии.',
+        successfullyAddedFiles: `Успешно добавлены файлы KODA.md из следующих директорий, если они есть:
 - {directories}`,
-        successfullyAdded: `\u0423\u0441\u043F\u0435\u0448\u043D\u043E \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u044B \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438:
+        successfullyAdded: `Успешно добавлены директории:
 - {directories}`,
-        currentDirectories: `\u0422\u0435\u043A\u0443\u0449\u0438\u0435 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438:
+        currentDirectories: `Текущие директории рабочей области:
 {directories}`,
       },
       tools: {
         noRegistry:
-          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0440\u0435\u0435\u0441\u0442\u0440 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
-        available: `\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B Koda CLI:
+          'Не удалось получить реестр инструментов.',
+        available: `Доступные инструменты Koda CLI:
 
 `,
-        noTools: `  \u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432
+        noTools: `  Нет доступных инструментов
 `,
       },
       editorSettings: {
         title:
-          '\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440',
-        applyTo: '\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A',
+          'Выберите редактор',
+        applyTo: 'Применить к',
         enterSelectTabFocus:
-          '(\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 Enter \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430, Tab \u0434\u043B\u044F \u0441\u043C\u0435\u043D\u044B \u0444\u043E\u043A\u0443\u0441\u0430)',
+          '(Используйте Enter для выбора, Tab для смены фокуса)',
         supportedEditors:
-          '\u0412 \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0435\u0435 \u0432\u0440\u0435\u043C\u044F \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u044E\u0442\u0441\u044F \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0435 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u044B. \u041E\u0431\u0440\u0430\u0442\u0438\u0442\u0435 \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u0435, \u0447\u0442\u043E \u043D\u0435\u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u044B \u043D\u0435\u043B\u044C\u0437\u044F \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u0432 \u0440\u0435\u0436\u0438\u043C\u0435 \u043F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u044B.',
+          'В настоящее время поддерживаются следующие редакторы. Обратите внимание, что некоторые редакторы нельзя использовать в режиме песочницы.',
         preferredEditor:
-          '\u0412\u0430\u0448 \u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440: ',
-        none: '\u041D\u0435\u0442',
+          'Ваш предпочтительный редактор: ',
+        none: 'Нет',
       },
       theme: {
-        title: '\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0442\u0435\u043C\u0443',
-        applyTo: '\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A',
+        title: 'Выберите тему',
+        applyTo: 'Применить к',
         preview:
-          '\u041F\u0440\u0435\u0434\u0432\u0430\u0440\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439 \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440',
+          'Предварительный просмотр',
         enterSelectTabFocus:
-          '(\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 Enter \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430, Tab \u0434\u043B\u044F \u0441\u043C\u0435\u043D\u044B \u0444\u043E\u043A\u0443\u0441\u0430)',
+          '(Используйте Enter для выбора, Tab для смены фокуса)',
       },
       stats: {
         modelStats:
-          '\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u043C\u043E\u0434\u0435\u043B\u0435\u0439 (\u0434\u043B\u044F \u0442\u0435\u0445\u043D\u0430\u0440\u0435\u0439)',
+          'Статистика моделей (для технарей)',
         toolStats:
-          '\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 (\u0434\u043B\u044F \u0442\u0435\u0445\u043D\u0430\u0440\u0435\u0439)',
-        metric: '\u041C\u0435\u0442\u0440\u0438\u043A\u0430',
+          'Статистика инструментов (для технарей)',
+        metric: 'Метрика',
         api: 'API',
-        requests: '\u0417\u0430\u043F\u0440\u043E\u0441\u044B',
-        errors: '\u041E\u0448\u0438\u0431\u043A\u0438',
+        requests: 'Запросы',
+        errors: 'Ошибки',
         avgLatency:
-          '\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0437\u0430\u0434\u0435\u0440\u0436\u043A\u0430',
-        tokens: '\u0422\u043E\u043A\u0435\u043D\u044B',
-        total: '\u0412\u0441\u0435\u0433\u043E',
-        prompt: '\u041F\u0440\u043E\u043C\u043F\u0442',
-        cached: '\u041A\u044D\u0448\u0438\u0440\u043E\u0432\u0430\u043D\u043E',
-        thoughts: '\u0420\u0430\u0437\u043C\u044B\u0448\u043B\u0435\u043D\u0438\u044F',
-        tool: '\u0418\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442',
+          'Средняя задержка',
+        tokens: 'Токены',
+        total: 'Всего',
+        prompt: 'Промпт',
+        cached: 'Кэшировано',
+        thoughts: 'Размышления',
+        tool: 'Инструмент',
         toolName:
-          '\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430',
-        output: '\u0412\u044B\u0432\u043E\u0434',
-        calls: '\u0412\u044B\u0437\u043E\u0432\u044B',
+          'Название инструмента',
+        output: 'Вывод',
+        calls: 'Вызовы',
         successRate:
-          '\u0423\u0440\u043E\u0432\u0435\u043D\u044C \u0443\u0441\u043F\u0435\u0445\u0430',
+          'Уровень успеха',
         avgDuration:
-          '\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C',
+          'Средняя продолжительность',
         userDecisionSummary:
-          '\u0421\u0432\u043E\u0434\u043A\u0430 \u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F',
+          'Сводка решений пользователя',
         totalReviewed:
-          '\u0412\u0441\u0435\u0433\u043E \u0440\u0430\u0441\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u043E \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u0439',
-        accepted: '\u041F\u0440\u0438\u043D\u044F\u0442\u043E',
-        rejected: '\u041E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u043E',
-        modified: '\u0418\u0437\u043C\u0435\u043D\u0435\u043D\u043E',
+          'Всего рассмотрено предложений',
+        accepted: 'Принято',
+        rejected: 'Отклонено',
+        modified: 'Изменено',
         overallAgreementRate:
-          '\u041E\u0431\u0449\u0438\u0439 \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u0441\u043E\u0433\u043B\u0430\u0441\u0438\u044F',
+          'Общий уровень согласия',
         noApiCalls:
-          '\u0412 \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 \u043D\u0435 \u0431\u044B\u043B\u043E \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u043E \u043D\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u0432\u044B\u0437\u043E\u0432\u0430 API.',
+          'В этой сессии не было выполнено ни одного вызова API.',
         noToolCalls:
-          '\u0412 \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 \u043D\u0435 \u0431\u044B\u043B\u043E \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u043E \u043D\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u0432\u044B\u0437\u043E\u0432\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430.',
+          'В этой сессии не было выполнено ни одного вызова инструмента.',
       },
       memory: {
         refreshing:
-          '\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u044E \u0438\u0435\u0440\u0430\u0440\u0445\u0438\u0447\u0435\u0441\u043A\u0443\u044E \u043F\u0430\u043C\u044F\u0442\u044C (KODA.md \u0438\u043B\u0438 \u0434\u0440\u0443\u0433\u0438\u0435 \u0444\u0430\u0439\u043B\u044B \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430)...',
+          'Обновляю иерархическую память (KODA.md или другие файлы контекста)...',
         refreshSuccess:
-          '\u041F\u0430\u043C\u044F\u0442\u044C \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0430. \u0417\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u043E {charCount} \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432 \u0438\u0437 {fileCount} \u0444\u0430\u0439\u043B\u0430(\u043E\u0432).',
+          'Память успешно обновлена. Загружено {charCount} символов из {fileCount} файла(ов).',
         refreshSuccessEmpty:
-          '\u041F\u0430\u043C\u044F\u0442\u044C \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0430. \u0421\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E.',
+          'Память успешно обновлена. Содержимое не найдено.',
         refreshError:
-          '\u041E\u0448\u0438\u0431\u043A\u0430 \u043F\u0440\u0438 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0438 \u043F\u0430\u043C\u044F\u0442\u0438: {error}',
+          'Ошибка при обновлении памяти: {error}',
         empty:
-          '\u041F\u0430\u043C\u044F\u0442\u044C \u0441\u0435\u0439\u0447\u0430\u0441 \u043F\u0443\u0441\u0442\u0430.',
+          'Память сейчас пуста.',
         usage:
-          '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /memory add <\u0442\u0435\u043A\u0441\u0442 \u0434\u043B\u044F \u0437\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u044F>',
+          'Использование: /memory add <текст для запоминания>',
         saving:
-          '\u041F\u043E\u043F\u044B\u0442\u043A\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0432 \u043F\u0430\u043C\u044F\u0442\u044C: "{text}"',
+          'Попытка сохранить в память: "{text}"',
         refreshingFromSourceFiles:
-          '\u041E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u043F\u0430\u043C\u044F\u0442\u0438 \u0438\u0437 \u0438\u0441\u0445\u043E\u0434\u043D\u044B\u0445 \u0444\u0430\u0439\u043B\u043E\u0432...',
+          'Обновление памяти из исходных файлов...',
         refreshSuccessFromSourceFiles:
-          '\u041F\u0430\u043C\u044F\u0442\u044C \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0430. \u0417\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u043E {characters} \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432 \u0438\u0437 {files} \u0444\u0430\u0439\u043B\u0430(\u043E\u0432).',
-        showContent: `\u0422\u0435\u043A\u0443\u0449\u0435\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043F\u0430\u043C\u044F\u0442\u0438 \u0438\u0437 {fileCount} \u0444\u0430\u0439\u043B\u0430(\u043E\u0432):
+          'Память успешно обновлена. Загружено {characters} символов из {files} файла(ов).',
+        showContent: `Текущее содержимое памяти из {fileCount} файла(ов):
 
 ---
 {memoryContent}
 ---`,
-        save: '\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0432 \u043F\u0430\u043C\u044F\u0442\u044C',
+        save: 'Сохранить в память',
         saveSuccess:
-          '\u0425\u043E\u0440\u043E\u0448\u043E, \u044F \u0437\u0430\u043F\u043E\u043C\u043D\u0438\u043B: "{fact}"',
+          'Хорошо, я запомнил: "{fact}"',
         saveModifiedSuccess:
-          '\u0425\u043E\u0440\u043E\u0448\u043E, \u044F \u043E\u0431\u043D\u043E\u0432\u0438\u043B \u0444\u0430\u0439\u043B \u043F\u0430\u043C\u044F\u0442\u0438 \u0441 \u0432\u0430\u0448\u0438\u043C\u0438 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F\u043C\u0438.',
+          'Хорошо, я обновил файл памяти с вашими изменениями.',
         saveError:
-          '\u041E\u0448\u0438\u0431\u043A\u0430 \u043F\u0440\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0438 \u043F\u0430\u043C\u044F\u0442\u0438: {error}',
+          'Ошибка при сохранении памяти: {error}',
         validationNonEmpty:
-          '\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440 "fact" \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u043D\u0435\u043F\u0443\u0441\u0442\u043E\u0439 \u0441\u0442\u0440\u043E\u043A\u043E\u0439.',
+          'Параметр "fact" должен быть непустой строкой.',
       },
       flashFallback: {
-        proQuotaExceeded: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
-\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
-        freeQuotaExceeded: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
-\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
-        proGenericQuota: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
-\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
-        freeGenericQuota: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
-\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
-        proDefault: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
-\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
-        freeDefault: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
-\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
+        proQuotaExceeded: `⚡ Переключаюсь с {currentModel} на {fallbackModel} до конца сессии: текущая модель временно недоступна.
+⚡ Используйте /auth, чтобы настроить другой токен доступа и выбрать модель.`,
+        freeQuotaExceeded: `⚡ Переключаюсь с {currentModel} на {fallbackModel} до конца сессии: текущая модель временно недоступна.
+⚡ Используйте /auth, чтобы настроить другой токен доступа и выбрать модель.`,
+        proGenericQuota: `⚡ Переключаюсь с {currentModel} на {fallbackModel} до конца сессии: текущая модель временно недоступна.
+⚡ Используйте /auth, чтобы настроить другой токен доступа и выбрать модель.`,
+        freeGenericQuota: `⚡ Переключаюсь с {currentModel} на {fallbackModel} до конца сессии: текущая модель временно недоступна.
+⚡ Используйте /auth, чтобы настроить другой токен доступа и выбрать модель.`,
+        proDefault: `⚡ Переключаюсь с {currentModel} на {fallbackModel} до конца сессии: текущая модель временно недоступна.
+⚡ Используйте /auth, чтобы настроить другой токен доступа и выбрать модель.`,
+        freeDefault: `⚡ Переключаюсь с {currentModel} на {fallbackModel} до конца сессии: текущая модель временно недоступна.
+⚡ Используйте /auth, чтобы настроить другой токен доступа и выбрать модель.`,
       },
       trial: {
         footerLabel:
-          '\u043F\u0440\u043E\u0431\u043D\u044B\u0435 \u0437\u0430\u043F\u0440\u043E\u0441\u044B {used}{limitPart}',
-        limitReached: `\u26A1 \u0412\u044B \u0438\u0437\u0440\u0430\u0441\u0445\u043E\u0434\u043E\u0432\u0430\u043B\u0438 \u0432\u0441\u0435 \u043F\u0440\u043E\u0431\u043D\u044B\u0435 \u0437\u0430\u043F\u0440\u043E\u0441\u044B Koda.
-\u26A1 \u0417\u0430\u043F\u0440\u043E\u0441\u044B \u0431\u0443\u0434\u0443\u0442 \u043F\u0440\u0438\u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u044B \u0434\u043E \u0441\u0431\u0440\u043E\u0441\u0430 \u043B\u0438\u043C\u0438\u0442\u0430.
-\u26A1 \u041D\u0430\u0441\u0442\u0440\u043E\u0439\u0442\u0435 \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u044B\u0439 \u0434\u043E\u0441\u0442\u0443\u043F \u0447\u0435\u0440\u0435\u0437 /auth \u0438\u043B\u0438 \u043E\u0444\u043E\u0440\u043C\u0438\u0442\u0435 \u0442\u0430\u0440\u0438\u0444: https://kodacode.ru `,
+          'пробные запросы {used}{limitPart}',
+        limitReached: `⚡ Вы израсходовали все пробные запросы Koda.
+⚡ Запросы будут приостановлены до сброса лимита.
+⚡ Настройте постоянный доступ через /auth или оформите тариф: https://kodacode.ru `,
       },
       auth: {
         reauthRequired:
-          '\u0422\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044F \u043F\u043E\u0432\u0442\u043E\u0440\u043D\u0430\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F',
+          'Требуется повторная аутентификация',
         timeout:
-          '\u0412\u0440\u0435\u043C\u044F \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u0438\u0441\u0442\u0435\u043A\u043B\u043E. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0435 \u0440\u0430\u0437.',
+          'Время ожидания аутентификации истекло. Попробуйте еще раз.',
       },
       prompts: {
         pressCtrlCAgain:
-          '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 Ctrl+C \u0435\u0449\u0435 \u0440\u0430\u0437, \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0439\u0442\u0438.',
+          'Нажмите Ctrl+C еще раз, чтобы выйти.',
         pressCtrlDAgain:
-          '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 Ctrl+D \u0435\u0449\u0435 \u0440\u0430\u0437, \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0439\u0442\u0438.',
+          'Нажмите Ctrl+D еще раз, чтобы выйти.',
         pressEscAgain:
-          '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 Esc \u0435\u0449\u0435 \u0440\u0430\u0437, \u0447\u0442\u043E\u0431\u044B \u043E\u0447\u0438\u0441\u0442\u0438\u0442\u044C.',
+          'Нажмите Esc еще раз, чтобы очистить.',
       },
       extensions: {
         noActive:
-          '\u041D\u0435\u0442 \u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0445 \u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u0439.',
+          'Нет активных расширений.',
         activeTitle:
-          '\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0435 \u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u044F:',
+          'Активные расширения:',
       },
       placeholders: {
-        vim: "  \u041D\u0430\u0436\u043C\u0438\u0442\u0435 'i' \u0434\u043B\u044F \u0440\u0435\u0436\u0438\u043C\u0430 INSERT \u0438 'Esc' \u0434\u043B\u044F \u0440\u0435\u0436\u0438\u043C\u0430 NORMAL.",
+        vim: "  Нажмите 'i' для режима INSERT и 'Esc' для режима NORMAL.",
         default:
-          '  \u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 @\u043F\u0443\u0442\u044C/\u043A/\u0444\u0430\u0439\u043B\u0443',
+          '  Введите сообщение или @путь/к/файлу',
       },
-      confirmation: { yes: '\u0414\u0430', no: '\u041D\u0435\u0442' },
+      confirmation: { yes: 'Да', no: 'Нет' },
       toolConfirmation: {
         modifyInProgress:
-          '\u0418\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435 \u0432 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u0435: ',
+          'Изменение в процессе: ',
         saveAndCloseExternalEditor:
-          '\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u0435 \u0438 \u0437\u0430\u043A\u0440\u043E\u0439\u0442\u0435 \u0432\u043D\u0435\u0448\u043D\u0438\u0439 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C',
+          'Сохраните и закройте внешний редактор, чтобы продолжить',
         applyThisChange:
-          '\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u044D\u0442\u043E \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435?',
+          'Применить это изменение?',
         yesAllowOnce:
-          '\u0414\u0430, \u0440\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044C \u043E\u0434\u0438\u043D \u0440\u0430\u0437',
+          'Да, разрешить один раз',
         yesAllowAlways:
-          '\u0414\u0430, \u0440\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044C \u0432\u0441\u0435\u0433\u0434\u0430',
-        noEsc: '\u041D\u0435\u0442 (esc)',
+          'Да, разрешить всегда',
+        noEsc: 'Нет (esc)',
         modifyWithExternalEditor:
-          '\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u0432\u043E \u0432\u043D\u0435\u0448\u043D\u0435\u043C \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0435',
+          'Изменить во внешнем редакторе',
         noSuggestChanges:
-          '\u041D\u0435\u0442, \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438\u0442\u044C \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F (esc)',
+          'Нет, предложить изменения (esc)',
         allowExecutionOf:
-          "\u0420\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435: '{command}'?",
+          "Разрешить выполнение: '{command}'?",
         doYouWantToProceed:
-          '\u0412\u044B \u0445\u043E\u0442\u0438\u0442\u0435 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C?',
+          'Вы хотите продолжить?',
         urlsToFetch:
-          'URL-\u0430\u0434\u0440\u0435\u0441\u0430 \u0434\u043B\u044F \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F:',
+          'URL-адреса для получения:',
         allowExecutionOfMcpTool:
-          '\u0420\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430 MCP "{toolName}" \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 "{serverName}"?',
+          'Разрешить выполнение инструмента MCP "{toolName}" с сервера "{serverName}"?',
         yesAlwaysAllowToolFromServer:
-          '\u0414\u0430, \u0432\u0441\u0435\u0433\u0434\u0430 \u0440\u0430\u0437\u0440\u0435\u0448\u0430\u0442\u044C \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442 "{toolName}" \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 "{serverName}"',
+          'Да, всегда разрешать инструмент "{toolName}" с сервера "{serverName}"',
         yesAlwaysAllowAllToolsFromServer:
-          '\u0414\u0430, \u0432\u0441\u0435\u0433\u0434\u0430 \u0440\u0430\u0437\u0440\u0435\u0448\u0430\u0442\u044C \u0432\u0441\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 "{serverName}"',
+          'Да, всегда разрешать все инструменты с сервера "{serverName}"',
       },
       init: {
         error:
-          '\u041E\u0448\u0438\u0431\u043A\u0430 \u0438\u043D\u0438\u0446\u0438\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438: {error}',
+          'Ошибка инициализации: {error}',
         checkConfig:
-          '\u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 API-\u043A\u043B\u044E\u0447 \u0438 \u043A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044E.',
+          'Проверьте API-ключ и конфигурацию.',
       },
     },
   },
@@ -8646,7 +8741,7 @@ var aXt = (t, e, r, n, i, a, s, o, l, u, c, p, h, m) => {
             [wf.IMAGE_SAFETY]: 'Response stopped due to image safety violations.',
             [wf.UNEXPECTED_TOOL_CALL]: 'Response stopped due to unexpected tool call.',
           }[Z];
-        ge && r({ type: 'info', text: `\u26A0\uFE0F  ${ge}` }, fe);
+        ge && r({ type: 'info', text: `⚠️  ${ge}` }, fe);
       },
       [r]
     ),
@@ -10703,7 +10798,7 @@ function QXt(t, e) {
             ? (g = await i0e())
             : ((g = ['KodaAgent']),
               p(
-                '\u0414\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430 \u0434\u0440\u0443\u0433\u0438\u0445 \u043C\u043E\u0434\u0435\u043B\u0435\u0439 \u0432 \u043D\u0430\u0447\u0430\u043B\u0435 \u0430\u0432\u0442\u043E\u0440\u0438\u0437\u0443\u0439\u0442\u0435\u0441\u044C \u0447\u0435\u0440\u0435\u0437 GitHub'
+                'Для выбора других моделей в начале авторизуйтесь через GitHub'
               ));
           let _ = t.getModel() || af;
           !v &&
@@ -10730,7 +10825,7 @@ function QXt(t, e) {
           v &&
             (!_ && v !== 'KodaAgent'
               ? (p(
-                  '\u0414\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430 \u0434\u0440\u0443\u0433\u0438\u0445 \u043C\u043E\u0434\u0435\u043B\u0435\u0439 \u0432 \u043D\u0430\u0447\u0430\u043B\u0435 \u0430\u0432\u0442\u043E\u0440\u0438\u0437\u0443\u0439\u0442\u0435\u0441\u044C \u0447\u0435\u0440\u0435\u0437 GitHub'
+                  'Для выбора других моделей в начале авторизуйтесь через GitHub'
                 ),
                 e.setValue(g, 'model', 'KodaAgent'),
                 t.setModel('KodaAgent'))
@@ -11062,7 +11157,7 @@ function Fl({
   return (0, BA.jsxs)(Fe, {
     flexDirection: 'column',
     children: [
-      a && (0, BA.jsx)(Se, { color: c > 0 ? Ue.Foreground : Ue.Gray, children: '\u25B2' }),
+      a && (0, BA.jsx)(Se, { color: c > 0 ? Ue.Foreground : Ue.Gray, children: '▲' }),
       v.map((g, _) => {
         let S = c + _,
           b = l === S,
@@ -11084,7 +11179,7 @@ function Fl({
                 flexShrink: 0,
                 children: (0, BA.jsx)(Se, {
                   color: b ? Ue.AccentGreen : Ue.Foreground,
-                  children: b ? '\u25CF' : ' ',
+                  children: b ? '●' : ' ',
                 }),
               }),
               (0, BA.jsx)(Fe, {
@@ -11110,7 +11205,7 @@ function Fl({
         );
       }),
       a &&
-        (0, BA.jsx)(Se, { color: c + s < t.length ? Ue.Foreground : Ue.Gray, children: '\u25BC' }),
+        (0, BA.jsx)(Se, { color: c + s < t.length ? Ue.Foreground : Ue.Gray, children: '▼' }),
     ],
   });
 }
@@ -12225,7 +12320,7 @@ var Kz = '\x1B[32m',
       c = hxe(),
       p = '';
     ((c === pS.IN_PROGRESS || u.length > 0) &&
-      ((p += `${otr}\u23F3 ${Ie.t('commandDescriptions.mcpServersStarting', { count: u.length })}${fl}
+      ((p += `${otr}⏳ ${Ie.t('commandDescriptions.mcpServersStarting', { count: u.length })}${fl}
 `),
       (p += `${dh}${Ie.t('commandDescriptions.mcpServersStartingNote')}${fl}
 
@@ -12390,15 +12485,15 @@ var Kz = '\x1B[32m',
 `),
         (p += `${dh}${Ie.t('commandDescriptions.mcpTipsTitle')}${fl}
 `),
-        (p += `  \u2022 ${Ie.t('commandDescriptions.mcpTipsDesc', { command: `${dh}/mcp desc${fl}` })}
+        (p += `  • ${Ie.t('commandDescriptions.mcpTipsDesc', { command: `${dh}/mcp desc${fl}` })}
 `),
-        (p += `  \u2022 ${Ie.t('commandDescriptions.mcpTipsSchema', { command: `${dh}/mcp schema${fl}` })}
+        (p += `  • ${Ie.t('commandDescriptions.mcpTipsSchema', { command: `${dh}/mcp schema${fl}` })}
 `),
-        (p += `  \u2022 ${Ie.t('commandDescriptions.mcpTipsNoDesc', { command: `${dh}/mcp nodesc${fl}` })}
+        (p += `  • ${Ie.t('commandDescriptions.mcpTipsNoDesc', { command: `${dh}/mcp nodesc${fl}` })}
 `),
-        (p += `  \u2022 ${Ie.t('commandDescriptions.mcpTipsAuth', { command: `${dh}/mcp auth <server-name>${fl}` })}
+        (p += `  • ${Ie.t('commandDescriptions.mcpTipsAuth', { command: `${dh}/mcp auth <server-name>${fl}` })}
 `),
-        (p += `  \u2022 ${Ie.t('commandDescriptions.mcpTipsToggle', { command: `${dh}Ctrl+T${fl}` })}
+        (p += `  • ${Ie.t('commandDescriptions.mcpTipsToggle', { command: `${dh}Ctrl+T${fl}` })}
 `),
         (p += `
 `)),
@@ -13534,34 +13629,34 @@ hnr.propTypes = {
 };
 var EB = hnr;
 var lVe = `
- \u2588\u2588\u2588       \u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588    \u2588\u2588\u2588\u2588\u2588\u2588\u2588    \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588  
-\u2591\u2591\u2591\u2588\u2588\u2588    \u2591\u2591\u2588\u2588\u2588   \u2588\u2588\u2588\u2591   \u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588 \u2591\u2591\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2588\u2588\u2588   \u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588 
-  \u2591\u2591\u2591\u2588\u2588\u2588   \u2591\u2588\u2588\u2588  \u2588\u2588\u2588    \u2588\u2588\u2588     \u2591\u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588   \u2591\u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588    \u2591\u2588\u2588\u2588 
-    \u2591\u2591\u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588    \u2591\u2588\u2588\u2588      \u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588    \u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 
-     \u2588\u2588\u2588\u2591  \u2591\u2588\u2588\u2588\u2591\u2591\u2588\u2588\u2588   \u2591\u2588\u2588\u2588      \u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588    \u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588 
-   \u2588\u2588\u2588\u2591    \u2591\u2588\u2588\u2588 \u2591\u2591\u2588\u2588\u2588  \u2591\u2591\u2588\u2588\u2588     \u2588\u2588\u2588  \u2591\u2588\u2588\u2588    \u2588\u2588\u2588  \u2591\u2588\u2588\u2588    \u2591\u2588\u2588\u2588 
- \u2588\u2588\u2588\u2591      \u2588\u2588\u2588\u2588\u2588 \u2591\u2591\u2588\u2588\u2588\u2588 \u2591\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2591   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588
-\u2591\u2591\u2591       \u2591\u2591\u2591\u2591\u2591   \u2591\u2591\u2591\u2591    \u2591\u2591\u2591\u2591\u2591\u2591\u2591    \u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591   \u2591\u2591\u2591\u2591\u2591   \u2591\u2591\u2591\u2591\u2591                                
+ ███       █████   ████    ███████    ██████████     █████████  
+░░░███    ░░███   ███░   ███░░░░░███ ░░███░░░░███   ███░░░░░███ 
+  ░░░███   ░███  ███    ███     ░░███ ░███   ░░███ ░███    ░███ 
+    ░░░███ ░███████    ░███      ░███ ░███    ░███ ░███████████ 
+     ███░  ░███░░███   ░███      ░███ ░███    ░███ ░███░░░░░███ 
+   ███░    ░███ ░░███  ░░███     ███  ░███    ███  ░███    ░███ 
+ ███░      █████ ░░████ ░░░███████░   ██████████   █████   █████
+░░░       ░░░░░   ░░░░    ░░░░░░░    ░░░░░░░░░░   ░░░░░   ░░░░░                                
 `,
   uVe = `
- \u2588\u2588\u2588       \u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588    \u2588\u2588\u2588\u2588\u2588\u2588\u2588    \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588  
-\u2591\u2591\u2591\u2588\u2588\u2588    \u2591\u2591\u2588\u2588\u2588   \u2588\u2588\u2588\u2591   \u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588 \u2591\u2591\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2588\u2588\u2588   \u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588 
-  \u2591\u2591\u2591\u2588\u2588\u2588   \u2591\u2588\u2588\u2588  \u2588\u2588\u2588    \u2588\u2588\u2588     \u2591\u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588   \u2591\u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588    \u2591\u2588\u2588\u2588 
-    \u2591\u2591\u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588    \u2591\u2588\u2588\u2588      \u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588    \u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 
-     \u2588\u2588\u2588\u2591  \u2591\u2588\u2588\u2588\u2591\u2591\u2588\u2588\u2588   \u2591\u2588\u2588\u2588      \u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588    \u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588 
-   \u2588\u2588\u2588\u2591    \u2591\u2588\u2588\u2588 \u2591\u2591\u2588\u2588\u2588  \u2591\u2591\u2588\u2588\u2588     \u2588\u2588\u2588  \u2591\u2588\u2588\u2588    \u2588\u2588\u2588  \u2591\u2588\u2588\u2588    \u2591\u2588\u2588\u2588 
- \u2588\u2588\u2588\u2591      \u2588\u2588\u2588\u2588\u2588 \u2591\u2591\u2588\u2588\u2588\u2588 \u2591\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2591   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588
-\u2591\u2591\u2591       \u2591\u2591\u2591\u2591\u2591   \u2591\u2591\u2591\u2591    \u2591\u2591\u2591\u2591\u2591\u2591\u2591    \u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591   \u2591\u2591\u2591\u2591\u2591   \u2591\u2591\u2591\u2591\u2591                                
+ ███       █████   ████    ███████    ██████████     █████████  
+░░░███    ░░███   ███░   ███░░░░░███ ░░███░░░░███   ███░░░░░███ 
+  ░░░███   ░███  ███    ███     ░░███ ░███   ░░███ ░███    ░███ 
+    ░░░███ ░███████    ░███      ░███ ░███    ░███ ░███████████ 
+     ███░  ░███░░███   ░███      ░███ ░███    ░███ ░███░░░░░███ 
+   ███░    ░███ ░░███  ░░███     ███  ░███    ███  ░███    ░███ 
+ ███░      █████ ░░████ ░░░███████░   ██████████   █████   █████
+░░░       ░░░░░   ░░░░    ░░░░░░░    ░░░░░░░░░░   ░░░░░   ░░░░░                                
 `,
   Anr = `
- \u2588\u2588\u2588       \u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588
-\u2591\u2591\u2591\u2588\u2588\u2588    \u2591\u2591\u2588\u2588\u2588   \u2588\u2588\u2588\u2591 
-  \u2591\u2591\u2591\u2588\u2588\u2588   \u2591\u2588\u2588\u2588  \u2588\u2588\u2588   
-    \u2591\u2591\u2591\u2588\u2588\u2588 \u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2588    
-     \u2588\u2588\u2588\u2591  \u2591\u2588\u2588\u2588\u2591\u2591\u2588\u2588\u2588   
-   \u2588\u2588\u2588\u2591    \u2591\u2588\u2588\u2588 \u2591\u2591\u2588\u2588\u2588  
- \u2588\u2588\u2588\u2591      \u2588\u2588\u2588\u2588\u2588 \u2591\u2591\u2588\u2588\u2588\u2588
-\u2591\u2591\u2591       \u2591\u2591\u2591\u2591\u2591   \u2591\u2591\u2591\u2591      
+ ███       █████   ████
+░░░███    ░░███   ███░ 
+  ░░░███   ░███  ███   
+    ░░░███ ░███████    
+     ███░  ░███░░███   
+   ███░    ░███ ░░███  
+ ███░      █████ ░░████
+░░░       ░░░░░   ░░░░      
 `;
 var dhe = (t) => {
   if (!t) return 0;
@@ -13671,7 +13766,7 @@ var Snr = ({ currentLoadingPhrase: t, elapsedTime: e, rightContent: r, thought: 
               (0, fh.jsx)(Fe, {
                 marginRight: 1,
                 children: (0, fh.jsx)(mhe, {
-                  nonRespondingDisplay: i === 'waiting_for_confirmation' ? '\u280F' : '',
+                  nonRespondingDisplay: i === 'waiting_for_confirmation' ? '⠏' : '',
                 }),
               }),
               o && (0, fh.jsx)(Se, { color: Ue.AccentPurple, children: o }),
@@ -13786,7 +13881,7 @@ function pVe({
     paddingX: 1,
     width: n,
     children: [
-      i > 0 && (0, mh.jsx)(Se, { color: Ue.Foreground, children: '\u25B2' }),
+      i > 0 && (0, mh.jsx)(Se, { color: Ue.Foreground, children: '▲' }),
       l.map((u, c) => {
         let p = s + c,
           m = p === e ? Ue.AccentPurple : Ue.Gray,
@@ -13821,7 +13916,7 @@ function pVe({
           `${u.value}-${p}`
         );
       }),
-      o < t.length && (0, mh.jsx)(Se, { color: 'gray', children: '\u25BC' }),
+      o < t.length && (0, mh.jsx)(Se, { color: 'gray', children: '▼' }),
       t.length > B9 &&
         (0, mh.jsxs)(Se, { color: 'gray', children: ['(', e + 1, '/', t.length, ')'] }),
     ],
@@ -16370,7 +16465,7 @@ var eir = ({ errorCount: t }) =>
           (0, mJ.jsxs)(Se, {
             color: Ue.AccentRed,
             children: [
-              '\u2716',
+              '✖',
               ' ',
               t,
               ' error',
@@ -16550,11 +16645,11 @@ var sir = ({
             (0, za.jsxs)(Se, {
               children: [
                 (0, za.jsx)(Se, { color: Pa.ui.symbol, children: '| ' }),
-                (0, za.jsx)(Se, { color: Pa.status.error, children: '\u25BC' }),
+                (0, za.jsx)(Se, { color: Pa.status.error, children: '▼' }),
                 (0, za.jsx)(Se, { color: Pa.text.primary, children: '(\xB4' }),
-                (0, za.jsx)(Se, { color: Pa.status.error, children: '\u1D25' }),
+                (0, za.jsx)(Se, { color: Pa.status.error, children: 'ᴥ' }),
                 (0, za.jsx)(Se, { color: Pa.text.primary, children: '`)' }),
-                (0, za.jsx)(Se, { color: Pa.status.error, children: '\u25BC ' }),
+                (0, za.jsx)(Se, { color: Pa.status.error, children: '▼ ' }),
               ],
             }),
           !o &&
@@ -19700,7 +19795,7 @@ function Eir(t, e, r) {
 }
 function yir(t) {
   let e = t.regex,
-    r = '[\xC0-\u02B8a-zA-Z_$][\xC0-\u02B8a-zA-Z_$0-9]*',
+    r = '[\xC0-ʸa-zA-Z_$][\xC0-ʸa-zA-Z_$0-9]*',
     n = r + Eir('(?:<' + r + '~~~(?:\\s*,\\s*' + r + '~~~)*>)?', /~~~/g, 2),
     l = {
       keyword: [
@@ -24816,47 +24911,47 @@ var EVe = (t) => ko(/\b/, t, /\w$/.test(t) ? /\b/ : /\B/),
   ],
   Jir = $0(
     /[/=\-+!*%<>&|^~?]/,
-    /[\u00A1-\u00A7]/,
-    /[\u00A9\u00AB]/,
-    /[\u00AC\u00AE]/,
-    /[\u00B0\u00B1]/,
-    /[\u00B6\u00BB\u00BF\u00D7\u00F7]/,
-    /[\u2016-\u2017]/,
-    /[\u2020-\u2027]/,
-    /[\u2030-\u203E]/,
-    /[\u2041-\u2053]/,
-    /[\u2055-\u205E]/,
-    /[\u2190-\u23FF]/,
-    /[\u2500-\u2775]/,
-    /[\u2794-\u2BFF]/,
-    /[\u2E00-\u2E7F]/,
-    /[\u3001-\u3003]/,
-    /[\u3008-\u3020]/,
-    /[\u3030]/
+    /[¡-§]/,
+    /[©«]/,
+    /[¬®]/,
+    /[°±]/,
+    /[¶»¿×÷]/,
+    /[‖-‗]/,
+    /[†-‧]/,
+    /[‰-‾]/,
+    /[⁁-⁓]/,
+    /[⁕-⁞]/,
+    /[←-⏿]/,
+    /[─-❵]/,
+    /[➔-⯿]/,
+    /[⸀-⹿]/,
+    /[、-〃]/,
+    /[〈-〠]/,
+    /[〰]/
   ),
   Kir = $0(
     Jir,
-    /[\u0300-\u036F]/,
-    /[\u1DC0-\u1DFF]/,
-    /[\u20D0-\u20FF]/,
-    /[\uFE00-\uFE0F]/,
-    /[\uFE20-\uFE2F]/
+    /[̀-ͯ]/,
+    /[᷀-᷿]/,
+    /[⃐-⃿]/,
+    /[︀-️]/,
+    /[︠-︯]/
   ),
   gVe = ko(Jir, Kir, '*'),
   Xir = $0(
     /[a-zA-Z_]/,
-    /[\u00A8\u00AA\u00AD\u00AF\u00B2-\u00B5\u00B7-\u00BA]/,
-    /[\u00BC-\u00BE\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]/,
-    /[\u0100-\u02FF\u0370-\u167F\u1681-\u180D\u180F-\u1DBF]/,
-    /[\u1E00-\u1FFF]/,
-    /[\u200B-\u200D\u202A-\u202E\u203F-\u2040\u2054\u2060-\u206F]/,
-    /[\u2070-\u20CF\u2100-\u218F\u2460-\u24FF\u2776-\u2793]/,
-    /[\u2C00-\u2DFF\u2E80-\u2FFF]/,
-    /[\u3004-\u3007\u3021-\u302F\u3031-\u303F\u3040-\uD7FF]/,
-    /[\uF900-\uFD3D\uFD40-\uFDCF\uFDF0-\uFE1F\uFE30-\uFE44]/,
-    /[\uFE47-\uFEFE\uFF00-\uFFFD]/
+    /[¨ª­¯²-µ·-º]/,
+    /[¼-¾À-ÖØ-öø-ÿ]/,
+    /[Ā-˿Ͱ-ᙿᚁ-᠍᠏-ᶿ]/,
+    /[Ḁ-῿]/,
+    /[​-‍‪-‮‿-⁀⁔⁠-⁯]/,
+    /[⁰-⃏℀-↏①-⓿❶-➓]/,
+    /[Ⰰ-ⷿ⺀-⿿]/,
+    /[〄-〇〡-〯〱-〿぀-퟿]/,
+    /[豈-ﴽ﵀-﷏ﷰ-︟︰-﹄]/,
+    /[﹇-﻾＀-�]/
   ),
-  Ohe = $0(Xir, /\d/, /[\u0300-\u036F\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/),
+  Ohe = $0(Xir, /\d/, /[̀-ͯ᷀-᷿⃐-⃿︠-︯]/),
   M9 = ko(Xir, Ohe, '*'),
   Nhe = ko(/[A-Z]/, Ohe, '*'),
   iRn = [
@@ -26313,9 +26408,9 @@ function XRn(t, e, r) {
         .forEach((_, S) => {
           if ((S > 0 && (h.push(m), (m = []), (E = 0)), _)) {
             let b = F1(_);
-            if (S > 0 && b > 0) (m.push({ text: '\u2026', props: {} }), (E = F1('\u2026')));
+            if (S > 0 && b > 0) (m.push({ text: '…', props: {} }), (E = F1('…')));
             else {
-              let I = Math.max(0, e - F1('\u2026'));
+              let I = Math.max(0, e - F1('…'));
               if (b <= I && E === 0) (m.push({ text: _, props: v.props }), (E += b));
               else {
                 let R = ml(_),
@@ -26328,8 +26423,8 @@ function XRn(t, e, r) {
                 }
                 let U = R.slice(0, G).join('');
                 (U && m.push({ text: U, props: v.props }),
-                  m.push({ text: '\u2026', props: {} }),
-                  (E = F + F1('\u2026')));
+                  m.push({ text: '…', props: {} }),
+                  (E = F + F1('…')));
               }
             }
           }
@@ -26339,7 +26434,7 @@ function XRn(t, e, r) {
         a[a.length - 1].text.endsWith(`
 `))) &&
       h.push(m),
-      h.length === 0 && h.push([{ text: '\u2026', props: {} }]));
+      h.length === 0 && h.push([{ text: '…', props: {} }]));
     for (let v of h) r.push(v);
     return;
   }
@@ -26627,7 +26722,7 @@ var Var = 4,
                     children: (0, zd.jsx)(Se, {
                       wrap: 'truncate',
                       color: Ue.Gray,
-                      children: '\u2550'.repeat(i),
+                      children: '═'.repeat(i),
                     }),
                   },
                   `gap-${_}`
@@ -27652,7 +27747,7 @@ function Xar({
           children: (0, Jd.jsx)(Se, { color: Ue.AccentYellow, children: i }),
         }),
       r
-        ? (0, Jd.jsx)(Se, { color: Ue.Gray, children: 'Loading models\u2026' })
+        ? (0, Jd.jsx)(Se, { color: Ue.Gray, children: 'Loading models…' })
         : (0, Jd.jsxs)(Jd.Fragment, {
             children: [
               (0, Jd.jsx)(Fl, {
@@ -28885,6 +28980,7 @@ function cOn(t) {
       e.push([].concat(t[i], i));
     });
     n;
+
   ) {
     n = !1;
     for (let i = 0; i < e.length; i++)
@@ -29669,14 +29765,14 @@ async function rMn() {
       s = '';
     switch (i) {
       case dl.CONNECTED:
-        ((a = JOn + '\u2713' + PGe), (s = 'Connected'));
+        ((a = JOn + '✓' + PGe), (s = 'Connected'));
         break;
       case dl.CONNECTING:
-        ((a = KOn + '\u2026' + PGe), (s = 'Connecting'));
+        ((a = KOn + '…' + PGe), (s = 'Connecting'));
         break;
       case dl.DISCONNECTED:
       default:
-        ((a = XOn + '\u2717' + PGe), (s = 'Disconnected'));
+        ((a = XOn + '✗' + PGe), (s = 'Disconnected'));
         break;
     }
     let o = `${r}: `;
@@ -30235,16 +30331,16 @@ var jGe = ({ messages: t, maxHeight: e, width: r }) =>
             maxWidth: r - 4,
             children: t.map((i, a) => {
               let s = Ue.Foreground,
-                o = '\u2139';
+                o = 'ℹ';
               switch (i.type) {
                 case 'warn':
-                  ((s = Ue.AccentYellow), (o = '\u26A0'));
+                  ((s = Ue.AccentYellow), (o = '⚠'));
                   break;
                 case 'error':
-                  ((s = Ue.AccentRed), (o = '\u2716'));
+                  ((s = Ue.AccentRed), (o = '✖'));
                   break;
                 case 'debug':
-                  ((s = Ue.Gray), (o = '\u1F50D'));
+                  ((s = Ue.Gray), (o = 'ὐD'));
                   break;
                 case 'log':
                 default:
@@ -30429,9 +30525,9 @@ var wlr = ({ headers: t, rows: e, terminalWidth: r }) => {
     },
     l = (c) => {
       let h = {
-          top: { left: '\u250C', middle: '\u252C', right: '\u2510', horizontal: '\u2500' },
-          middle: { left: '\u251C', middle: '\u253C', right: '\u2524', horizontal: '\u2500' },
-          bottom: { left: '\u2514', middle: '\u2534', right: '\u2518', horizontal: '\u2500' },
+          top: { left: '┌', middle: '┬', right: '┐', horizontal: '─' },
+          middle: { left: '├', middle: '┼', right: '┤', horizontal: '─' },
+          bottom: { left: '└', middle: '┴', right: '┘', horizontal: '─' },
         }[c],
         m = s.map((v) => h.horizontal.repeat(v)),
         E = h.left + m.join(h.middle) + h.right;
@@ -30444,17 +30540,17 @@ var wlr = ({ headers: t, rows: e, terminalWidth: r }) => {
       });
       return (0, _3.jsxs)(Se, {
         children: [
-          '\u2502',
+          '│',
           ' ',
           h.map((m, E) =>
             (0, _3.jsxs)(
               JGe.default.Fragment,
-              { children: [m, E < h.length - 1 ? ' \u2502 ' : ''] },
+              { children: [m, E < h.length - 1 ? ' │ ' : ''] },
               E
             )
           ),
           ' ',
-          '\u2502',
+          '│',
         ],
       });
     };
@@ -30723,7 +30819,7 @@ var vMn = 1,
   Zk = QJ.default.memo(SMn);
 var kB = qe(Ft(), 1);
 var Rlr = ({ text: t, isPending: e, availableTerminalHeight: r, terminalWidth: n }) => {
-  let i = '\u276F ',
+  let i = '❯ ',
     a = i.length;
   return (0, kB.jsxs)(Fe, {
     flexDirection: 'row',
@@ -30747,7 +30843,7 @@ var Rlr = ({ text: t, isPending: e, availableTerminalHeight: r, terminalWidth: n
 };
 var UB = qe(Ft(), 1);
 var Nlr = ({ text: t }) => {
-  let e = '\u2139 ',
+  let e = 'ℹ ',
     r = e.length;
   return (0, UB.jsxs)(Fe, {
     flexDirection: 'row',
@@ -30766,7 +30862,7 @@ var Nlr = ({ text: t }) => {
 };
 var HB = qe(Ft(), 1);
 var Olr = ({ text: t }) => {
-  let e = '\u2715 ',
+  let e = '✕ ',
     r = e.length;
   return (0, HB.jsxs)(Fe, {
     flexDirection: 'row',
@@ -30867,8 +30963,8 @@ var IMn = 1,
       children: [
         t === 'Pending' && (0, nl.jsx)(Se, { color: Ue.AccentGreen, children: 'o' }),
         t === 'Executing' &&
-          (0, nl.jsx)(mhe, { spinnerType: 'toggle', nonRespondingDisplay: '\u22B7' }),
-        t === 'Success' && (0, nl.jsx)(Se, { color: Ue.AccentGreen, children: '\u2714' }),
+          (0, nl.jsx)(mhe, { spinnerType: 'toggle', nonRespondingDisplay: '⊷' }),
+        t === 'Success' && (0, nl.jsx)(Se, { color: Ue.AccentGreen, children: '✔' }),
         t === 'Confirming' && (0, nl.jsx)(Se, { color: Ue.AccentYellow, children: '?' }),
         t === 'Canceled' && (0, nl.jsx)(Se, { color: Ue.AccentYellow, bold: !0, children: '-' }),
         t === 'Error' && (0, nl.jsx)(Se, { color: Ue.AccentRed, bold: !0, children: 'x' }),
@@ -30900,7 +30996,7 @@ var IMn = 1,
     });
   },
   NMn = () =>
-    (0, nl.jsxs)(Se, { color: Ue.Foreground, wrap: 'truncate', children: [' ', '\u2190'] });
+    (0, nl.jsxs)(Se, { color: Ue.Foreground, wrap: 'truncate', children: [' ', '←'] });
 Qn();
 var Ql = qe(Ft(), 1);
 var Qlr = ({
@@ -31155,7 +31251,7 @@ var Ulr = ({
 };
 var XGe = qe(Ft(), 1);
 var Hlr = ({ text: t, isPending: e, availableTerminalHeight: r, terminalWidth: n }) => {
-  let a = '\u2726 '.length;
+  let a = '✦ '.length;
   return (0, XGe.jsx)(Fe, {
     flexDirection: 'column',
     paddingLeft: a,
@@ -31182,7 +31278,7 @@ var Vlr = ({ compression: t }) => {
         marginRight: 1,
         children: t.isPending
           ? (0, Tb.jsx)(Mk, { type: 'dots' })
-          : (0, Tb.jsx)(Se, { color: Ue.AccentPurple, children: '\u2726' }),
+          : (0, Tb.jsx)(Se, { color: Ue.AccentPurple, children: '✦' }),
       }),
       (0, Tb.jsx)(Fe, {
         children: (0, Tb.jsx)(Se, {
@@ -31540,10 +31636,10 @@ var tU = ({ title: t, children: e }) =>
                   ' ',
                   (0, Xr.jsxs)(Se, {
                     color: Ue.AccentGreen,
-                    children: ['\u2714 ', a.totalSuccess],
+                    children: ['✔ ', a.totalSuccess],
                   }),
                   ' ',
-                  (0, Xr.jsxs)(Se, { color: Ue.AccentRed, children: ['\u2716 ', a.totalFail] }),
+                  (0, Xr.jsxs)(Se, { color: Ue.AccentRed, children: ['✖ ', a.totalFail] }),
                   ' )',
                 ],
               }),
@@ -31631,7 +31727,7 @@ var Jlr = 28,
           children: (0, ws.jsx)(Se, {
             bold: n,
             color: n ? void 0 : Ue.LightBlue,
-            children: r ? `  \u21B3 ${t}` : t,
+            children: r ? `  ↳ ${t}` : t,
           }),
         }),
         e.map((i, a) =>
@@ -32932,7 +33028,7 @@ var yur = ({ onExit: t }) => (
           (0, W0.jsx)(Se, { color: Ue.AccentBlue, children: '[1]' }),
           ' are incorporated into the agreement under which Google has agreed to provide Google Cloud Platform',
           (0, W0.jsx)(Se, { color: Ue.AccentGreen, children: '[2]' }),
-          ' to Customer (the \u201CAgreement\u201D). If the Agreement authorizes the resale or supply of Google Cloud Platform under a Google Cloud partner or reseller program, then except for in the section entitled \u201CPartner-Specific Terms\u201D, all references to Customer in the Service Specific Terms mean Partner or Reseller (as applicable), and all references to Customer Data in the Service Specific Terms mean Partner Data. Capitalized terms used but not defined in the Service Specific Terms have the meaning given to them in the Agreement.',
+          ' to Customer (the “Agreement”). If the Agreement authorizes the resale or supply of Google Cloud Platform under a Google Cloud partner or reseller program, then except for in the section entitled “Partner-Specific Terms”, all references to Customer in the Service Specific Terms mean Partner or Reseller (as applicable), and all references to Customer Data in the Service Specific Terms mean Partner Data. Capitalized terms used but not defined in the Service Specific Terms have the meaning given to them in the Agreement.',
         ],
       }),
       (0, W0.jsx)(Uh, {}),
@@ -33112,7 +33208,7 @@ function Sur({ settings: t, selectedScope: e, onSave: r, isActive: n = !1, onTog
                 flexShrink: 0,
                 children: (0, gd.jsx)(Se, {
                   color: l === 'en' ? Ue.AccentGreen : Ue.Gray,
-                  children: l === 'en' ? '\u25CF' : '\u25CB',
+                  children: l === 'en' ? '●' : '○',
                 }),
               }),
               (0, gd.jsxs)(Se, {
@@ -33135,7 +33231,7 @@ function Sur({ settings: t, selectedScope: e, onSave: r, isActive: n = !1, onTog
                 flexShrink: 0,
                 children: (0, gd.jsx)(Se, {
                   color: l === 'ru' ? Ue.AccentGreen : Ue.Gray,
-                  children: l === 'ru' ? '\u25CF' : '\u25CB',
+                  children: l === 'ru' ? '●' : '○',
                 }),
               }),
               (0, gd.jsxs)(Se, {
@@ -33161,7 +33257,7 @@ function Sur({ settings: t, selectedScope: e, onSave: r, isActive: n = !1, onTog
             flexShrink: 0,
             children: (0, gd.jsx)(Se, {
               color: n ? Ue.AccentGreen : Ue.Gray,
-              children: n ? '\u25CF' : '',
+              children: n ? '●' : '',
             }),
           }),
           (0, gd.jsx)(Fe, {
@@ -33178,7 +33274,7 @@ function Sur({ settings: t, selectedScope: e, onSave: r, isActive: n = !1, onTog
             }),
           }),
           (0, gd.jsx)(Fe, { minWidth: 3 }),
-          (0, gd.jsxs)(Se, { color: Ue.Foreground, children: [E, ' \u25BC'] }),
+          (0, gd.jsxs)(Se, { color: Ue.Foreground, children: [E, ' ▼'] }),
         ],
       });
 }
@@ -33348,7 +33444,7 @@ function bur({ settings: t, onSelect: e, onRestartRequest: r }) {
         children: [
           (0, Uo.jsx)(Se, { bold: !0, color: Ue.AccentBlue, children: Ie.t('app.settings.title') }),
           (0, Uo.jsx)(Fe, { height: 1 }),
-          j && (0, Uo.jsx)(Se, { color: Ue.Gray, children: '\u25B2' }),
+          j && (0, Uo.jsx)(Se, { color: Ue.Gray, children: '▲' }),
           se.map((H, ee) => {
             let me = a === 'settings' && u === ee + p,
               Ae = t.forScope(o).settings,
@@ -33391,7 +33487,7 @@ function bur({ settings: t, onSelect: e, onRestartRequest: r }) {
                             flexShrink: 0,
                             children: (0, Uo.jsx)(Se, {
                               color: me ? Ue.AccentGreen : Ue.Gray,
-                              children: me ? '\u25CF' : '',
+                              children: me ? '●' : '',
                             }),
                           }),
                           (0, Uo.jsx)(Fe, {
@@ -33417,7 +33513,7 @@ function bur({ settings: t, onSelect: e, onRestartRequest: r }) {
                   H.value
                 );
           }),
-          N && (0, Uo.jsx)(Se, { color: Ue.Gray, children: '\u25BC' }),
+          N && (0, Uo.jsx)(Se, { color: Ue.Gray, children: '▼' }),
           (0, Uo.jsx)(Fe, { height: 1 }),
           (0, Uo.jsxs)(Fe, {
             marginTop: 1,
@@ -33512,35 +33608,10 @@ async function XMn() {
     return null;
   }
 }
-// Polza AI Integration: Helper functions
-function isPolzaEnabled() {
-  return !!(process.env.POLZA_API_KEY && process.env.POLZA_API_KEY.trim());
-}
-
-function getPolzaApiBase() {
-  return process.env.POLZA_API_BASE || 'https://api.polza.ai/api/v1';
-}
-
-function getPolzaModel() {
-  return process.env.POLZA_DEFAULT_MODEL || 'anthropic/claude-sonnet-4.5';
-}
-
 function ZMn() {
-  // If Polza is enabled, use Polza API instead of Koda API
-  if (isPolzaEnabled()) {
-    return getPolzaApiBase();
-  }
   return `${process.env.KODA_API_BASE || 'https://api.kodacode.ru'}/ftc`;
 }
 async function rqe() {
-  // Polza AI Integration: Use different auth flow for Polza
-  if (isPolzaEnabled()) {
-    // For Polza, we don't need to fetch token counts (Polza manages its own quotas)
-    // Return a dummy success response to indicate Polza is configured
-    return { count: 0, limit: 999999, remaining: 999999 };
-  }
-
-  // Original Koda API token fetch logic
   let t = process.env.KODA_GITHUB_TOKEN || process.env.GITHUB_TOKEN || null;
   if ((t || (t = await XMn()), !t)) return null;
   let e = ZMn(),
@@ -34254,7 +34325,7 @@ var tLn = 1e3,
                                                   nqe.env.GEMINI_SYSTEM_MD &&
                                                     (0, Sr.jsx)(Se, {
                                                       color: Ue.AccentRed,
-                                                      children: '|\u2310\u25A0_\u25A0| ',
+                                                      children: '|⌐■_■| ',
                                                     }),
                                                   Z
                                                     ? (0, Sr.jsx)(Se, {
@@ -35927,99 +35998,3 @@ ${e.stack}`
     (Rb.emit('log-error', n), t || ((t = !0), Rb.emit('open-debug-console')));
   });
 }
-async function $ur() {
-  sFn();
-  let t = process.cwd(),
-    e = b9(t);
-  (await PXt(), Ie.setLanguage(e.merged.language || 'ru'));
-  try {
-    e.merged.language
-      ? (process.env.KODA_RESPONSE_LANGUAGE = String(e.merged.language))
-      : process.env.KODA_RESPONSE_LANGUAGE || (process.env.KODA_RESPONSE_LANGUAGE = 'ru');
-  } catch {}
-  if ((await JXt(), e.errors.length > 0)) {
-    for (let m of e.errors) {
-      let E = `Error in ${m.path}: ${m.message}`;
-      (process.env.NO_COLOR || (E = `\x1B[31m${E}\x1B[0m`),
-        console.error(E),
-        console.error(`Please fix ${m.path} and try again.`));
-    }
-    process.exit(1);
-  }
-  let r = await ylr(),
-    n = hAe(t),
-    i = await gAe(e.merged, n, _9, r),
-    a = new Q9({ stderr: !0, debugMode: i.getDebugMode() });
-  if (
-    (a.patch(),
-    yk(a.cleanup),
-    tFn.setDefaultResultOrder(nFn(e.merged.dnsResolutionOrder)),
-    r.promptInteractive &&
-      !process.stdin.isTTY &&
-      (console.error(
-        'Error: The --prompt-interactive flag is not supported when piping input from stdin.'
-      ),
-      process.exit(1)),
-    i.getListExtensions())
-  ) {
-    console.log('Installed extensions:');
-    for (let m of n) console.log(`- ${m.config.name}`);
-    process.exit(0);
-  }
-  let s = e.merged.selectedAuthType;
-  s || (e.setValue('User', 'selectedAuthType', hn.WITHOUT_AUTH), (s = hn.WITHOUT_AUTH));
-  let o = jz();
-  if (!(!!s && s !== hn.WITHOUT_AUTH && o)) {
-    let m = e.merged.model;
-    (m && m !== 'KodaAgent' && e.setValue('User', 'model', 'KodaAgent'),
-      r.model && r.model !== 'KodaAgent' && (r.model = 'KodaAgent'));
-  }
-  if (
-    (Uar(i.getDebugMode()),
-    await i.initialize(),
-    i.getIdeMode() && (await i.getIdeClient().connect(), qM(i, new iC(nC.START))),
-    Ya.loadCustomThemes(e.merged.customThemes),
-    e.merged.theme &&
-      (Ya.setActiveTheme(e.merged.theme) ||
-        console.warn(`Warning: Theme "${e.merged.theme}" not found.`)),
-    !process.env.SANDBOX)
-  ) {
-    let m = e.merged.autoConfigureMaxOldSpaceSize ? iFn(i) : [],
-      E = i.getSandbox();
-    if (E) {
-      if (e.merged.selectedAuthType && !e.merged.useExternalAuth)
-        try {
-          let v = Sb(e.merged.selectedAuthType);
-          if (v) throw new Error(v);
-          await i.refreshAuth(e.merged.selectedAuthType);
-        } catch (v) {
-          (console.error('Error authenticating:', v), process.exit(1));
-        }
-      (await Nur(E, m, i), process.exit(0));
-    } else m.length > 0 && (await aFn(m), process.exit(0));
-  }
-  if (
-    (e.merged.selectedAuthType === hn.LOGIN_WITH_GITHUB &&
-      i.isBrowserLaunchSuppressed() &&
-      (await cme(i)),
-    i.getExperimentalZedIntegration())
-  )
-    return Gur(i, e, n, r);
-  let u = i.getQuestion(),
-    c = [...(await Our()), ...(await Lur(t))];
-  if (i.isInteractive()) {
-    let m = await fb();
-    (await qnr(), oFn(XLn(t), e));
-    let E = Jge(
-      (0, OAe.jsx)(qur.default.StrictMode, {
-        children: (0, OAe.jsx)(KGe.Provider, {
-          value: e,
-          children: (0, OAe.jsx)(Iur, { config: i, settings: e, startupWarnings: c, version: m }),
-        }),
-      }),
-      { exitOnCtrlC: !1 }
-    );
-    yk(() => E.unmount());
-    return;
-  }
-  if (!process.stdin.isTTY) {
