@@ -167,6 +167,87 @@ ${ruRUObject}
 `;
     content = content.slice(0, i18nCommentIndex) + i18nInline + content.slice(i18nCommentIndex);
 
+    // Remove old hard-coded i18n objects from the app code
+    // This prevents duplicate i18n data and ensures changes to locale files are applied
+    console.log('   → Removing old hard-coded i18n objects from app code...');
+
+    // Pattern to find the old English locale object (var hDn={help:{basics:)
+    const oldEnPattern = /var\s+\w{3}\s*=\s*\{help:\{basics:/;
+    const enMatch = content.match(oldEnPattern);
+    if (enMatch) {
+      const startPos = enMatch.index;
+      // Find the matching closing brace for this object
+      let braceCount = 0;
+      let pos = content.indexOf('{', startPos);
+      let foundEnd = false;
+
+      while (pos < content.length && !foundEnd) {
+        const char = content[pos];
+        // Skip string content to avoid counting braces inside strings
+        if (char === '"' || char === "'" || char === '`') {
+          const quote = char;
+          pos++;
+          while (pos < content.length && content[pos] !== quote) {
+            if (content[pos] === '\\') pos++; // Skip escaped characters
+            pos++;
+          }
+        } else if (char === '{') {
+          braceCount++;
+        } else if (char === '}') {
+          braceCount--;
+          if (braceCount === 0) {
+            // Found the end, remove this entire variable declaration
+            let endPos = pos + 1;
+            // Skip any trailing semicolons or commas
+            while (endPos < content.length && (content[endPos] === ';' || content[endPos] === ',')) {
+              endPos++;
+            }
+            content = content.slice(0, startPos) + content.slice(endPos);
+            console.log('   → Removed old English locale object');
+            foundEnd = true;
+          }
+        }
+        pos++;
+      }
+    }
+
+    // Pattern to find the old Russian locale object (can be "var ADn=" or just "ADn=")
+    const oldRuPattern = /(var\s+)?([A-Z][a-zA-Z0-9]{2})\s*=\s*\{help:\{basics:/;
+    const ruMatch = content.match(oldRuPattern);
+    if (ruMatch) {
+      const startPos = ruMatch.index;
+      let braceCount = 0;
+      let pos = content.indexOf('{', startPos);
+      let foundEnd = false;
+
+      while (pos < content.length && !foundEnd) {
+        const char = content[pos];
+        // Skip string content to avoid counting braces inside strings
+        if (char === '"' || char === "'" || char === '`') {
+          const quote = char;
+          pos++;
+          while (pos < content.length && content[pos] !== quote) {
+            if (content[pos] === '\\') pos++; // Skip escaped characters
+            pos++;
+          }
+        } else if (char === '{') {
+          braceCount++;
+        } else if (char === '}') {
+          braceCount--;
+          if (braceCount === 0) {
+            let endPos = pos + 1;
+            while (endPos < content.length && (content[endPos] === ';' || content[endPos] === ',')) {
+              endPos++;
+            }
+            content = content.slice(0, startPos) + content.slice(endPos);
+            console.log('   → Removed old Russian locale object');
+            foundEnd = true;
+          }
+        }
+        pos++;
+      }
+    }
+
     // Apply environment variable inlining/defaults
     content = inlineEnvironmentVariables(content);
   }
