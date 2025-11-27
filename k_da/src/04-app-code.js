@@ -10,7 +10,6 @@
 var qur = qe(or(), 1);
 import { Stream as xfr } from 'node:stream';
 import cX from 'node:process';
-import { enUS, ruRU } from './i18n/index.js';
 var Lze = qe(or(), 1);
 import Tfr from 'node:process';
 function z$e(t, e, { signal: r, edges: n } = {}) {
@@ -6525,14 +6524,1888 @@ function ja(t, { isActive: e, kittyProtocolEnabled: r = !1, config: n }) {
       );
     }, [e, i, a, r, n]));
 }
-// i18n objects (enUS, ruRU) are imported from ./i18n/index.js
-// English locale (previously hDn)
-var hDn = enUS,
-// Russian locale (previously ADn)
-  ADn = ruRU;
-// Locale mapping object
-var nXt = { en: hDn, ru: ADn },
-  // I18n manager class (previously NUe)
+var hDn = {
+    help: {
+      basics: 'Basics:',
+      addContext: 'Add context',
+      addContextDescription:
+        'Use {at} to specify files for context (e.g., {example}) to target specific files or folders',
+      shellMode: 'Shell mode',
+      shellModeDescription:
+        'Execute shell commands via {exclamation} (e.g., {example}) or use natural language (e.g. {naturalLanguage})',
+      shellModeNaturalLanguageExample: 'start server',
+      commands: 'Commands:',
+      shellCommand: 'shell command',
+      shortcuts: 'Keyboard Shortcuts:',
+      jumpWords: 'Jump through words in the input',
+      quitApp: 'Quit application',
+      newLine: 'New line',
+      newLineLinux: 'New line (Alt+Enter works for certain linux distros)',
+      clearScreen: 'Clear the screen',
+      openEditor: 'Open input in external editor',
+      toggleYolo: 'Toggle YOLO mode',
+      sendMessage: 'Send message',
+      cancelOperation: 'Cancel operation',
+      autoAcceptEdits: 'Toggle auto-accepting edits',
+      cycleHistory: 'Cycle through your prompt history',
+      fullList: 'For a full list of shortcuts, see {file}',
+    },
+    commandMessages: {
+      docs: {
+        openingInBrowser: 'Opening documentation in your browser: {url}',
+        openInBrowserMessage: `Please open the following URL in your browser to view the documentation:
+{url}
+
+If the browser does not open automatically, please copy and paste this link to access the documentation: {url}`,
+      },
+      init: {
+        configNotAvailable: 'Configuration not available.',
+        fileAlreadyExists: 'A KODA.md file already exists in this directory. No changes were made.',
+        fileCreated: 'Empty KODA.md created. Now analyzing the project to populate it.',
+      },
+      ide: {
+        notSupported:
+          'IDE integration is not supported in your current environment. To use this feature, run Koda CLI in one of these supported IDEs: {supportedList}',
+        noInstaller:
+          "No installer is available for {ideName}. Please install the '{extensionName}' extension manually from the marketplace.",
+        installing: 'Installing IDE companion...',
+        connected: 'Connected to {ideName}',
+        connecting: 'Connecting...',
+        disconnected: 'Disconnected',
+        disconnectedWithDetails: 'Disconnected: {details}',
+        openFilesTitle: 'Open files:',
+        fileLimitNote:
+          '(Note: The file list is limited to a number of recently accessed files within your workspace and only includes local files on disk)',
+        openingBrowser: 'Opening browser to install IDE companion: {url}',
+        browserOpened:
+          'Browser opened successfully. Please follow the installation instructions on the website.',
+        openUrlError: 'Could not open URL in browser: ',
+      },
+      vim: {
+        enteredMode: 'Entered Vim mode. Run /vim again to exit.',
+        exitedMode: 'Exited Vim mode.',
+      },
+    },
+    statsDisplay: {
+      sessionStats: 'Session Stats',
+      interactionSummary: 'Interaction Summary',
+      sessionId: 'Session ID:',
+      toolCalls: 'Tool Calls:',
+      successRate: 'Success Rate:',
+      userAgreement: 'User Agreement:',
+      userAgreementReviewed: '({count} reviewed)',
+      performance: 'Performance',
+      wallTime: 'Wall Time:',
+      agentActive: 'Agent Active:',
+      apiTime: 'API Time:',
+      toolTime: 'Tool Time:',
+      modelUsage: 'Model Usage',
+      requests: 'Reqs',
+      inputTokens: 'Input Tokens',
+      outputTokens: 'Output Tokens',
+      savingsHighlight: 'Savings Highlight:',
+      savingsDetail:
+        '{tokens} ({percent}%) of input tokens were served from the cache, reducing costs.',
+      tipFullStats: 'Tip: For a full token breakdown, run {command}.',
+    },
+    sessionSummary: { poweringDown: 'Agent powering down. Goodbye!' },
+    settings: {
+      theme: { label: 'Theme', description: 'The color theme for the UI.' },
+      customThemes: { label: 'Custom Themes', description: 'Custom theme definitions.' },
+      hideWindowTitle: { label: 'Hide Window Title', description: 'Hide the window title bar' },
+      hideTips: { label: 'Hide Tips', description: 'Hide helpful tips in the UI' },
+      hideBanner: { label: 'Hide Banner', description: 'Hide the application banner' },
+      showMemoryUsage: {
+        label: 'Show Memory Usage',
+        description: 'Display memory usage information in the UI',
+      },
+      usageStatisticsEnabled: {
+        label: 'Enable Usage Statistics',
+        description: 'Enable collection of usage statistics',
+      },
+      autoConfigureMaxOldSpaceSize: {
+        label: 'Auto Configure Max Old Space Size',
+        description: 'Automatically configure Node.js memory limits',
+      },
+      preferredEditor: {
+        label: 'Preferred Editor',
+        description: 'The preferred editor to open files in.',
+      },
+      maxSessionTurns: {
+        label: 'Max Session Turns',
+        description: 'Maximum number of user/model/tool turns to keep in a session.',
+      },
+      memoryImportFormat: {
+        label: 'Memory Import Format',
+        description: 'The format to use when importing memory.',
+      },
+      memoryDiscoveryMaxDirs: {
+        label: 'Memory Discovery Max Dirs',
+        description: 'Maximum number of directories to search for memory.',
+      },
+      contextFileName: { label: 'Context File Name', description: 'The name of the context file.' },
+      vimMode: { label: 'Vim Mode', description: 'Enable Vim keybindings' },
+      ideMode: { label: 'IDE Mode', description: 'Enable IDE integration mode' },
+      accessibility: {
+        label: 'Accessibility',
+        description: 'Accessibility settings.',
+        disableLoadingPhrases: {
+          label: 'Disable Loading Phrases',
+          description: 'Disable loading phrases for accessibility',
+        },
+      },
+      checkpointing: {
+        label: 'Checkpointing',
+        description: 'Session checkpointing settings.',
+        enabled: {
+          label: 'Enable Checkpointing',
+          description: 'Enable session checkpointing for recovery',
+        },
+      },
+      fileFiltering: {
+        label: 'File Filtering',
+        description: 'Settings for git-aware file filtering.',
+        respectGitIgnore: {
+          label: 'Respect .gitignore',
+          description: 'Respect .gitignore files when searching',
+        },
+        respectGeminiIgnore: {
+          label: 'Respect .kodaiignore',
+          description: 'Respect .kodaignore files when searching',
+        },
+        enableRecursiveFileSearch: {
+          label: 'Enable Recursive File Search',
+          description: 'Enable recursive file search functionality',
+        },
+      },
+      disableAutoUpdate: { label: 'Disable Auto Update', description: 'Disable automatic updates' },
+      selectedAuthType: {
+        label: 'Selected Auth Type',
+        description: 'The currently selected authentication type.',
+      },
+      useExternalAuth: {
+        label: 'Use External Auth',
+        description: 'Whether to use an external authentication flow.',
+      },
+      sandbox: {
+        label: 'Sandbox',
+        description: 'Sandbox execution environment (can be a boolean or a path string).',
+      },
+      coreTools: { label: 'Core Tools', description: 'Paths to core tool definitions.' },
+      excludeTools: {
+        label: 'Exclude Tools',
+        description: 'Tool names to exclude from discovery.',
+      },
+      toolDiscoveryCommand: {
+        label: 'Tool Discovery Command',
+        description: 'Command to run for tool discovery.',
+      },
+      toolCallCommand: {
+        label: 'Tool Call Command',
+        description: 'Command to run for tool calls.',
+      },
+      mcpServerCommand: {
+        label: 'MCP Server Command',
+        description: 'Command to start an MCP server.',
+      },
+      mcpServers: { label: 'MCP Servers', description: 'Configuration for MCP servers.' },
+      allowMCPServers: {
+        label: 'Allow MCP Servers',
+        description: 'A whitelist of MCP servers to allow.',
+      },
+      excludeMCPServers: {
+        label: 'Exclude MCP Servers',
+        description: 'A blacklist of MCP servers to exclude.',
+      },
+      telemetry: { label: 'Telemetry', description: 'Telemetry configuration.' },
+      bugCommand: {
+        label: 'Bug Command',
+        description: 'Configuration for the bug report command.',
+      },
+      summarizeToolOutput: {
+        label: 'Summarize Tool Output',
+        description: 'Settings for summarizing tool output.',
+      },
+      dnsResolutionOrder: {
+        label: 'DNS Resolution Order',
+        description: 'The DNS resolution order.',
+      },
+      excludedProjectEnvVars: {
+        label: 'Excluded Project Environment Variables',
+        description: 'Environment variables to exclude from project context.',
+      },
+      disableUpdateNag: {
+        label: 'Disable Update Nag',
+        description: 'Disable update notification prompts.',
+      },
+      includeDirectories: {
+        label: 'Include Directories',
+        description: 'Additional directories to include in the workspace context.',
+      },
+      loadMemoryFromIncludeDirectories: {
+        label: 'Load Memory From Include Directories',
+        description: 'Whether to load memory files from include directories.',
+      },
+      model: { label: 'Model', description: 'The Koda model to use for conversations.' },
+      hasSeenIdeIntegrationNudge: {
+        label: 'Has Seen IDE Integration Nudge',
+        description: 'Whether the user has seen the IDE integration nudge.',
+      },
+      folderTrustFeature: {
+        label: 'Folder Trust Feature',
+        description: 'Enable folder trust feature for enhanced security.',
+      },
+      folderTrust: {
+        label: 'Folder Trust',
+        description: 'Setting to track whether Folder trust is enabled.',
+      },
+      chatCompression: { label: 'Chat Compression', description: 'Chat compression settings.' },
+      showLineNumbers: {
+        label: 'Show Line Numbers',
+        description: 'Show line numbers in the chat.',
+      },
+      language: { label: 'Language', description: 'The language for the user interface.' },
+    },
+    languageSetting: {
+      selectLanguage: 'Select Language:',
+      english: 'English',
+      russian: 'Russian',
+      pressToSelect: 'Press {key} to select',
+      pressEscToCancel: 'Press ESC to cancel',
+      pressEnterToChange: 'Press Enter to change',
+    },
+    authDialog: {
+      loginWithGithub: 'Login with GitHub',
+      continueWithoutAuth: 'Continue without authentication',
+      getTitle: 'Get started',
+      authQuestion: 'How would you like to authenticate for this project?',
+      useEnterToSelect: '(Use Enter to select)',
+      existingApiKeyDetected: 'Existing API key detected (KODA_API_KEY)',
+      authenticateLater: 'You can authenticate later through the menu.',
+      termsOfService: 'Terms of Services and Privacy Notice for Koda CLI',
+    },
+    authInProgress: {
+      waitingMessage: 'Waiting for auth... (Press ESC or CTRL+C to cancel)',
+      openUrlMessage: 'Open: ',
+      codeMessage: 'Code: ',
+      timeoutMessage: 'Authentication timed out. Please try again.',
+    },
+    contextSummary: {
+      using: 'Using:',
+      openFile: 'open file',
+      openFiles: 'open files',
+      contextFile: 'context file',
+      contextFiles: 'context files',
+      mcpServer: 'MCP server',
+      mcpServers: 'MCP servers',
+      blockedMcpServer: 'Blocked MCP server',
+      blockedMcpServers: 'Blocked MCP servers',
+      viewOpenFiles: 'ctrl+g to view',
+      viewMcp: 'ctrl+t to view',
+      toggleMcp: 'ctrl+t to toggle',
+    },
+    loading: {
+      activity: {
+        processingResponse: 'AI is generating a response...',
+        awaitingUserConfirmation: 'Awaiting your confirmation...',
+        executing: {
+          withDescription: 'Running {tool} - {description}',
+          withoutDescription: 'Running {tool}',
+        },
+        validating: {
+          withDescription: 'Validating {tool} - {description}',
+          withoutDescription: 'Validating {tool}',
+        },
+        scheduled: {
+          withDescription: 'Preparing {tool} - {description}',
+          withoutDescription: 'Preparing {tool}',
+        },
+        awaitingApproval: {
+          withDescription: 'Awaiting confirmation for {tool} - {description}',
+          withoutDescription: 'Awaiting confirmation for {tool}',
+        },
+        success: {
+          withDescription: 'Finished {tool} - {description}',
+          withoutDescription: 'Finished {tool}',
+        },
+        error: {
+          withDescription: 'Error in {tool} - {description}',
+          withoutDescription: 'Error in {tool}',
+        },
+        cancelled: {
+          withDescription: 'Cancelled {tool} - {description}',
+          withoutDescription: 'Cancelled {tool}',
+        },
+        tool: {
+          read_file: {
+            executing: {
+              withDescription: 'Reading file {description}',
+              withoutDescription: 'Reading file',
+            },
+            success: {
+              withDescription: 'Read file {description}',
+              withoutDescription: 'Read file',
+            },
+          },
+          read_many_files: {
+            executing: {
+              withDescription: 'Reading multiple files - {description}',
+              withoutDescription: 'Reading multiple files',
+            },
+            success: {
+              withDescription: 'Read multiple files - {description}',
+              withoutDescription: 'Read multiple files',
+            },
+          },
+          write_file: {
+            awaiting_approval: {
+              withDescription: 'Awaiting confirmation to write file {description}',
+              withoutDescription: 'Awaiting confirmation to write file',
+            },
+            executing: {
+              withDescription: 'Writing file {description}',
+              withoutDescription: 'Writing file',
+            },
+            success: {
+              withDescription: 'Wrote file {description}',
+              withoutDescription: 'Wrote file',
+            },
+          },
+          replace: {
+            awaiting_approval: {
+              withDescription: 'Awaiting confirmation to update {description}',
+              withoutDescription: 'Awaiting confirmation to update file',
+            },
+            executing: {
+              withDescription: 'Updating {description}',
+              withoutDescription: 'Updating file',
+            },
+            success: {
+              withDescription: 'Updated {description}',
+              withoutDescription: 'Updated file',
+            },
+          },
+          edit: {
+            awaiting_approval: {
+              withDescription: 'Awaiting confirmation to edit {description}',
+              withoutDescription: 'Awaiting confirmation to edit file',
+            },
+            executing: {
+              withDescription: 'Editing {description}',
+              withoutDescription: 'Editing file',
+            },
+            success: { withDescription: 'Edited {description}', withoutDescription: 'Edited file' },
+          },
+        },
+      },
+      cancelAndTimer: '(esc to cancel, {time})',
+    },
+    commandDescriptions: {
+      auth: 'Change the auth method',
+      about: 'Show version info',
+      chat: 'Manage conversation history',
+      chatList: 'List saved conversation checkpoints',
+      chatSave: 'Save the current conversation as a checkpoint. Usage: /chat save <tag>',
+      chatResume: 'Resume a conversation checkpoint. Usage: /chat resume <tag>',
+      chatDelete: 'Delete a conversation checkpoint. Usage: /chat delete <tag>',
+      clear: 'Clear the screen and conversation history',
+      compress: 'Compresses the context by replacing it with a summary',
+      alreadyCompressing: 'Already compressing, wait for previous request to complete',
+      copy: 'Copy the last result or code snippet to clipboard',
+      corgi: 'Toggles corgi mode',
+      directory: 'Manage workspace directories',
+      directoryAdd: 'Add directories to the workspace. Use comma to separate multiple paths',
+      directoryShow: 'Show all directories in the workspace',
+      docs: 'Open documentation in browser',
+      editor: 'Set external editor preference',
+      extensions: 'List active extensions',
+      help: 'For help on koda-cli',
+      ide: 'Manage IDE integration',
+      ideStatus: 'Check status of IDE integration',
+      ideInstall: 'Install required IDE companion for {ideName}',
+      ideEnable: 'Enable IDE integration',
+      ideDisable: 'Disable IDE integration',
+      init: 'Analyzes the project and creates a tailored KODA.md file',
+      memory: 'Commands for interacting with memory',
+      memoryShow: 'Show the current memory contents',
+      memoryAdd: 'Add content to the memory',
+      memoryRefresh: 'Refresh the memory from the source',
+      mcp: 'List configured MCP servers and tools',
+      mcpAuth: 'Authenticate with an OAuth-enabled MCP server',
+      mcpRefresh: 'Refresh the list of MCP servers and tools',
+      mcpConfigNotLoaded: 'Config not loaded.',
+      mcpToolRegistryError: 'Could not retrieve tool registry.',
+      mcpNoServersConfigured: 'No MCP servers configured.',
+      mcpServersStarting: 'MCP servers are starting up ({count} initializing)...',
+      mcpServersStartingNote:
+        'Note: First startup may take longer. Tool availability will update automatically.',
+      mcpConfiguredServersTitle: 'Configured MCP servers:',
+      mcpStatusStarting: 'Starting... (first startup may take longer)',
+      mcpStatusDisconnected: 'Disconnected',
+      mcpStatusReady: 'Ready',
+      mcpAuthExpired: '(OAuth token expired)',
+      mcpAuthAuthenticated: '(OAuth authenticated)',
+      mcpAuthNotAuthenticated: '(OAuth not authenticated)',
+      mcpToolSingular: 'tool',
+      mcpToolPlural: 'tools',
+      mcpPromptSingular: 'prompt',
+      mcpPromptPlural: 'prompts',
+      mcpZeroTools: '(0 tools)',
+      mcpToolsLoading: '(tools and prompts will appear when ready)',
+      mcpToolsCached: '({count} tools cached)',
+      mcpToolsTitle: 'Tools:',
+      mcpParametersTitle: 'Parameters:',
+      mcpPromptsTitle: 'Prompts:',
+      mcpNoToolsOrPrompts: 'No tools or prompts available',
+      mcpNoToolsAvailable: 'No tools available',
+      mcpAuthHint: '(type: "/mcp auth {serverName}" to authenticate this server)',
+      mcpStatusBlocked: 'Blocked',
+      mcpTipsTitle: '\u{1F4A1} Tips:',
+      mcpTipsDesc: '  \u2022 Use {command} to show server and tool descriptions',
+      mcpTipsSchema: '  \u2022 Use {command} to show tool parameter schemas',
+      mcpTipsNoDesc: '  \u2022 Use {command} to hide descriptions',
+      mcpTipsAuth: '  \u2022 Use {command} to authenticate with OAuth-enabled servers',
+      mcpTipsToggle: '  \u2022 Press {command} to toggle tool descriptions on/off',
+      mcpNoOauthServers: 'No MCP servers configured with OAuth authentication.',
+      mcpOAuthServersList: `MCP servers with OAuth authentication:
+{serverList}
+
+Use /mcp auth <server-name> to authenticate.`,
+      mcpServerNotFound: "MCP server '{serverName}' not found.",
+      mcpAuthStarting: "Starting OAuth authentication for MCP server '{serverName}'...",
+      mcpAuthSuccess: "\u2705 Successfully authenticated with MCP server '{serverName}'!",
+      mcpAuthRediscovering: "Re-discovering tools from '{serverName}'...",
+      mcpAuthRefreshSuccess: "Successfully authenticated and refreshed tools for '{serverName}'.",
+      mcpAuthFailure: "Failed to authenticate with MCP server '{serverName}': {error}",
+      mcpRefreshing: 'Refreshing MCP servers and tools...',
+      privacy: 'Display the privacy notice',
+      quit: 'Exit the cli',
+      restore: 'Restore a previous version of a file. Usage: /restore <file_path>',
+      restoreCommand: {
+        noCheckpointDir: 'Could not determine the .kodacli directory path.',
+        noRestorableCalls: 'No restorable tool calls found.',
+        availableCalls: 'Available tool calls to restore:\\n\\n{fileList}',
+        fileNotFound: 'File not found: {fileName}',
+        loadHistoryNotAvailable: 'loadHistory function is not available.',
+        projectRestored: 'Restored project to the state before the tool call.',
+        readError: 'Could not read restorable tool calls. This is the error: {error}',
+      },
+      settings: 'View and edit Koda CLI settings',
+      setupGithub: 'Set up GitHub Actions',
+      stats: 'Check session stats. Usage: /stats [model|tools]',
+      statsModel: 'Show model-specific usage statistics',
+      statsTools: 'Show tool-specific usage statistics',
+      theme: 'Change the theme',
+      tools: 'List available Koda CLI tools',
+      vim: 'Toggle vim mode on/off',
+      model: 'Select model',
+      terminalSetup: 'Set up terminal integration',
+      bug: 'Report a bug or issue',
+    },
+    bugCommand: {
+      browserInstruction: `Opening bug report in your default browser...
+`,
+      bugReportDetails: 'Bug Report Details:',
+      openUrlError: 'Could not open URL in browser: ',
+      telegramCommunity: 'Telegram Community:',
+    },
+    commandPrompts: {
+      init: `
+You are an AI agent that brings the power of Koda directly into the terminal. Your task is to analyze the current directory and generate a comprehensive KODA.md file to be used as instructional context for future interactions.
+
+**Analysis Process:**
+
+1.  **Initial Exploration:**
+    *   Start by listing the files and directories to get a high-level overview of the structure.
+    *   Read the README file (e.g., \`README.md\`, \`README.txt\`) if it exists. This is often the best place to start.
+
+2.  **Iterative Deep Dive (up to 10 files):**
+    *   Based on your initial findings, select a few files that seem most important (e.g., configuration files, main source files, documentation).
+    *   Read them. As you learn more, refine your understanding and decide which files to read next. You don't need to decide all 10 files at once. Let your discoveries guide your exploration.
+
+3.  **Identify Project Type:**
+    *   **Code Project:** Look for clues like \`package.json\`, \`requirements.txt\`, \`pom.xml\`, \`go.mod\`, \`Cargo.toml\`, \`build.gradle\`, or a \`src\` directory. If you find them, this is likely a software project.
+    *   **Non-Code Project:** If you don't find code-related files, this might be a directory for documentation, research papers, notes, or something else.
+
+**KODA.md Content Generation:**
+
+**For a Code Project:**
+
+*   **Project Overview:** Write a clear and concise summary of the project's purpose, main technologies, and architecture.
+*   **Building and Running:** Document the key commands for building, running, and testing the project. Infer these from the files you've read (e.g., \`scripts\` in \`package.json\`, \`Makefile\`, etc.). If you can't find explicit commands, provide a placeholder with a TODO.
+*   **Development Conventions:** Describe any coding styles, testing practices, or contribution guidelines you can infer from the codebase.
+
+**For a Non-Code Project:**
+
+*   **Directory Overview:** Describe the purpose and contents of the directory. What is it for? What kind of information does it hold?
+*   **Key Files:** List the most important files and briefly explain what they contain.
+*   **Usage:** Explain how the contents of this directory are intended to be used.
+
+**Final Output:**
+
+Write the complete content to the \`KODA.md\` file. The output must be well-formatted Markdown.
+`,
+    },
+    toolDescriptions: {
+      search_file_content:
+        'Searches for a regular expression pattern within the content of files in a specified directory (or current working directory). Can filter files by a glob pattern. Returns the lines containing matches, along with their file paths and line numbers.',
+      list_directory:
+        'Lists the names of files and subdirectories directly within a specified directory path. Can optionally ignore entries matching provided glob patterns.',
+      glob: 'Efficiently finds files matching specific glob patterns (e.g., `src/**/*.ts`, `**/*.md`), returning absolute paths sorted by modification time (newest first). Ideal for quickly locating files based on their name or path structure, especially in large codebases.',
+      google_web_search:
+        'Performs a web search using the Serper-backed API and returns the top organic results.',
+      save_memory: `Saves a specific piece of information or fact to your long-term memory.
+
+Use this tool:
+
+- When the user explicitly asks you to remember something (e.g., "Remember that I like pineapple on pizza", "Please save this: my cat's name is Whiskers").
+- When the user states a clear, concise fact about themselves, their preferences, or their environment that seems important for you to retain for future interactions to provide a more personalized and effective assistance.
+
+Do NOT use this tool:
+
+- To remember conversational context that is only relevant for the current session.
+- To save long, complex, or rambling pieces of text. The fact should be relatively short and to the point.
+- If you are unsure whether the information is a fact worth remembering long-term. If in doubt, you can ask the user, "Should I remember that for you?"
+
+## Parameters
+
+- \`fact\` (string, required): The specific fact or piece of information to remember. This should be a clear, self-contained statement. For example, if the user says "My favorite color is blue", the fact would be "My favorite color is blue".`,
+      run_shell_command:
+        'This tool executes a given shell command as `bash -c <command>`. Command can start background processes using `&`. Command is executed as a subprocess that leads its own process group. Command process group can be terminated as `kill -- -PGID` or signaled as `kill -s SIGNAL -- -PGID`.\n\n      The following information is returned:\n\n      Command: Executed command.\n      Directory: Directory (relative to project root) where command was executed, or `(root)`.\n      Stdout: Output on stdout stream. Can be `(empty)` or partial on error and for any unwaited background processes.\n      Stderr: Output on stderr stream. Can be `(empty)` or partial on error and for any unwaited background processes.',
+    },
+    tips: {
+      title: 'Tips for getting started:',
+      tip1: '1. Ask questions, edit files, or run commands',
+      tip2: '2. Be specific for the best results',
+      tip3: '3. Create {fileName} files to customize your interactions with Koda',
+      tip4: '4. {command} for more information',
+      tip3noFile: '3. {command} for more information',
+    },
+    startupWarnings: {
+      homeDirectory: {
+        message:
+          'You are running Koda CLI in your home directory. It is recommended to run in a project-specific directory.',
+      },
+      rootDirectory: {
+        message:
+          'Warning: You are running Koda CLI in the root directory. Your entire folder structure will be used for context. It is strongly recommended to run in a project-specific directory.',
+      },
+      fileSystemError: {
+        message: 'Could not verify the current directory due to a file system error.',
+      },
+    },
+    app: {
+      context: { contextLeft: '{percentLeft}% context left' },
+      toolConfirmation: {
+        modifyInProgress: 'Modify in progress: ',
+        saveAndCloseExternalEditor: 'Save and close external editor to continue',
+        applyThisChange: 'Apply this change?',
+        yesAllowOnce: 'Yes, allow once',
+        yesAllowAlways: 'Yes, allow always',
+        noEsc: 'No (esc)',
+        modifyWithExternalEditor: 'Modify with external editor',
+        noSuggestChanges: 'No, suggest changes (esc)',
+        allowExecutionOf: "Allow execution of: '{command}'?",
+        doYouWantToProceed: 'Do you want to proceed?',
+        urlsToFetch: 'URLs to fetch:',
+        allowExecutionOfMcpTool:
+          'Allow execution of MCP tool "{toolName}" from server "{serverName}"?',
+        yesAlwaysAllowToolFromServer:
+          'Yes, always allow tool "{toolName}" from server "{serverName}"',
+        yesAlwaysAllowAllToolsFromServer: 'Yes, always allow all tools from server "{serverName}"',
+      },
+      requestCancelled: 'Request cancelled.',
+      docs: { seeDocs: 'see /docs' },
+      settings: {
+        title: 'Settings',
+        applyTo: 'Apply To',
+        enterSelectTabFocus: '(Use Enter to select, Tab to change focus)',
+        restartRequired:
+          'To see changes, Koda CLI must be restarted. Press r to exit and apply changes now.',
+      },
+      memory: {
+        refreshing: 'Refreshing hierarchical memory (KODA.md or other context files)...',
+        refreshSuccess:
+          'Memory refreshed successfully. Loaded {charCount} characters from {fileCount} file(s).',
+        refreshSuccessEmpty: 'Memory refreshed successfully. No memory content found.',
+        refreshError: 'Error refreshing memory: {error}',
+        empty: 'Memory is currently empty.',
+        usage: 'Usage: /memory add <text to remember>',
+        saving: 'Attempting to save to memory: "{text}"',
+        refreshingFromSourceFiles: 'Refreshing memory from source files...',
+        refreshSuccessFromSourceFiles:
+          'Memory refreshed successfully. Loaded {characters} characters from {files} file(s).',
+        showContent:
+          'Current memory content from {fileCount} file(s):\\n\\n---\\n{memoryContent}\\n---',
+        save: 'Save Memory',
+        saveSuccess: `Okay, I've remembered that: "{fact}"`,
+        saveModifiedSuccess: "Okay, I've updated the memory file with your modifications.",
+        saveError: 'Error saving memory: {error}',
+        validationNonEmpty: 'Parameter "fact" must be a non-empty string.',
+      },
+      flashFallback: {
+        proQuotaExceeded: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+\u26A1 Use /auth to configure another access token if you prefer a different model.`,
+        freeQuotaExceeded: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+\u26A1 Use /auth to configure another access token if you prefer a different model.`,
+        proGenericQuota: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+\u26A1 Use /auth to configure another access token if you prefer a different model.`,
+        freeGenericQuota: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+\u26A1 Use /auth to configure another access token if you prefer a different model.`,
+        proDefault: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+\u26A1 Use /auth to configure another access token if you prefer a different model.`,
+        freeDefault: `\u26A1 Switching from {currentModel} to {fallbackModel} for the remainder of this session because the current model is temporarily unavailable.
+\u26A1 Use /auth to configure another access token if you prefer a different model.`,
+      },
+      trial: {
+        footerLabel: 'trial requests {used}{limitPart}',
+        limitReached: `\u26A1 You have used all available Koda trial requests.
+\u26A1 Further requests are paused until the trial resets.
+\u26A1 Configure permanent access with /auth or visit https://kodacode.ru .`,
+      },
+      auth: {
+        reauthRequired: 'Reauthentication required',
+        timeout: 'Authentication timed out. Please try again.',
+      },
+      prompts: {
+        pressCtrlCAgain: 'Press Ctrl+C again to exit.',
+        pressCtrlDAgain: 'Press Ctrl+D again to exit.',
+        pressEscAgain: 'Press Esc again to clear.',
+      },
+      placeholders: {
+        vim: "  Press 'i' for INSERT mode and 'Esc' for NORMAL mode.",
+        default: '  Type your message or @path/to/file',
+      },
+      confirmation: { yes: 'Yes', no: 'No' },
+      compression: {
+        compressing: 'Compressing chat history',
+        compressed: 'Chat history compressed from {original} to {new} tokens.',
+      },
+      chat: {
+        noCheckpoints: 'No saved conversation checkpoints found.',
+        listTitle: 'List of saved conversations:',
+        savedOn: 'saved on',
+        noteNewestLast: 'Note: Newest last, oldest first',
+        missingTag: 'Missing tag. Usage: /chat save <tag>',
+        conversationSaved: 'Conversation checkpoint saved with tag: {tag}.',
+        noConversation: 'No conversation found to save.',
+        noCheckpoint: 'No saved checkpoint found with tag: {tag}.',
+        overwritePrompt:
+          'A checkpoint with the tag {tag} already exists. Do you want to overwrite it?',
+      },
+      copy: {
+        noOutput: 'No output in history',
+        copied: 'Last output copied to the clipboard',
+        failed: 'Failed to copy to the clipboard.',
+        noText: 'Last AI output contains no text to copy.',
+      },
+      directory: {
+        configNotAvailable: 'Configuration is not available.',
+        providePath: 'Please provide at least one path to add.',
+        notSupported:
+          'The /directory add command is not supported in restrictive sandbox profiles. Please use --include-directories when starting the session instead.',
+        successfullyAddedFiles: `Successfully added KODA.md files from the following directories if there are:
+- {directories}`,
+        successfullyAdded: `Successfully added directories:
+- {directories}`,
+        currentDirectories: `Current workspace directories:
+{directories}`,
+      },
+      tools: {
+        noRegistry: 'Could not retrieve tool registry.',
+        available: `Available Koda CLI tools:
+
+`,
+        noTools: `  No tools available
+`,
+      },
+      editorSettings: {
+        title: 'Select Editor',
+        applyTo: 'Apply To',
+        enterSelectTabFocus: '(Use Enter to select, Tab to change focus)',
+        supportedEditors:
+          'These editors are currently supported. Please note that some editors cannot be used in sandbox mode.',
+        preferredEditor: 'Your preferred editor is: ',
+        none: 'None',
+      },
+      theme: {
+        title: 'Select Theme',
+        applyTo: 'Apply To',
+        preview: 'Preview',
+        enterSelectTabFocus: '(Use Enter to select, Tab to change focus)',
+      },
+      stats: {
+        modelStats: 'Model Stats For Nerds',
+        toolStats: 'Tool Stats For Nerds',
+        metric: 'Metric',
+        api: 'API',
+        requests: 'Requests',
+        errors: 'Errors',
+        avgLatency: 'Avg Latency',
+        tokens: 'Tokens',
+        total: 'Total',
+        prompt: 'Prompt',
+        cached: 'Cached',
+        thoughts: 'Thoughts',
+        tool: 'Tool',
+        toolName: 'Tool Name',
+        output: 'Output',
+        calls: 'Calls',
+        successRate: 'Success Rate',
+        avgDuration: 'Avg Duration',
+        userDecisionSummary: 'User Decision Summary',
+        totalReviewed: 'Total Reviewed Suggestions',
+        accepted: 'Accepted',
+        rejected: 'Rejected',
+        modified: 'Modified',
+        overallAgreementRate: 'Overall Agreement Rate',
+        noApiCalls: 'No API calls have been made in this session.',
+        noToolCalls: 'No tool calls have been made in this session.',
+      },
+      about: {
+        title: 'About Koda CLI',
+        cliVersion: 'CLI Version',
+        gitCommit: 'Git Commit',
+        model: 'Model',
+        sandbox: 'Sandbox',
+        os: 'OS',
+        authMethod: 'Auth Method',
+        gcpProject: 'GCP Project',
+      },
+      init: {
+        error: 'Initialization Error: {error}',
+        checkConfig: 'Please check API key and configuration.',
+      },
+      extensions: { noActive: 'No active extensions.', activeTitle: 'Active extensions:' },
+    },
+  },
+  ADn = {
+    help: {
+      basics: '\u041E\u0441\u043D\u043E\u0432\u044B:',
+      addContext:
+        '\u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430',
+      addContextDescription:
+        '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {at}, \u0447\u0442\u043E\u0431\u044B \u0443\u043A\u0430\u0437\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B \u0434\u043B\u044F \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, {example}), \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u043D\u044B\u0435 \u0444\u0430\u0439\u043B\u044B \u0438\u043B\u0438 \u043F\u0430\u043F\u043A\u0438',
+      shellMode: '\u0420\u0435\u0436\u0438\u043C \u043E\u0431\u043E\u043B\u043E\u0447\u043A\u0438',
+      shellModeDescription:
+        '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u0439\u0442\u0435 \u043A\u043E\u043C\u0430\u043D\u0434\u044B \u043E\u0431\u043E\u043B\u043E\u0447\u043A\u0438 \u0447\u0435\u0440\u0435\u0437 {exclamation} (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, {example}) \u0438\u043B\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0435\u0441\u0442\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439 \u044F\u0437\u044B\u043A (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, {naturalLanguage})',
+      shellModeNaturalLanguageExample:
+        '\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C \u0441\u0435\u0440\u0432\u0435\u0440',
+      commands: '\u041A\u043E\u043C\u0430\u043D\u0434\u044B:',
+      shellCommand:
+        '\u043A\u043E\u043C\u0430\u043D\u0434\u0430 \u043E\u0431\u043E\u043B\u043E\u0447\u043A\u0438',
+      shortcuts:
+        '\u0413\u043E\u0440\u044F\u0447\u0438\u0435 \u043A\u043B\u0430\u0432\u0438\u0448\u0438:',
+      jumpWords:
+        '\u041F\u0435\u0440\u0435\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \u043F\u043E \u0441\u043B\u043E\u0432\u0430\u043C \u0432\u043E \u0432\u0432\u043E\u0434\u0438\u043C\u043E\u043C \u0442\u0435\u043A\u0441\u0442\u0435',
+      quitApp:
+        '\u0412\u044B\u0439\u0442\u0438 \u0438\u0437 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F',
+      newLine: '\u041D\u043E\u0432\u0430\u044F \u0441\u0442\u0440\u043E\u043A\u0430',
+      newLineLinux:
+        '\u041D\u043E\u0432\u0430\u044F \u0441\u0442\u0440\u043E\u043A\u0430 (Alt+Enter \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0432 \u043D\u0435\u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u0434\u0438\u0441\u0442\u0440\u0438\u0431\u0443\u0442\u0438\u0432\u0430\u0445 Linux)',
+      clearScreen:
+        '\u041E\u0447\u0438\u0441\u0442\u0438\u0442\u044C \u044D\u043A\u0440\u0430\u043D',
+      openEditor:
+        '\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0432\u0432\u043E\u0434 \u0432\u043E \u0432\u043D\u0435\u0448\u043D\u0435\u043C \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0435',
+      toggleYolo:
+        '\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u0436\u0438\u043C YOLO',
+      sendMessage:
+        '\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435',
+      cancelOperation:
+        '\u041E\u0442\u043C\u0435\u043D\u0438\u0442\u044C \u043E\u043F\u0435\u0440\u0430\u0446\u0438\u044E',
+      autoAcceptEdits:
+        '\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u043F\u0440\u0438\u043C\u0435\u043D\u0435\u043D\u0438\u0435 \u043F\u0440\u0430\u0432\u043E\u043A',
+      cycleHistory:
+        '\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435 \u043F\u043E \u0438\u0441\u0442\u043E\u0440\u0438\u0438 \u0437\u0430\u043F\u0440\u043E\u0441\u043E\u0432',
+      fullList:
+        '\u041F\u043E\u043B\u043D\u044B\u0439 \u0441\u043F\u0438\u0441\u043E\u043A \u0433\u043E\u0440\u044F\u0447\u0438\u0445 \u043A\u043B\u0430\u0432\u0438\u0448 \u0441\u043C\u043E\u0442\u0440\u0438\u0442\u0435 \u0432 {file}',
+    },
+    commandMessages: {
+      docs: {
+        openingInBrowser:
+          '\u041E\u0442\u043A\u0440\u044B\u0442\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u0438 \u0432 \u0432\u0430\u0448\u0435\u043C \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435: {url}',
+        openInBrowserMessage: `\u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u043E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 URL-\u0430\u0434\u0440\u0435\u0441 \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435 \u0434\u043B\u044F \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u0438:
+{url}
+
+\u0415\u0441\u043B\u0438 \u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u043D\u0435 \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438, \u0441\u043A\u043E\u043F\u0438\u0440\u0443\u0439\u0442\u0435 \u0438 \u0432\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u044D\u0442\u0443 \u0441\u0441\u044B\u043B\u043A\u0443 \u0434\u043B\u044F \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u043A \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u0438: {url}`,
+      },
+      init: {
+        configNotAvailable:
+          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.',
+        fileAlreadyExists:
+          '\u0424\u0430\u0439\u043B KODA.md \u0443\u0436\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442 \u0432 \u044D\u0442\u043E\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438. \u0418\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u043D\u0435 \u0432\u043D\u0435\u0441\u0435\u043D\u044B.',
+        fileCreated:
+          '\u041F\u0443\u0441\u0442\u043E\u0439 \u0444\u0430\u0439\u043B KODA.md \u0441\u043E\u0437\u0434\u0430\u043D. \u0412\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442\u0441\u044F \u0430\u043D\u0430\u043B\u0438\u0437 \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0434\u043B\u044F \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u044F.',
+      },
+      ide: {
+        notSupported:
+          '\u0418\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044F \u0441 IDE \u043D\u0435 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u0432 \u0432\u0430\u0448\u0435\u0439 \u0442\u0435\u043A\u0443\u0449\u0435\u0439 \u0441\u0440\u0435\u0434\u0435. \u0427\u0442\u043E\u0431\u044B \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u044D\u0442\u0443 \u0444\u0443\u043D\u043A\u0446\u0438\u044E, \u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 Koda CLI \u0432 \u043E\u0434\u043D\u043E\u0439 \u0438\u0437 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u043C\u044B\u0445 IDE: {supportedList}',
+        noInstaller:
+          "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0433\u043E \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0449\u0438\u043A\u0430 \u0434\u043B\u044F {ideName}. \u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0435 \u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u0435 '{extensionName}' \u0432\u0440\u0443\u0447\u043D\u0443\u044E \u0438\u0437 \u043C\u0430\u0440\u043A\u0435\u0442\u0430.",
+        installing:
+          '\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0430 \u043A\u043E\u043C\u043F\u0430\u043D\u044C\u043E\u043D\u0430 IDE...',
+        connected: '\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043E \u043A {ideName}',
+        connecting: '\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435...',
+        disconnected: '\u041E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u043E',
+        disconnectedWithDetails:
+          '\u041E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u043E: {details}',
+        openFilesTitle:
+          '\u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0435 \u0444\u0430\u0439\u043B\u044B:',
+        fileLimitNote:
+          '(\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435: \u0441\u043F\u0438\u0441\u043E\u043A \u0444\u0430\u0439\u043B\u043E\u0432 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E\u043C \u043D\u0435\u0434\u0430\u0432\u043D\u043E \u043E\u0442\u043A\u0440\u044B\u0442\u044B\u0445 \u0444\u0430\u0439\u043B\u043E\u0432 \u0432 \u0432\u0430\u0448\u0435\u0439 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438 \u0438 \u0432\u043A\u043B\u044E\u0447\u0430\u0435\u0442 \u0442\u043E\u043B\u044C\u043A\u043E \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0435 \u0444\u0430\u0439\u043B\u044B \u043D\u0430 \u0434\u0438\u0441\u043A\u0435)',
+        openingBrowser:
+          '\u041E\u0442\u043A\u0440\u044B\u0432\u0430\u044E \u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u0434\u043B\u044F \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0438 \u043A\u043E\u043C\u043F\u0430\u043D\u044C\u043E\u043D\u0430 IDE: {url}',
+        browserOpened:
+          '\u0411\u0440\u0430\u0443\u0437\u0435\u0440 \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043E\u0442\u043A\u0440\u044B\u0442. \u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0441\u043B\u0435\u0434\u0443\u0439\u0442\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u044F\u043C \u043F\u043E \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u0435 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435.',
+        openUrlError:
+          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u044C URL \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435: ',
+      },
+      vim: {
+        enteredMode:
+          '\u0412\u043E\u0448\u043B\u0438 \u0432 \u0440\u0435\u0436\u0438\u043C Vim. \u0412\u044B\u043F\u043E\u043B\u043D\u0438\u0442\u0435 /vim \u0441\u043D\u043E\u0432\u0430 \u0434\u043B\u044F \u0432\u044B\u0445\u043E\u0434\u0430.',
+        exitedMode:
+          '\u0412\u044B\u0448\u043B\u0438 \u0438\u0437 \u0440\u0435\u0436\u0438\u043C\u0430 Vim.',
+      },
+    },
+    statsDisplay: {
+      sessionStats:
+        '\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u0441\u0435\u0441\u0441\u0438\u0438',
+      interactionSummary:
+        '\u0421\u0432\u043E\u0434\u043A\u0430 \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F',
+      sessionId: 'ID \u0441\u0435\u0441\u0441\u0438\u0438:',
+      toolCalls:
+        '\u0412\u044B\u0437\u043E\u0432\u044B \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432:',
+      successRate: '\u0423\u0441\u043F\u0435\u0448\u043D\u043E\u0441\u0442\u044C:',
+      userAgreement:
+        '\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F:',
+      userAgreementReviewed: '({count} \u043E\u0446\u0435\u043D\u0435\u043D\u043E)',
+      performance:
+        '\u041F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C',
+      wallTime: '\u041E\u0431\u0449\u0435\u0435 \u0432\u0440\u0435\u043C\u044F:',
+      agentActive:
+        '\u0410\u043A\u0442\u0438\u0432\u043D\u043E\u0441\u0442\u044C \u0430\u0433\u0435\u043D\u0442\u0430:',
+      apiTime: 'API-\u0432\u0440\u0435\u043C\u044F:',
+      toolTime:
+        '\u0412\u0440\u0435\u043C\u044F \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432:',
+      modelUsage:
+        '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435 \u043C\u043E\u0434\u0435\u043B\u0435\u0439',
+      requests: '\u0417\u0430\u043F\u0440\u043E\u0441\u044B',
+      inputTokens:
+        '\u0412\u0445\u043E\u0434\u043D\u044B\u0435 \u0442\u043E\u043A\u0435\u043D\u044B',
+      outputTokens:
+        '\u0412\u044B\u0445\u043E\u0434\u043D\u044B\u0435 \u0442\u043E\u043A\u0435\u043D\u044B',
+      savingsHighlight: '\u042D\u043A\u043E\u043D\u043E\u043C\u0438\u044F:',
+      savingsDetail:
+        '{tokens} ({percent}%) \u0432\u0445\u043E\u0434\u043D\u044B\u0445 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u0431\u044B\u043B\u0438 \u043E\u0431\u0441\u043B\u0443\u0436\u0435\u043D\u044B \u0438\u0437 \u043A\u044D\u0448\u0430, \u0441\u043D\u0438\u0436\u0430\u044F \u0437\u0430\u0442\u0440\u0430\u0442\u044B.',
+      tipFullStats:
+        '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430: \u041F\u043E\u043B\u043D\u0443\u044E \u0440\u0430\u0437\u0431\u0438\u0432\u043A\u0443 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u043C\u043E\u0436\u043D\u043E \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u043A\u043E\u043C\u0430\u043D\u0434\u043E\u0439 {command}.',
+    },
+    sessionSummary: {
+      poweringDown:
+        '\u0410\u0433\u0435\u043D\u0442 \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442 \u0440\u0430\u0431\u043E\u0442\u0443. \u0414\u043E \u0441\u0432\u0438\u0434\u0430\u043D\u0438\u044F!',
+    },
+    settings: {
+      theme: {
+        label: '\u0422\u0435\u043C\u0430',
+        description:
+          '\u0426\u0432\u0435\u0442\u043E\u0432\u0430\u044F \u0442\u0435\u043C\u0430 \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430.',
+      },
+      customThemes: {
+        label:
+          '\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0435 \u0442\u0435\u043C\u044B',
+        description:
+          '\u041E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0445 \u0442\u0435\u043C.',
+      },
+      hideWindowTitle: {
+        label:
+          '\u0421\u043A\u0440\u044B\u0442\u044C \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u043E\u043A\u043D\u0430',
+        description:
+          '\u0421\u043A\u0440\u044B\u0442\u044C \u0441\u0442\u0440\u043E\u043A\u0443 \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043A\u0430 \u043E\u043A\u043D\u0430',
+      },
+      hideTips: {
+        label:
+          '\u0421\u043A\u0440\u044B\u0442\u044C \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438',
+        description:
+          '\u0421\u043A\u0440\u044B\u0442\u044C \u043F\u043E\u043B\u0435\u0437\u043D\u044B\u0435 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438 \u0432 \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0435',
+      },
+      hideBanner: {
+        label: '\u0421\u043A\u0440\u044B\u0442\u044C \u0431\u0430\u043D\u043D\u0435\u0440',
+        description:
+          '\u0421\u043A\u0440\u044B\u0442\u044C \u0431\u0430\u043D\u043D\u0435\u0440 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F',
+      },
+      showMemoryUsage: {
+        label:
+          '\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435 \u043F\u0430\u043C\u044F\u0442\u0438',
+        description:
+          '\u041E\u0442\u043E\u0431\u0440\u0430\u0436\u0430\u0442\u044C \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044E \u043E\u0431 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0438 \u043F\u0430\u043C\u044F\u0442\u0438 \u0432 \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0435',
+      },
+      usageStatisticsEnabled: {
+        label:
+          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0443 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F',
+        description:
+          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0431\u043E\u0440 \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F',
+      },
+      autoConfigureMaxOldSpaceSize: {
+        label:
+          '\u0410\u0432\u0442\u043E\u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430 Max Old Space Size',
+        description:
+          '\u0410\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0442\u044C \u043B\u0438\u043C\u0438\u0442\u044B \u043F\u0430\u043C\u044F\u0442\u0438 Node.js',
+      },
+      preferredEditor: {
+        label:
+          '\u041F\u0440\u0435\u0434\u043F\u043E\u0447\u0438\u0442\u0430\u0435\u043C\u044B\u0439 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440',
+        description:
+          '\u041F\u0440\u0435\u0434\u043F\u043E\u0447\u0438\u0442\u0430\u0435\u043C\u044B\u0439 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440 \u0434\u043B\u044F \u043E\u0442\u043A\u0440\u044B\u0442\u0438\u044F \u0444\u0430\u0439\u043B\u043E\u0432.',
+      },
+      maxSessionTurns: {
+        label:
+          '\u041C\u0430\u043A\u0441. \u0447\u0438\u0441\u043B\u043E \u0445\u043E\u0434\u043E\u0432 \u0441\u0435\u0441\u0441\u0438\u0438',
+        description:
+          '\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435 \u0447\u0438\u0441\u043B\u043E \u0445\u043E\u0434\u043E\u0432 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F/\u043C\u043E\u0434\u0435\u043B\u0438/\u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432, \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u043C\u044B\u0445 \u0432 \u0441\u0435\u0441\u0441\u0438\u0438.',
+      },
+      memoryImportFormat: {
+        label:
+          '\u0424\u043E\u0440\u043C\u0430\u0442 \u0438\u043C\u043F\u043E\u0440\u0442\u0430 \u043F\u0430\u043C\u044F\u0442\u0438',
+        description:
+          '\u0424\u043E\u0440\u043C\u0430\u0442, \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u043C\u044B\u0439 \u043F\u0440\u0438 \u0438\u043C\u043F\u043E\u0440\u0442\u0435 \u043F\u0430\u043C\u044F\u0442\u0438.',
+      },
+      memoryDiscoveryMaxDirs: {
+        label:
+          '\u041C\u0430\u043A\u0441. \u0447\u0438\u0441\u043B\u043E \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439 \u0434\u043B\u044F \u043F\u043E\u0438\u0441\u043A\u0430 \u043F\u0430\u043C\u044F\u0442\u0438',
+        description:
+          '\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u043E\u0435 \u0447\u0438\u0441\u043B\u043E \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439 \u0434\u043B\u044F \u043F\u043E\u0438\u0441\u043A\u0430 \u043F\u0430\u043C\u044F\u0442\u0438.',
+      },
+      contextFileName: {
+        label:
+          '\u0418\u043C\u044F \u0444\u0430\u0439\u043B\u0430 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430',
+        description:
+          '\u0418\u043C\u044F \u0444\u0430\u0439\u043B\u0430 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430.',
+      },
+      vimMode: {
+        label: '\u0420\u0435\u0436\u0438\u043C Vim',
+        description:
+          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0430\u0441\u043A\u043B\u0430\u0434\u043A\u0443 \u043A\u043B\u0430\u0432\u0438\u0448 Vim',
+      },
+      ideMode: {
+        label: '\u0420\u0435\u0436\u0438\u043C IDE',
+        description:
+          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u0436\u0438\u043C \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438 \u0441 IDE',
+      },
+      accessibility: {
+        label:
+          '\u0421\u043F\u0435\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0435 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438',
+        description:
+          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0441\u043F\u0435\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0445 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0435\u0439.',
+        disableLoadingPhrases: {
+          label:
+            '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0440\u0430\u0437\u044B \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438',
+          description:
+            '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0440\u0430\u0437\u044B \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438 \u0434\u043B\u044F \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0441\u0442\u0438',
+        },
+      },
+      checkpointing: {
+        label:
+          '\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0435 \u0442\u043E\u0447\u043A\u0438',
+        description:
+          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0445 \u0442\u043E\u0447\u0435\u043A \u0441\u0435\u0441\u0441\u0438\u0438.',
+        enabled: {
+          label:
+            '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0435 \u0442\u043E\u0447\u043A\u0438',
+          description:
+            '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0435 \u0442\u043E\u0447\u043A\u0438 \u0441\u0435\u0441\u0441\u0438\u0438 \u0434\u043B\u044F \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F',
+        },
+      },
+      fileFiltering: {
+        label:
+          '\u0424\u0438\u043B\u044C\u0442\u0440\u0430\u0446\u0438\u044F \u0444\u0430\u0439\u043B\u043E\u0432',
+        description:
+          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0444\u0438\u043B\u044C\u0442\u0440\u0430\u0446\u0438\u0438 \u0444\u0430\u0439\u043B\u043E\u0432 \u0441 \u0443\u0447\u0435\u0442\u043E\u043C git.',
+        respectGitIgnore: {
+          label: '\u0423\u0447\u0438\u0442\u044B\u0432\u0430\u0442\u044C .gitignore',
+          description:
+            '\u0423\u0447\u0438\u0442\u044B\u0432\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B .gitignore \u043F\u0440\u0438 \u043F\u043E\u0438\u0441\u043A\u0435',
+        },
+        respectGeminiIgnore: {
+          label: '\u0423\u0447\u0438\u0442\u044B\u0432\u0430\u0442\u044C .kodaignore',
+          description:
+            '\u0423\u0447\u0438\u0442\u044B\u0432\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B .kodaignore \u043F\u0440\u0438 \u043F\u043E\u0438\u0441\u043A\u0435',
+        },
+        enableRecursiveFileSearch: {
+          label:
+            '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u043A\u0443\u0440\u0441\u0438\u0432\u043D\u044B\u0439 \u043F\u043E\u0438\u0441\u043A \u0444\u0430\u0439\u043B\u043E\u0432',
+          description:
+            '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0443\u043D\u043A\u0446\u0438\u044E \u0440\u0435\u043A\u0443\u0440\u0441\u0438\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0438\u0441\u043A\u0430 \u0444\u0430\u0439\u043B\u043E\u0432',
+        },
+      },
+      disableAutoUpdate: {
+        label:
+          '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0430\u0432\u0442\u043E\u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435',
+        description:
+          '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F',
+      },
+      selectedAuthType: {
+        label:
+          '\u0412\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0439 \u0442\u0438\u043F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438',
+        description:
+          '\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u044B\u0439 \u0442\u0438\u043F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438.',
+      },
+      useExternalAuth: {
+        label:
+          '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u0432\u043D\u0435\u0448\u043D\u044E\u044E \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044E',
+        description:
+          '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u043B\u0438 \u0432\u043D\u0435\u0448\u043D\u0438\u0439 \u043F\u043E\u0442\u043E\u043A \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438.',
+      },
+      sandbox: {
+        label: '\u041F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u0430',
+        description:
+          '\u0421\u0440\u0435\u0434\u0430 \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u044F \u0432 \u043F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u0435 (\u043C\u043E\u0436\u0435\u0442 \u0431\u044B\u0442\u044C \u0431\u0443\u043B\u0435\u0432\u044B\u043C \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435\u043C \u0438\u043B\u0438 \u043F\u0443\u0442\u0435\u043C).',
+      },
+      coreTools: {
+        label:
+          '\u0411\u0430\u0437\u043E\u0432\u044B\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B',
+        description:
+          '\u041F\u0443\u0442\u0438 \u043A \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u044F\u043C \u0431\u0430\u0437\u043E\u0432\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+      },
+      excludeTools: {
+        label:
+          '\u0418\u0441\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B',
+        description:
+          '\u0418\u043C\u0435\u043D\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0434\u043B\u044F \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u044F \u0438\u0437 \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F.',
+      },
+      toolDiscoveryCommand: {
+        label:
+          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+        description:
+          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0434\u043B\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430 \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+      },
+      toolCallCommand: {
+        label:
+          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0432\u044B\u0437\u043E\u0432\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430',
+        description:
+          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0434\u043B\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430 \u0432\u044B\u0437\u043E\u0432\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+      },
+      mcpServerCommand: {
+        label:
+          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP',
+        description:
+          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0434\u043B\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP.',
+      },
+      mcpServers: {
+        label: '\u0421\u0435\u0440\u0432\u0435\u0440\u044B MCP',
+        description:
+          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 MCP.',
+      },
+      allowMCPServers: {
+        label:
+          '\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043D\u043D\u044B\u0435 \u0441\u0435\u0440\u0432\u0435\u0440\u044B MCP',
+        description:
+          '\u0421\u043F\u0438\u0441\u043E\u043A (allowlist) \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 MCP, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043D\u044B.',
+      },
+      excludeMCPServers: {
+        label:
+          '\u0418\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044B\u0435 \u0441\u0435\u0440\u0432\u0435\u0440\u044B MCP',
+        description:
+          '\u0421\u043F\u0438\u0441\u043E\u043A (blocklist) \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 MCP, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u0438\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u044B.',
+      },
+      telemetry: {
+        label: '\u0422\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044F',
+        description:
+          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u0438.',
+      },
+      bugCommand: {
+        label:
+          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u043E\u0442\u0447\u0435\u0442\u0430 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435',
+        description:
+          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u043A\u043E\u043C\u0430\u043D\u0434\u044B \u043E\u0442\u043F\u0440\u0430\u0432\u043A\u0438 \u043E\u0442\u0447\u0435\u0442\u0430 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435.',
+      },
+      summarizeToolOutput: {
+        label:
+          '\u0421\u0443\u043C\u043C\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0432\u044B\u0432\u043E\u0434 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+        description:
+          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0441\u0443\u043C\u043C\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u0432\u044B\u0432\u043E\u0434\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+      },
+      dnsResolutionOrder: {
+        label:
+          '\u041F\u043E\u0440\u044F\u0434\u043E\u043A \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043D\u0438\u044F DNS',
+        description:
+          '\u041F\u043E\u0440\u044F\u0434\u043E\u043A \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043D\u0438\u044F DNS.',
+      },
+      excludedProjectEnvVars: {
+        label:
+          '\u0418\u0441\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044B\u0435 \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0435 \u043E\u043A\u0440\u0443\u0436\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430',
+        description:
+          '\u041F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0435 \u043E\u043A\u0440\u0443\u0436\u0435\u043D\u0438\u044F, \u0438\u0441\u043A\u043B\u044E\u0447\u0430\u0435\u043C\u044B\u0435 \u0438\u0437 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430 \u043F\u0440\u043E\u0435\u043A\u0442\u0430.',
+      },
+      disableUpdateNag: {
+        label:
+          '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u043D\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u044F \u043E\u0431 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0438',
+        description:
+          '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F \u043E \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u043E\u0441\u0442\u0438 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F.',
+      },
+      includeDirectories: {
+        label:
+          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438',
+        description:
+          '\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0435 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438, \u0432\u043A\u043B\u044E\u0447\u0430\u0435\u043C\u044B\u0435 \u0432 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438.',
+      },
+      loadMemoryFromIncludeDirectories: {
+        label:
+          '\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0442\u044C \u043F\u0430\u043C\u044F\u0442\u044C \u0438\u0437 \u0432\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044B\u0445 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439',
+        description:
+          '\u0417\u0430\u0433\u0440\u0443\u0436\u0430\u0442\u044C \u043B\u0438 \u0444\u0430\u0439\u043B\u044B \u043F\u0430\u043C\u044F\u0442\u0438 \u0438\u0437 \u0432\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044B\u0445 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439.',
+      },
+      model: {
+        label: '\u041C\u043E\u0434\u0435\u043B\u044C',
+        description:
+          '\u041C\u043E\u0434\u0435\u043B\u044C Koda \u0434\u043B\u044F \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u0432.',
+      },
+      hasSeenIdeIntegrationNudge: {
+        label:
+          '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438 \u0441 IDE \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u0430',
+        description:
+          '\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u043B\u0430\u0441\u044C \u043B\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430 \u043E\u0431 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438 IDE.',
+      },
+      folderTrustFeature: {
+        label:
+          '\u0424\u0443\u043D\u043A\u0446\u0438\u044F \u0434\u043E\u0432\u0435\u0440\u0438\u044F \u043A \u043F\u0430\u043F\u043A\u0430\u043C',
+        description:
+          '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0444\u0443\u043D\u043A\u0446\u0438\u044E \u0434\u043E\u0432\u0435\u0440\u0438\u044F \u043A \u043F\u0430\u043F\u043A\u0430\u043C \u0434\u043B\u044F \u043F\u043E\u0432\u044B\u0448\u0435\u043D\u0438\u044F \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438.',
+      },
+      folderTrust: {
+        label: '\u0414\u043E\u0432\u0435\u0440\u0438\u0435 \u043A \u043F\u0430\u043F\u043A\u0435',
+        description:
+          '\u041E\u0442\u0441\u043B\u0435\u0436\u0438\u0432\u0430\u0442\u044C, \u0432\u043A\u043B\u044E\u0447\u0435\u043D\u043E \u043B\u0438 \u0434\u043E\u0432\u0435\u0440\u0438\u0435 \u043A \u043F\u0430\u043F\u043A\u0435.',
+      },
+      chatCompression: {
+        label: '\u0421\u0436\u0430\u0442\u0438\u0435 \u0447\u0430\u0442\u0430',
+        description:
+          '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0441\u0436\u0430\u0442\u0438\u044F \u0447\u0430\u0442\u0430.',
+      },
+      showLineNumbers: {
+        label:
+          '\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u043E\u043C\u0435\u0440\u0430 \u0441\u0442\u0440\u043E\u043A',
+        description:
+          '\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u043E\u043C\u0435\u0440\u0430 \u0441\u0442\u0440\u043E\u043A \u0432 \u0447\u0430\u0442\u0435.',
+      },
+      language: {
+        label: '\u042F\u0437\u044B\u043A',
+        description:
+          '\u042F\u0437\u044B\u043A \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u043E\u0433\u043E \u0438\u043D\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430.',
+      },
+    },
+    languageSetting: {
+      selectLanguage: '\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u044F\u0437\u044B\u043A:',
+      english: '\u0410\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439',
+      russian: '\u0420\u0443\u0441\u0441\u043A\u0438\u0439',
+      pressToSelect:
+        '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 {key} \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430',
+      pressEscToCancel:
+        '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 ESC \u0434\u043B\u044F \u043E\u0442\u043C\u0435\u043D\u044B',
+      pressEnterToChange:
+        '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 Enter \u0434\u043B\u044F \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F',
+    },
+    authDialog: {
+      loginWithGithub: '\u0412\u043E\u0439\u0442\u0438 \u0447\u0435\u0440\u0435\u0437 GitHub',
+      continueWithoutAuth:
+        '\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0431\u0435\u0437 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438',
+      getTitle: '\u041D\u0430\u0447\u0430\u043B\u043E \u0440\u0430\u0431\u043E\u0442\u044B',
+      authQuestion:
+        '\u041A\u0430\u043A \u0432\u044B \u0445\u043E\u0442\u0438\u0442\u0435 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u0446\u0438\u0440\u043E\u0432\u0430\u0442\u044C\u0441\u044F?',
+      useEnterToSelect:
+        '(\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 Enter \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430)',
+      existingApiKeyDetected:
+        '\u041E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0439 API-\u043A\u043B\u044E\u0447 (KODA_API_KEY)',
+      authenticateLater:
+        '\u0412\u044B \u043C\u043E\u0436\u0435\u0442\u0435 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u0446\u0438\u0440\u043E\u0432\u0430\u0442\u044C\u0441\u044F \u043F\u043E\u0437\u0436\u0435 \u0447\u0435\u0440\u0435\u0437 \u043C\u0435\u043D\u044E.',
+      termsOfService:
+        '\u0423\u0441\u043B\u043E\u0432\u0438\u044F \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F \u0438 \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0435 \u043E \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438 \u0434\u043B\u044F Koda CLI',
+    },
+    authInProgress: {
+      waitingMessage:
+        '\u041E\u0436\u0438\u0434\u0430\u043D\u0438\u0435 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438... (\u041D\u0430\u0436\u043C\u0438\u0442\u0435 ESC \u0438\u043B\u0438 CTRL+C \u0434\u043B\u044F \u043E\u0442\u043C\u0435\u043D\u044B)',
+      openUrlMessage: '\u041E\u0442\u043A\u0440\u044B\u0442\u044C: ',
+      codeMessage: '\u041A\u043E\u0434: ',
+      timeoutMessage:
+        '\u0412\u0440\u0435\u043C\u044F \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u0438\u0441\u0442\u0435\u043A\u043B\u043E. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0435 \u0440\u0430\u0437.',
+    },
+    contextSummary: {
+      using: '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442\u0441\u044F:',
+      openFile: '\u043E\u0442\u043A\u0440\u044B\u0442\u044B\u0439 \u0444\u0430\u0439\u043B',
+      openFiles: '\u043E\u0442\u043A\u0440\u044B\u0442\u044B\u0445 \u0444\u0430\u0439\u043B\u0430',
+      contextFile:
+        '\u0444\u0430\u0439\u043B \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430',
+      contextFiles:
+        '\u0444\u0430\u0439\u043B\u0430 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430',
+      mcpServer: '\u0441\u0435\u0440\u0432\u0435\u0440 MCP',
+      mcpServers: '\u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP',
+      blockedMcpServer:
+        '\u0417\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0439 \u0441\u0435\u0440\u0432\u0435\u0440 MCP',
+      blockedMcpServers:
+        '\u0417\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP',
+      viewOpenFiles:
+        'ctrl+g \u0434\u043B\u044F \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430',
+      viewMcp: 'ctrl+t \u0434\u043B\u044F \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430',
+      toggleMcp:
+        'ctrl+t \u0434\u043B\u044F \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u044F',
+    },
+    loading: {
+      activity: {
+        processingResponse:
+          '\u041E\u0431\u0440\u0430\u0431\u0430\u0442\u044B\u0432\u0430\u044E \u0432\u0430\u0448 \u0437\u0430\u043F\u0440\u043E\u0441...',
+        awaitingUserConfirmation:
+          '\u041E\u0436\u0438\u0434\u0430\u044E \u0432\u0430\u0448\u0435\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F...',
+        executing: {
+          withDescription:
+            '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u044E {tool} - {description}',
+          withoutDescription: '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u044E {tool}',
+        },
+        validating: {
+          withDescription:
+            '\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u044E \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B {tool} - {description}',
+          withoutDescription:
+            '\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u044E \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B {tool}',
+        },
+        scheduled: {
+          withDescription: '\u0413\u043E\u0442\u043E\u0432\u043B\u044E {tool} - {description}',
+          withoutDescription: '\u0413\u043E\u0442\u043E\u0432\u043B\u044E {tool}',
+        },
+        awaitingApproval: {
+          withDescription:
+            '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u0434\u043B\u044F {tool} - {description}',
+          withoutDescription:
+            '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u0434\u043B\u044F {tool}',
+        },
+        success: {
+          withDescription:
+            '\u0417\u0430\u0432\u0435\u0440\u0448\u0438\u043B {tool} - {description}',
+          withoutDescription: '\u0417\u0430\u0432\u0435\u0440\u0448\u0438\u043B {tool}',
+        },
+        error: {
+          withDescription: '\u041E\u0448\u0438\u0431\u043A\u0430 \u0432 {tool} - {description}',
+          withoutDescription: '\u041E\u0448\u0438\u0431\u043A\u0430 \u0432 {tool}',
+        },
+        cancelled: {
+          withDescription: '\u041E\u0442\u043C\u0435\u043D\u0438\u043B {tool} - {description}',
+          withoutDescription: '\u041E\u0442\u043C\u0435\u043D\u0438\u043B {tool}',
+        },
+        tool: {
+          read_file: {
+            executing: {
+              withDescription:
+                '\u0427\u0438\u0442\u0430\u044E \u0444\u0430\u0439\u043B {description}',
+              withoutDescription: '\u0427\u0438\u0442\u0430\u044E \u0444\u0430\u0439\u043B',
+            },
+            success: {
+              withDescription:
+                '\u041F\u0440\u043E\u0447\u0438\u0442\u0430\u043B \u0444\u0430\u0439\u043B {description}',
+              withoutDescription:
+                '\u041F\u0440\u043E\u0447\u0438\u0442\u0430\u043B \u0444\u0430\u0439\u043B',
+            },
+          },
+          read_many_files: {
+            executing: {
+              withDescription:
+                '\u0427\u0438\u0442\u0430\u044E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0444\u0430\u0439\u043B\u043E\u0432 - {description}',
+              withoutDescription:
+                '\u0427\u0438\u0442\u0430\u044E \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0444\u0430\u0439\u043B\u043E\u0432',
+            },
+            success: {
+              withDescription:
+                '\u041F\u0440\u043E\u0447\u0438\u0442\u0430\u043B \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0444\u0430\u0439\u043B\u043E\u0432 - {description}',
+              withoutDescription:
+                '\u041F\u0440\u043E\u0447\u0438\u0442\u0430\u043B \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0444\u0430\u0439\u043B\u043E\u0432',
+            },
+          },
+          write_file: {
+            awaiting_approval: {
+              withDescription:
+                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u0437\u0430\u043F\u0438\u0441\u044C \u0444\u0430\u0439\u043B\u0430 {description}',
+              withoutDescription:
+                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u0437\u0430\u043F\u0438\u0441\u044C \u0444\u0430\u0439\u043B\u0430',
+            },
+            executing: {
+              withDescription:
+                '\u0417\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u044E \u0444\u0430\u0439\u043B {description}',
+              withoutDescription:
+                '\u0417\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u044E \u0444\u0430\u0439\u043B',
+            },
+            success: {
+              withDescription:
+                '\u0417\u0430\u043F\u0438\u0441\u0430\u043B \u0444\u0430\u0439\u043B {description}',
+              withoutDescription:
+                '\u0417\u0430\u043F\u0438\u0441\u0430\u043B \u0444\u0430\u0439\u043B',
+            },
+          },
+          replace: {
+            awaiting_approval: {
+              withDescription:
+                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 {description}',
+              withoutDescription:
+                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u0444\u0430\u0439\u043B\u0430',
+            },
+            executing: {
+              withDescription: '\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u044E {description}',
+              withoutDescription:
+                '\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u044E \u0444\u0430\u0439\u043B',
+            },
+            success: {
+              withDescription: '\u041E\u0431\u043D\u043E\u0432\u0438\u043B {description}',
+              withoutDescription:
+                '\u041E\u0431\u043D\u043E\u0432\u0438\u043B \u0444\u0430\u0439\u043B',
+            },
+          },
+          edit: {
+            awaiting_approval: {
+              withDescription:
+                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u043F\u0440\u0430\u0432\u043A\u0443 {description}',
+              withoutDescription:
+                '\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043D\u0430 \u043F\u0440\u0430\u0432\u043A\u0443 \u0444\u0430\u0439\u043B\u0430',
+            },
+            executing: {
+              withDescription: '\u041F\u0440\u0430\u0432\u043B\u044E {description}',
+              withoutDescription: '\u041F\u0440\u0430\u0432\u043B\u044E \u0444\u0430\u0439\u043B',
+            },
+            success: {
+              withDescription: '\u0418\u0441\u043F\u0440\u0430\u0432\u0438\u043B {description}',
+              withoutDescription:
+                '\u0418\u0441\u043F\u0440\u0430\u0432\u0438\u043B \u0444\u0430\u0439\u043B',
+            },
+          },
+        },
+      },
+      cancelAndTimer: '(esc \u0434\u043B\u044F \u043E\u0442\u043C\u0435\u043D\u044B, {time})',
+    },
+    commandDescriptions: {
+      about:
+        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044E \u043E \u0432\u0435\u0440\u0441\u0438\u0438',
+      auth: '\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043C\u0435\u0442\u043E\u0434 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438',
+      chat: '\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0440\u0438\u0435\u0439 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u043E\u0432',
+      chatList:
+        '\u0421\u043F\u0438\u0441\u043E\u043A \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043D\u044B\u0445 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0445 \u0442\u043E\u0447\u0435\u043A \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430',
+      chatSave:
+        '\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0442\u0435\u043A\u0443\u0449\u0438\u0439 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440 \u043A\u0430\u043A \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0443\u044E \u0442\u043E\u0447\u043A\u0443. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /chat save <\u0442\u0435\u0433>',
+      chatResume:
+        '\u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0443\u044E \u0442\u043E\u0447\u043A\u0443 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /chat resume <\u0442\u0435\u0433>',
+      chatDelete:
+        '\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0443\u044E \u0442\u043E\u0447\u043A\u0443 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /chat delete <\u0442\u0435\u0433>',
+      clear:
+        '\u041E\u0447\u0438\u0441\u0442\u0438\u0442\u044C \u044D\u043A\u0440\u0430\u043D \u0438 \u0438\u0441\u0442\u043E\u0440\u0438\u044E \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u043E\u0432',
+      compress:
+        '\u0421\u0436\u0438\u043C\u0430\u0435\u0442 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442, \u0437\u0430\u043C\u0435\u043D\u044F\u044F \u0435\u0433\u043E \u0440\u0435\u0437\u044E\u043C\u0435',
+      alreadyCompressing:
+        '\u0412\u044B \u0443\u0436\u0435 \u0441\u0436\u0438\u043C\u0430\u0435\u0442\u0435 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442, \u043F\u043E\u0434\u043E\u0436\u0434\u0438\u0442\u0435 \u043F\u043E\u043A\u0430 \u043E\u043D \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u0441\u044F',
+      copy: '\u0421\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442 \u0438\u043B\u0438 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u043A\u043E\u0434\u0430 \u0432 \u0431\u0443\u0444\u0435\u0440 \u043E\u0431\u043C\u0435\u043D\u0430',
+      corgi:
+        '\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u0435\u0442 \u0440\u0435\u0436\u0438\u043C \u043A\u043E\u0440\u0433\u0438',
+      directory:
+        '\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430\u043C\u0438 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438',
+      directoryAdd:
+        '\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0438 \u0432 \u0440\u0430\u0431\u043E\u0447\u0443\u044E \u043E\u0431\u043B\u0430\u0441\u0442\u044C. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0437\u0430\u043F\u044F\u0442\u0443\u044E \u0434\u043B\u044F \u0440\u0430\u0437\u0434\u0435\u043B\u0435\u043D\u0438\u044F \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u0438\u0445 \u043F\u0443\u0442\u0435\u0439',
+      directoryShow:
+        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432\u0441\u0435 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0438 \u0432 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438',
+      docs: '\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u044E \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435',
+      editor:
+        '\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0435\u043D\u0438\u044F \u0432\u043D\u0435\u0448\u043D\u0435\u0433\u043E \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0430',
+      extensions:
+        '\u0421\u043F\u0438\u0441\u043E\u043A \u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0445 \u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u0439',
+      help: '\u0421\u043F\u0440\u0430\u0432\u043A\u0430 \u043F\u043E koda-cli',
+      ide: '\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0435\u0439 IDE',
+      ideStatus:
+        '\u041F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0441\u0442\u0430\u0442\u0443\u0441 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438 IDE',
+      ideInstall:
+        '\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u044B\u0439 \u043A\u043E\u043C\u043F\u0430\u043D\u044C\u043E\u043D IDE \u0434\u043B\u044F {ideName}',
+      ideEnable:
+        '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044E IDE',
+      ideDisable:
+        '\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044E IDE',
+      init: '\u0410\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u043F\u0440\u043E\u0435\u043A\u0442 \u0438 \u0441\u043E\u0437\u0434\u0430\u0435\u0442 \u0438\u043D\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043B\u044C\u043D\u044B\u0439 \u0444\u0430\u0439\u043B KODA.md',
+      memory:
+        '\u041A\u043E\u043C\u0430\u043D\u0434\u044B \u0434\u043B\u044F \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F \u0441 \u043F\u0430\u043C\u044F\u0442\u044C\u044E',
+      memoryShow:
+        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0442\u0435\u043A\u0443\u0449\u0435\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043F\u0430\u043C\u044F\u0442\u0438',
+      memoryAdd:
+        '\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u0432 \u043F\u0430\u043C\u044F\u0442\u044C',
+      memoryRefresh:
+        '\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u0430\u043C\u044F\u0442\u044C \u0438\u0437 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430',
+      mcp: '\u0421\u043F\u0438\u0441\u043E\u043A \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u043D\u044B\u0445 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 \u0438 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 MCP',
+      mcpAuth:
+        '\u0410\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C MCP \u0441 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u043E\u0439 OAuth',
+      mcpRefresh:
+        '\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0441\u043F\u0438\u0441\u043E\u043A \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 \u0438 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 MCP',
+      mcpConfigNotLoaded:
+        '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u0430.',
+      mcpToolRegistryError:
+        '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0440\u0435\u0435\u0441\u0442\u0440 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+      mcpNoServersConfigured:
+        '\u0421\u0435\u0440\u0432\u0435\u0440\u044B MCP \u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u044B.',
+      mcpServersStarting:
+        '\u0421\u0435\u0440\u0432\u0435\u0440\u044B MCP \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u044E\u0442\u0441\u044F ({count} \u0438\u043D\u0438\u0446\u0438\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442\u0441\u044F)...',
+      mcpServersStartingNote:
+        '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435: \u043F\u0435\u0440\u0432\u044B\u0439 \u0437\u0430\u043F\u0443\u0441\u043A \u043C\u043E\u0436\u0435\u0442 \u0437\u0430\u043D\u044F\u0442\u044C \u0431\u043E\u043B\u044C\u0448\u0435 \u0432\u0440\u0435\u043C\u0435\u043D\u0438. \u0414\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0441\u0442\u044C \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u043E\u0431\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.',
+      mcpConfiguredServersTitle:
+        '\u041D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u043D\u044B\u0435 \u0441\u0435\u0440\u0432\u0435\u0440\u044B MCP:',
+      mcpStatusStarting:
+        '\u0417\u0430\u043F\u0443\u0441\u043A... (\u043F\u0435\u0440\u0432\u044B\u0439 \u0437\u0430\u043F\u0443\u0441\u043A \u043C\u043E\u0436\u0435\u0442 \u0437\u0430\u043D\u044F\u0442\u044C \u0431\u043E\u043B\u044C\u0448\u0435 \u0432\u0440\u0435\u043C\u0435\u043D\u0438)',
+      mcpStatusDisconnected: '\u041E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u043E',
+      mcpStatusReady: '\u0413\u043E\u0442\u043E\u0432',
+      mcpAuthExpired: '(OAuth \u0442\u043E\u043A\u0435\u043D \u0438\u0441\u0442\u0435\u043A)',
+      mcpAuthAuthenticated:
+        '(OAuth \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430)',
+      mcpAuthNotAuthenticated:
+        '(OAuth \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u043D\u0435 \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430)',
+      mcpToolSingular: '\u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442',
+      mcpToolPlural: '\u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B',
+      mcpPromptSingular: '\u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430',
+      mcpPromptPlural: '\u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438',
+      mcpZeroTools: '(0 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432)',
+      mcpToolsLoading:
+        '(\u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B \u0438 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F, \u043A\u043E\u0433\u0434\u0430 \u0431\u0443\u0434\u0443\u0442 \u0433\u043E\u0442\u043E\u0432\u044B)',
+      mcpToolsCached:
+        '({count} \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0432 \u043A\u044D\u0448\u0435)',
+      mcpToolsTitle: '\u0418\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B:',
+      mcpParametersTitle: '\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B:',
+      mcpPromptsTitle: '\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438:',
+      mcpNoToolsOrPrompts:
+        '\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0438\u043B\u0438 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u043E\u043A',
+      mcpNoToolsAvailable:
+        '\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+      mcpAuthHint:
+        '(\u0432\u0432\u0435\u0434\u0438\u0442\u0435: "/mcp auth {serverName}" \u0434\u043B\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u044D\u0442\u043E\u0433\u043E \u0441\u0435\u0440\u0432\u0435\u0440\u0430)',
+      mcpStatusBlocked: '\u0417\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D',
+      mcpTipsTitle: '\u{1F4A1} \u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0438:',
+      mcpTipsDesc:
+        '  \u2022 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {command} \u0434\u043B\u044F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0439 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 \u0438 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+      mcpTipsSchema:
+        '  \u2022 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {command} \u0434\u043B\u044F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u0441\u0445\u0435\u043C \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u043E\u0432 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+      mcpTipsNoDesc:
+        '  \u2022 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {command} \u0434\u043B\u044F \u0441\u043A\u0440\u044B\u0442\u0438\u044F \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0439',
+      mcpTipsAuth:
+        '  \u2022 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 {command} \u0434\u043B\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u0430\u043C\u0438, \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u044E\u0449\u0438\u043C\u0438 OAuth',
+      mcpTipsToggle:
+        '  \u2022 \u041D\u0430\u0436\u043C\u0438\u0442\u0435 {command} \u0434\u043B\u044F \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u044F \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u044F \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432',
+      mcpNoOauthServers:
+        '\u041D\u0435\u0442 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 MCP, \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u043D\u044B\u0445 \u0441 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0435\u0439 OAuth.',
+      mcpOAuthServersList: `\u0421\u0435\u0440\u0432\u0435\u0440\u044B MCP \u0441 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0435\u0439 OAuth:
+{serverList}
+
+\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /mcp auth <\u0438\u043C\u044F-\u0441\u0435\u0440\u0432\u0435\u0440\u0430> \u0434\u043B\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438.`,
+      mcpServerNotFound:
+        "\u0421\u0435\u0440\u0432\u0435\u0440 MCP '{serverName}' \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D.",
+      mcpAuthStarting:
+        "\u0417\u0430\u043F\u0443\u0441\u043A OAuth \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u0434\u043B\u044F \u0441\u0435\u0440\u0432\u0435\u0440\u0430 MCP '{serverName}'...",
+      mcpAuthSuccess:
+        "\u2705 \u0423\u0441\u043F\u0435\u0448\u043D\u043E \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C MCP '{serverName}'!",
+      mcpAuthRediscovering:
+        "\u041F\u043E\u0432\u0442\u043E\u0440\u043D\u043E\u0435 \u043E\u0431\u043D\u0430\u0440\u0443\u0436\u0435\u043D\u0438\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0438\u0437 '{serverName}'...",
+      mcpAuthRefreshSuccess:
+        "\u0423\u0441\u043F\u0435\u0448\u043D\u043E \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u0438 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u044B \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B \u0434\u043B\u044F '{serverName}'.",
+      mcpAuthFailure:
+        "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0439\u0442\u0438 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044E \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u043C MCP '{serverName}': {error}",
+      mcpRefreshing:
+        '\u041E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u0441\u0435\u0440\u0432\u0435\u0440\u043E\u0432 \u0438 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 MCP...',
+      privacy:
+        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0435 \u043E \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438',
+      quit: '\u0412\u044B\u0439\u0442\u0438 \u0438\u0437 cli',
+      restore:
+        '\u0412\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0443\u044E \u0432\u0435\u0440\u0441\u0438\u044E \u0444\u0430\u0439\u043B\u0430. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /restore <\u043F\u0443\u0442\u044C_\u043A_\u0444\u0430\u0439\u043B\u0443>',
+      restoreCommand: {
+        noCheckpointDir:
+          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C \u043F\u0443\u0442\u044C \u043A \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 .kodacli.',
+        noRestorableCalls:
+          '\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0434\u043B\u044F \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F.',
+        availableCalls:
+          '\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0435 \u0432\u044B\u0437\u043E\u0432\u044B \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0434\u043B\u044F \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F:\\n\\n{fileList}',
+        fileNotFound:
+          '\u0424\u0430\u0439\u043B \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D: {fileName}',
+        loadHistoryNotAvailable:
+          '\u0424\u0443\u043D\u043A\u0446\u0438\u044F loadHistory \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.',
+        projectRestored:
+          '\u041F\u0440\u043E\u0435\u043A\u0442 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D \u0434\u043E \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u043F\u0435\u0440\u0435\u0434 \u0432\u044B\u0437\u043E\u0432\u043E\u043C \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430.',
+        readError:
+          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C \u0432\u044B\u0437\u043E\u0432\u044B \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 \u0434\u043B\u044F \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F. \u041E\u0448\u0438\u0431\u043A\u0430: {error}',
+      },
+      settings:
+        '\u041F\u0440\u043E\u0441\u043C\u043E\u0442\u0440 \u0438 \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043A Koda CLI',
+      setupGithub: '\u041D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C GitHub Actions',
+      stats:
+        '\u041F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0443 \u0441\u0435\u0441\u0441\u0438\u0438',
+      statsModel:
+        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0443 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F \u043F\u043E \u043C\u043E\u0434\u0435\u043B\u044F\u043C',
+      statsTools:
+        '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0443 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F \u043F\u043E \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430\u043C',
+      theme: '\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u0442\u0435\u043C\u0443',
+      tools:
+        '\u0421\u043F\u0438\u0441\u043E\u043A \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 Koda CLI',
+      vim: '\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C/\u0432\u044B\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0440\u0435\u0436\u0438\u043C vim',
+      model: '\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C',
+      terminalSetup:
+        '\u041D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0442\u0435\u0440\u043C\u0438\u043D\u0430\u043B',
+      bug: '\u0421\u043E\u043E\u0431\u0449\u0438\u0442\u044C \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435 \u0438\u043B\u0438 \u043F\u0440\u043E\u0431\u043B\u0435\u043C\u0435',
+    },
+    bugCommand: {
+      browserInstruction: `\u041E\u0442\u043A\u0440\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043E\u0442\u0447\u0435\u0442 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435 \u0432 \u0432\u0430\u0448\u0435\u043C \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435 \u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E...
+`,
+      bugReportDetails:
+        '\u0421\u0432\u0435\u0434\u0435\u043D\u0438\u044F \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435:',
+      openUrlError:
+        '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u044C URL-\u0430\u0434\u0440\u0435\u0441 \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435: ',
+      telegramCommunity:
+        '\u0421\u043E\u043E\u0431\u0449\u0435\u0441\u0442\u0432\u043E \u0432 Telegram:',
+    },
+    commandPrompts: {
+      init: `
+\u0422\u044B \u2014 \u0418\u0418-\u0430\u0433\u0435\u043D\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442 \u0432\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438 Koda \u043F\u0440\u044F\u043C\u043E \u0432 \u0442\u0435\u0440\u043C\u0438\u043D\u0430\u043B. \u0422\u0432\u043E\u044F \u0437\u0430\u0434\u0430\u0447\u0430 \u2014 \u043F\u0440\u043E\u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0442\u0435\u043A\u0443\u0449\u0443\u044E \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u044E \u0438 \u0441\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E\u0434\u0440\u043E\u0431\u043D\u044B\u0439 \u0444\u0430\u0439\u043B KODA.md, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0431\u0443\u0434\u0435\u0442 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C\u0441\u044F \u043A\u0430\u043A \u0438\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u043E\u043D\u043D\u044B\u0439 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0434\u043B\u044F \u0431\u0443\u0434\u0443\u0449\u0438\u0445 \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0439.
+
+**\u0422\u0440\u0435\u0431\u043E\u0432\u0430\u043D\u0438\u0435 \u044F\u0437\u044B\u043A\u0430:** \u0412\u0435\u0441\u044C \u0430\u043D\u0430\u043B\u0438\u0437 \u0438 \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u0444\u0430\u0439\u043B \u0434\u043E\u043B\u0436\u043D\u044B \u0431\u044B\u0442\u044C \u043F\u043E\u043B\u043D\u043E\u0441\u0442\u044C\u044E \u043D\u0430\u043F\u0438\u0441\u0430\u043D\u044B \u043D\u0430 \u0440\u0443\u0441\u0441\u043A\u043E\u043C \u044F\u0437\u044B\u043A\u0435 \u2014 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0440\u0443\u0441\u0441\u043A\u0438\u0435 \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043A\u0438, \u0444\u043E\u0440\u043C\u0443\u043B\u0438\u0440\u043E\u0432\u043A\u0438 \u0438 \u0442\u0435\u0440\u043C\u0438\u043D\u044B.
+
+**\u041F\u0440\u043E\u0446\u0435\u0441\u0441 \u0430\u043D\u0430\u043B\u0438\u0437\u0430:**
+
+1.  **\u041F\u0435\u0440\u0432\u0438\u0447\u043D\u043E\u0435 \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435:**
+    *   \u041D\u0430\u0447\u043D\u0438 \u0441 \u0432\u044B\u0432\u043E\u0434\u0430 \u0441\u043F\u0438\u0441\u043A\u0430 \u0444\u0430\u0439\u043B\u043E\u0432 \u0438 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439, \u0447\u0442\u043E\u0431\u044B \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u043E\u0431\u0449\u0435\u0435 \u043F\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043E \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0435.
+    *   \u041F\u0440\u043E\u0447\u0438\u0442\u0430\u0439 \u0444\u0430\u0439\u043B README (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \`README.md\`, \`README.txt\`), \u0435\u0441\u043B\u0438 \u043E\u043D \u0435\u0441\u0442\u044C. \u042D\u0442\u043E \u0447\u0430\u0441\u0442\u043E \u043B\u0443\u0447\u0448\u0438\u0439 \u0441\u0442\u0430\u0440\u0442.
+
+2.  **\u0418\u0442\u0435\u0440\u0430\u0442\u0438\u0432\u043D\u043E\u0435 \u043F\u043E\u0433\u0440\u0443\u0436\u0435\u043D\u0438\u0435 (\u0434\u043E 10 \u0444\u0430\u0439\u043B\u043E\u0432):**
+    *   \u041F\u043E \u0438\u0442\u043E\u0433\u0430\u043C \u043F\u0435\u0440\u0432\u0438\u0447\u043D\u044B\u0445 \u043D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0439 \u0432\u044B\u0431\u0435\u0440\u0438 \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043D\u0430\u0438\u0431\u043E\u043B\u0435\u0435 \u0432\u0430\u0436\u043D\u044B\u0445 \u0444\u0430\u0439\u043B\u043E\u0432 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \u043A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u043E\u043D\u043D\u044B\u0435 \u0444\u0430\u0439\u043B\u044B, \u043E\u0441\u043D\u043E\u0432\u043D\u044B\u0435 \u0438\u0441\u0445\u043E\u0434\u043D\u0438\u043A\u0438, \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u044E).
+    *   \u041F\u0440\u043E\u0447\u0438\u0442\u0430\u0439 \u0438\u0445. \u041F\u043E \u043C\u0435\u0440\u0435 \u0442\u043E\u0433\u043E \u043A\u0430\u043A \u0442\u044B \u0443\u0437\u043D\u0430\u0435\u0448\u044C \u0431\u043E\u043B\u044C\u0448\u0435, \u0443\u0442\u043E\u0447\u043D\u044F\u0439 \u043F\u043E\u043D\u0438\u043C\u0430\u043D\u0438\u0435 \u0438 \u0440\u0435\u0448\u0430\u0439, \u043A\u0430\u043A\u0438\u0435 \u0444\u0430\u0439\u043B\u044B \u0447\u0438\u0442\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435. \u041D\u0435 \u043D\u0443\u0436\u043D\u043E \u0432\u044B\u0431\u0438\u0440\u0430\u0442\u044C \u0432\u0441\u0435 10 \u0441\u0440\u0430\u0437\u0443 \u2014 \u043F\u0443\u0441\u0442\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u0438\u044F \u043D\u0430\u043F\u0440\u0430\u0432\u043B\u044F\u044E\u0442 \u0434\u0430\u043B\u044C\u043D\u0435\u0439\u0448\u0438\u0435 \u0448\u0430\u0433\u0438.
+
+3.  **\u041E\u043F\u0440\u0435\u0434\u0435\u043B\u0438 \u0442\u0438\u043F \u043F\u0440\u043E\u0435\u043A\u0442\u0430:**
+    *   **\u041F\u0440\u043E\u0435\u043A\u0442 \u0441 \u043A\u043E\u0434\u043E\u043C:** \u0418\u0449\u0438 \u043F\u0440\u0438\u0437\u043D\u0430\u043A\u0438 \u0432\u0440\u043E\u0434\u0435 \`package.json\`, \`requirements.txt\`, \`pom.xml\`, \`go.mod\`, \`Cargo.toml\`, \`build.gradle\` \u0438\u043B\u0438 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 \`src\`. \u0415\u0441\u043B\u0438 \u043E\u043D\u0438 \u0435\u0441\u0442\u044C, \u0441\u043A\u043E\u0440\u0435\u0435 \u0432\u0441\u0435\u0433\u043E \u044D\u0442\u043E \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u043D\u044B\u0439 \u043F\u0440\u043E\u0435\u043A\u0442.
+    *   **\u041F\u0440\u043E\u0435\u043A\u0442 \u0431\u0435\u0437 \u043A\u043E\u0434\u0430:** \u0415\u0441\u043B\u0438 \u043A\u043E\u0434\u043E\u0432\u044B\u0445 \u0444\u0430\u0439\u043B\u043E\u0432 \u043D\u0435\u0442, \u043A\u0430\u0442\u0430\u043B\u043E\u0433 \u043C\u043E\u0436\u0435\u0442 \u0441\u043E\u0434\u0435\u0440\u0436\u0430\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u044E, \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u044F, \u0437\u0430\u043C\u0435\u0442\u043A\u0438 \u0438\u043B\u0438 \u0434\u0440\u0443\u0433\u043E\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435.
+
+**\u0421\u043E\u0437\u0434\u0430\u043D\u0438\u0435 KODA.md:**
+
+**\u0414\u043B\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0441 \u043A\u043E\u0434\u043E\u043C:**
+
+*   **\u041E\u0431\u0437\u043E\u0440 \u043F\u0440\u043E\u0435\u043A\u0442\u0430:** \u041A\u0440\u0430\u0442\u043A\u043E \u043E\u043F\u0438\u0448\u0438 \u043D\u0430\u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u043F\u0440\u043E\u0435\u043A\u0442\u0430, \u043E\u0441\u043D\u043E\u0432\u043D\u044B\u0435 \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0438 \u0438 \u0430\u0440\u0445\u0438\u0442\u0435\u043A\u0442\u0443\u0440\u0443.
+*   **\u0421\u0431\u043E\u0440\u043A\u0430 \u0438 \u0437\u0430\u043F\u0443\u0441\u043A:** \u0417\u0430\u0444\u0438\u043A\u0441\u0438\u0440\u0443\u0439 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0435 \u043A\u043E\u043C\u0430\u043D\u0434\u044B \u0434\u043B\u044F \u0441\u0431\u043E\u0440\u043A\u0438, \u0437\u0430\u043F\u0443\u0441\u043A\u0430 \u0438 \u0442\u0435\u0441\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430. \u0421\u0434\u0435\u043B\u0430\u0439 \u0432\u044B\u0432\u043E\u0434\u044B \u043F\u043E \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u043D\u043D\u044B\u043C \u0444\u0430\u0439\u043B\u0430\u043C (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \u0440\u0430\u0437\u0434\u0435\u043B \`scripts\` \u0432 \`package.json\`, \`Makefile\` \u0438 \u0442.\u043F.). \u0415\u0441\u043B\u0438 \u044F\u0432\u043D\u044B\u0445 \u043A\u043E\u043C\u0430\u043D\u0434 \u043D\u0435\u0442, \u0434\u043E\u0431\u0430\u0432\u044C \u0437\u0430\u0433\u043B\u0443\u0448\u043A\u0443 \u0441 TODO.
+*   **\u041F\u0440\u0430\u0432\u0438\u043B\u0430 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0438:** \u041E\u043F\u0438\u0448\u0438 \u0441\u0442\u0438\u043B\u044C \u043A\u043E\u0434\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F, \u043F\u0440\u0430\u043A\u0442\u0438\u043A\u0438 \u0442\u0435\u0441\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u0438\u043B\u0438 \u043F\u0440\u0430\u0432\u0438\u043B\u0430 \u043A\u043E\u043D\u0442\u0440\u0438\u0431\u0443\u0446\u0438\u0438, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043C\u043E\u0436\u043D\u043E \u0432\u044B\u0432\u0435\u0441\u0442\u0438 \u0438\u0437 \u043A\u043E\u0434\u043E\u0432\u043E\u0439 \u0431\u0430\u0437\u044B.
+
+**\u0414\u043B\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0431\u0435\u0437 \u043A\u043E\u0434\u0430:**
+
+*   **\u041E\u0431\u0437\u043E\u0440 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430:** \u041E\u043F\u0438\u0448\u0438 \u043D\u0430\u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 \u0438 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438. \u0414\u043B\u044F \u0447\u0435\u0433\u043E \u043E\u043D\u0430? \u041A\u0430\u043A\u0438\u0435 \u0442\u0438\u043F\u044B \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432 \u0445\u0440\u0430\u043D\u0438\u0442?
+*   **\u041A\u043B\u044E\u0447\u0435\u0432\u044B\u0435 \u0444\u0430\u0439\u043B\u044B:** \u041F\u0435\u0440\u0435\u0447\u0438\u0441\u043B\u0438 \u0432\u0430\u0436\u043D\u044B\u0435 \u0444\u0430\u0439\u043B\u044B \u0438 \u043A\u0440\u0430\u0442\u043A\u043E \u043F\u043E\u044F\u0441\u043D\u0438, \u0447\u0442\u043E \u0432 \u043D\u0438\u0445 \u043D\u0430\u0445\u043E\u0434\u0438\u0442\u0441\u044F.
+*   **\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435:** \u041E\u0431\u044A\u044F\u0441\u043D\u0438, \u043A\u0430\u043A \u043F\u0440\u0435\u0434\u043F\u043E\u043B\u0430\u0433\u0430\u0435\u0442\u0441\u044F \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430.
+
+**\u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442:**
+
+\u0417\u0430\u043F\u0438\u0448\u0438 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0442\u0435\u043A\u0441\u0442 \u0432 \u0444\u0430\u0439\u043B \`KODA.md\`. \u0412\u044B\u0445\u043E\u0434 \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u043E \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u043D\u044B\u043C Markdown.
+\u041D\u0435 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u0430\u043D\u0433\u043B\u0438\u0439\u0441\u043A\u0438\u0439 \u044F\u0437\u044B\u043A \u043D\u0438 \u0432 \u043A\u0430\u043A\u0438\u0445 \u0440\u0430\u0437\u0434\u0435\u043B\u0430\u0445.
+`,
+    },
+    toolDescriptions: {
+      search_file_content:
+        '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u043F\u043E\u0438\u0441\u043A \u043F\u043E \u0440\u0435\u0433\u0443\u043B\u044F\u0440\u043D\u043E\u043C\u0443 \u0432\u044B\u0440\u0430\u0436\u0435\u043D\u0438\u044E \u0432 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u043C \u0444\u0430\u0439\u043B\u043E\u0432 \u0432 \u0443\u043A\u0430\u0437\u0430\u043D\u043D\u043E\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 (\u0438\u043B\u0438 \u0442\u0435\u043A\u0443\u0449\u0435\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438). \u041C\u043E\u0436\u0435\u0442 \u0444\u0438\u043B\u044C\u0442\u0440\u043E\u0432\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B \u043F\u043E glob-\u0448\u0430\u0431\u043B\u043E\u043D\u0443. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 \u0441\u0442\u0440\u043E\u043A\u0438, \u0441\u043E\u0434\u0435\u0440\u0436\u0430\u0449\u0438\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u044F, \u0432\u043C\u0435\u0441\u0442\u0435 \u0441 \u043F\u0443\u0442\u044F\u043C\u0438 \u043A \u0444\u0430\u0439\u043B\u0430\u043C \u0438 \u043D\u043E\u043C\u0435\u0440\u0430\u043C\u0438 \u0441\u0442\u0440\u043E\u043A.',
+      list_directory:
+        '\u0412\u044B\u0432\u043E\u0434\u0438\u0442 \u0438\u043C\u0435\u043D\u0430 \u0444\u0430\u0439\u043B\u043E\u0432 \u0438 \u043F\u043E\u0434\u043A\u0430\u0442\u0430\u043B\u043E\u0433\u043E\u0432 \u043D\u0435\u043F\u043E\u0441\u0440\u0435\u0434\u0441\u0442\u0432\u0435\u043D\u043D\u043E \u0432 \u0443\u043A\u0430\u0437\u0430\u043D\u043D\u043E\u043C \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0435. \u041C\u043E\u0436\u0435\u0442 \u0438\u0433\u043D\u043E\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0437\u0430\u043F\u0438\u0441\u0438, \u0441\u043E\u043E\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u0437\u0430\u0434\u0430\u043D\u043D\u044B\u043C glob-\u0448\u0430\u0431\u043B\u043E\u043D\u0430\u043C.',
+      glob: '\u042D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u043E \u043D\u0430\u0445\u043E\u0434\u0438\u0442 \u0444\u0430\u0439\u043B\u044B, \u0441\u043E\u043E\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u043D\u044B\u043C glob-\u0448\u0430\u0431\u043B\u043E\u043D\u0430\u043C (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, `src/**/*.ts`, `**/*.md`), \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u044F \u0430\u0431\u0441\u043E\u043B\u044E\u0442\u043D\u044B\u0435 \u043F\u0443\u0442\u0438, \u043E\u0442\u0441\u043E\u0440\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0435 \u043F\u043E \u0432\u0440\u0435\u043C\u0435\u043D\u0438 \u043C\u043E\u0434\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 (\u043D\u043E\u0432\u044B\u0435 \u043F\u0435\u0440\u0432\u044B\u043C\u0438). \u0418\u0434\u0435\u0430\u043B\u044C\u043D\u043E \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u0434\u043B\u044F \u0431\u044B\u0441\u0442\u0440\u043E\u0433\u043E \u043F\u043E\u0438\u0441\u043A\u0430 \u0444\u0430\u0439\u043B\u043E\u0432 \u043F\u043E \u0438\u043C\u0435\u043D\u0438 \u0438\u043B\u0438 \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0435 \u043F\u0443\u0442\u0438, \u043E\u0441\u043E\u0431\u0435\u043D\u043D\u043E \u0432 \u0431\u043E\u043B\u044C\u0448\u0438\u0445 \u043A\u043E\u0434\u043E\u0432\u044B\u0445 \u0431\u0430\u0437\u0430\u0445.',
+      google_web_search:
+        '\u0412\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0432\u0435\u0431-\u043F\u043E\u0438\u0441\u043A \u0441 \u043F\u043E\u043C\u043E\u0449\u044C\u044E API Serper \u0438 \u0432\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 \u043B\u0443\u0447\u0448\u0438\u0435 \u043E\u0440\u0433\u0430\u043D\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B.',
+      save_memory: `\u0421\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u0442 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u044B\u0439 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438 \u0438\u043B\u0438 \u0444\u0430\u043A\u0442 \u0432 \u0432\u0430\u0448\u0443 \u0434\u043E\u043B\u0433\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u0443\u044E \u043F\u0430\u043C\u044F\u0442\u044C.
+
+\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u044D\u0442\u043E\u0442 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442:
+
+- \u041A\u043E\u0433\u0434\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u044F\u0432\u043D\u043E \u043F\u0440\u043E\u0441\u0438\u0442 \u0432\u0430\u0441 \u0447\u0442\u043E-\u0442\u043E \u0437\u0430\u043F\u043E\u043C\u043D\u0438\u0442\u044C (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, "\u0417\u0430\u043F\u043E\u043C\u043D\u0438, \u0447\u0442\u043E \u044F \u043B\u044E\u0431\u043B\u044E \u043F\u0438\u0446\u0446\u0443 \u0441 \u0430\u043D\u0430\u043D\u0430\u0441\u043E\u043C", "\u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u0435: \u0438\u043C\u044F \u043C\u043E\u0435\u0433\u043E \u043A\u043E\u0442\u0430 - \u0412\u0430\u0441\u044C\u043A\u0430").
+- \u041A\u043E\u0433\u0434\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u0441\u043E\u043E\u0431\u0449\u0430\u0435\u0442 \u044F\u0441\u043D\u044B\u0439, \u043A\u0440\u0430\u0442\u043A\u0438\u0439 \u0444\u0430\u043A\u0442 \u043E \u0441\u0435\u0431\u0435, \u0441\u0432\u043E\u0438\u0445 \u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0435\u043D\u0438\u044F\u0445 \u0438\u043B\u0438 \u0441\u0432\u043E\u0435\u0439 \u0441\u0440\u0435\u0434\u0435, \u043A\u043E\u0442\u043E\u0440\u044B\u0439, \u043A\u0430\u0436\u0435\u0442\u0441\u044F, \u0432\u0430\u0436\u0435\u043D \u0434\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0432 \u0431\u0443\u0434\u0443\u0449\u0438\u0445 \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F\u0445, \u0447\u0442\u043E\u0431\u044B \u043E\u0431\u0435\u0441\u043F\u0435\u0447\u0438\u0442\u044C \u0431\u043E\u043B\u0435\u0435 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u0443\u044E \u0438 \u044D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u0443\u044E \u043F\u043E\u043C\u043E\u0449\u044C.
+
+\u041D\u0415 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u044D\u0442\u043E\u0442 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442:
+
+- \u0414\u043B\u044F \u0437\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u044F \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0430\u043A\u0442\u0443\u0430\u043B\u0435\u043D \u0442\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F \u0442\u0435\u043A\u0443\u0449\u0435\u0439 \u0441\u0435\u0441\u0441\u0438\u0438.
+- \u0414\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0434\u043B\u0438\u043D\u043D\u043E\u0433\u043E, \u0441\u043B\u043E\u0436\u043D\u043E\u0433\u043E \u0438\u043B\u0438 \u0440\u0430\u0437\u0432\u0435\u0440\u043D\u0443\u0442\u043E\u0433\u043E \u0442\u0435\u043A\u0441\u0442\u0430. \u0424\u0430\u043A\u0442 \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u043A\u043E\u0440\u043E\u0442\u043A\u0438\u043C \u0438 \u043F\u043E \u0434\u0435\u043B\u0443.
+- \u0415\u0441\u043B\u0438 \u0432\u044B \u043D\u0435 \u0443\u0432\u0435\u0440\u0435\u043D\u044B, \u0441\u0442\u043E\u0438\u0442 \u043B\u0438 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044E \u0437\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u0442\u044C \u043D\u0430 \u0434\u043E\u043B\u0433\u043E\u0441\u0440\u043E\u0447\u043D\u043E\u0439 \u043E\u0441\u043D\u043E\u0432\u0435. \u0415\u0441\u043B\u0438 \u0441\u043E\u043C\u043D\u0435\u0432\u0430\u0435\u0442\u0435\u0441\u044C, \u043C\u043E\u0436\u0435\u0442\u0435 \u0441\u043F\u0440\u043E\u0441\u0438\u0442\u044C \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F: "\u041C\u043D\u0435 \u0437\u0430\u043F\u043E\u043C\u043D\u0438\u0442\u044C \u044D\u0442\u043E \u0434\u043B\u044F \u0432\u0430\u0441?"
+
+## \u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B
+
+- \`fact\` (string, required): \u041A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u044B\u0439 \u0444\u0430\u043A\u0442 \u0438\u043B\u0438 \u0444\u0440\u0430\u0433\u043C\u0435\u043D\u0442 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438 \u0434\u043B\u044F \u0437\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u044F. \u0414\u043E\u043B\u0436\u043D\u043E \u0431\u044B\u0442\u044C \u044F\u0441\u043D\u044B\u043C, \u0441\u0430\u043C\u043E\u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u044B\u043C \u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435\u043C. \u041D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \u0435\u0441\u043B\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u0433\u043E\u0432\u043E\u0440\u0438\u0442 "\u041C\u043E\u0439 \u043B\u044E\u0431\u0438\u043C\u044B\u0439 \u0446\u0432\u0435\u0442 - \u0441\u0438\u043D\u0438\u0439", \u0442\u043E \u0444\u0430\u043A\u0442 \u0431\u0443\u0434\u0435\u0442 "\u041C\u043E\u0439 \u043B\u044E\u0431\u0438\u043C\u044B\u0439 \u0446\u0432\u0435\u0442 - \u0441\u0438\u043D\u0438\u0439".`,
+      run_shell_command:
+        '\u042D\u0442\u043E\u0442 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442 \u0432\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0437\u0430\u0434\u0430\u043D\u043D\u0443\u044E \u043A\u043E\u043C\u0430\u043D\u0434\u0443 \u043E\u0431\u043E\u043B\u043E\u0447\u043A\u0438 \u043A\u0430\u043A `bash -c <command>`. \u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u043C\u043E\u0436\u0435\u0442 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0442\u044C \u0444\u043E\u043D\u043E\u0432\u044B\u0435 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u044B \u0441 \u043F\u043E\u043C\u043E\u0449\u044C\u044E `&`. \u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0432\u044B\u043F\u043E\u043B\u043D\u044F\u0435\u0442\u0441\u044F \u043A\u0430\u043A \u043F\u043E\u0434\u043F\u0440\u043E\u0446\u0435\u0441\u0441, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0432\u0435\u0434\u0435\u0442 \u0441\u0432\u043E\u044E \u0441\u043E\u0431\u0441\u0442\u0432\u0435\u043D\u043D\u0443\u044E \u0433\u0440\u0443\u043F\u043F\u0443 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432. \u0413\u0440\u0443\u043F\u043F\u0443 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432 \u043C\u043E\u0436\u043D\u043E \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u044C \u0441 \u043F\u043E\u043C\u043E\u0449\u044C\u044E `kill -- -PGID` \u0438\u043B\u0438 \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0441\u0438\u0433\u043D\u0430\u043B `kill -s SIGNAL -- -PGID`.\n\n      \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442\u0441\u044F \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044F:\n\n      \u041A\u043E\u043C\u0430\u043D\u0434\u0430: \u0412\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0430\u044F \u043A\u043E\u043C\u0430\u043D\u0434\u0430.\n      \u041A\u0430\u0442\u0430\u043B\u043E\u0433: \u041A\u0430\u0442\u0430\u043B\u043E\u0433 (\u043E\u0442\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u043A\u043E\u0440\u043D\u044F \u043F\u0440\u043E\u0435\u043A\u0442\u0430), \u0433\u0434\u0435 \u0431\u044B\u043B\u0430 \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u0430 \u043A\u043E\u043C\u0430\u043D\u0434\u0430, \u0438\u043B\u0438 `(root)`.\n      Stdout: \u0412\u044B\u0432\u043E\u0434 \u0432 \u043F\u043E\u0442\u043E\u043A stdout. \u041C\u043E\u0436\u0435\u0442 \u0431\u044B\u0442\u044C `(\u043F\u0443\u0441\u0442\u043E)` \u0438\u043B\u0438 \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u044B\u043C \u043F\u0440\u0438 \u043E\u0448\u0438\u0431\u043A\u0435 \u0438 \u0434\u043B\u044F \u043B\u044E\u0431\u044B\u0445 \u043D\u0435\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u043D\u043D\u044B\u0445 \u0444\u043E\u043D\u043E\u0432\u044B\u0445 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432.\n      Stderr: \u0412\u044B\u0432\u043E\u0434 \u0432 \u043F\u043E\u0442\u043E\u043A stderr. \u041C\u043E\u0436\u0435\u0442 \u0431\u044B\u0442\u044C `(\u043F\u0443\u0441\u0442\u043E)` \u0438\u043B\u0438 \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u044B\u043C \u043F\u0440\u0438 \u043E\u0448\u0438\u0431\u043A\u0435 \u0438 \u0434\u043B\u044F \u043B\u044E\u0431\u044B\u0445 \u043D\u0435\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u043D\u043D\u044B\u0445 \u0444\u043E\u043D\u043E\u0432\u044B\u0445 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432.',
+    },
+    tips: {
+      title:
+        '\u0421\u043E\u0432\u0435\u0442\u044B \u0434\u043B\u044F \u043D\u0430\u0447\u0430\u043B\u0430 \u0440\u0430\u0431\u043E\u0442\u044B:',
+      tip1: '1. \u0417\u0430\u0434\u0430\u0432\u0430\u0439\u0442\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u044B, \u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u0443\u0439\u0442\u0435 \u0444\u0430\u0439\u043B\u044B \u0438\u043B\u0438 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0439\u0442\u0435 \u043A\u043E\u043C\u0430\u043D\u0434\u044B',
+      tip2: '2. \u0411\u0443\u0434\u044C\u0442\u0435 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u044B \u0434\u043B\u044F \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F \u043D\u0430\u0438\u043B\u0443\u0447\u0448\u0438\u0445 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432',
+      tip3: '3. \u0421\u043E\u0437\u0434\u0430\u0439\u0442\u0435 \u0444\u0430\u0439\u043B\u044B {fileName} \u0434\u043B\u044F \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F \u0441 Koda',
+      tip4: '4. {command} \u0434\u043B\u044F \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F \u0434\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0439 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438',
+      tip3noFile:
+        '3. {command} \u0434\u043B\u044F \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F \u0434\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0439 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438',
+    },
+    startupWarnings: {
+      homeDirectory: {
+        message:
+          '\u0412\u044B \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u0442\u0435 Koda CLI \u0432 \u0432\u0430\u0448\u0435\u0439 \u0434\u043E\u043C\u0430\u0448\u043D\u0435\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438. \u0420\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0443\u0435\u0442\u0441\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0442\u044C \u0432 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E\u0433\u043E \u043F\u0440\u043E\u0435\u043A\u0442\u0430.',
+      },
+      rootDirectory: {
+        message:
+          '\u041F\u0440\u0435\u0434\u0443\u043F\u0440\u0435\u0436\u0434\u0435\u043D\u0438\u0435: \u0412\u044B \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u0442\u0435 Koda CLI \u0432 \u043A\u043E\u0440\u043D\u0435\u0432\u043E\u0439 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438. \u0412\u0441\u044F \u0432\u0430\u0448\u0430 \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0430 \u043F\u0430\u043F\u043E\u043A \u0431\u0443\u0434\u0435\u0442 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C\u0441\u044F \u0434\u043B\u044F \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430. \u041D\u0430\u0441\u0442\u043E\u044F\u0442\u0435\u043B\u044C\u043D\u043E \u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0443\u0435\u0442\u0441\u044F \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0442\u044C \u0432 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E\u0433\u043E \u043F\u0440\u043E\u0435\u043A\u0442\u0430.',
+      },
+      fileSystemError: {
+        message:
+          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0442\u0435\u043A\u0443\u0449\u0443\u044E \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u044E \u0438\u0437-\u0437\u0430 \u043E\u0448\u0438\u0431\u043A\u0438 \u0444\u0430\u0439\u043B\u043E\u0432\u043E\u0439 \u0441\u0438\u0441\u0442\u0435\u043C\u044B.',
+      },
+    },
+    app: {
+      context: {
+        contextLeft:
+          '{percentLeft}% \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430 \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C',
+      },
+      requestCancelled:
+        '\u0417\u0430\u043F\u0440\u043E\u0441 \u043E\u0442\u043C\u0435\u043D\u0435\u043D.',
+      docs: { seeDocs: '\u0441\u043C. /docs' },
+      settings: {
+        title: '\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438',
+        applyTo: '\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A',
+        enterSelectTabFocus:
+          '(\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 Enter \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430, Tab \u0434\u043B\u044F \u0441\u043C\u0435\u043D\u044B \u0444\u043E\u043A\u0443\u0441\u0430)',
+        restartRequired:
+          '\u0427\u0442\u043E\u0431\u044B \u0443\u0432\u0438\u0434\u0435\u0442\u044C \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F, \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u043E \u043F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C Koda CLI. \u041D\u0430\u0436\u043C\u0438\u0442\u0435 r \u0434\u043B\u044F \u0432\u044B\u0445\u043E\u0434\u0430 \u0438 \u043F\u0440\u0438\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0439.',
+      },
+      about: {
+        title: '\u041E Koda CLI',
+        cliVersion: '\u0412\u0435\u0440\u0441\u0438\u044F CLI',
+        gitCommit: 'Git \u043A\u043E\u043C\u043C\u0438\u0442',
+        model: '\u041C\u043E\u0434\u0435\u043B\u044C',
+        sandbox: '\u041F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u0430',
+        os: '\u041E\u0421',
+        authMethod:
+          '\u041C\u0435\u0442\u043E\u0434 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438',
+        gcpProject: '\u041F\u0440\u043E\u0435\u043A\u0442 GCP',
+      },
+      compression: {
+        compressing:
+          '\u0421\u0436\u0430\u0442\u0438\u0435 \u0438\u0441\u0442\u043E\u0440\u0438\u0438 \u0447\u0430\u0442\u0430',
+        compressed:
+          '\u0418\u0441\u0442\u043E\u0440\u0438\u044F \u0447\u0430\u0442\u0430 \u0441\u0436\u0430\u0442\u0430 \u0441 {original} \u0434\u043E {new} \u0442\u043E\u043A\u0435\u043D\u043E\u0432.',
+      },
+      chat: {
+        noCheckpoints:
+          '\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043D\u044B\u0445 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u044B\u0445 \u0442\u043E\u0447\u0435\u043A \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430.',
+        listTitle:
+          '\u0421\u043F\u0438\u0441\u043E\u043A \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043D\u044B\u0445 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u043E\u0432:',
+        savedOn: '\u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D',
+        noteNewestLast:
+          '\u041F\u0440\u0438\u043C\u0435\u0447\u0430\u043D\u0438\u0435: \u041D\u043E\u0432\u044B\u0435 \u0432 \u043A\u043E\u043D\u0446\u0435, \u0441\u0442\u0430\u0440\u044B\u0435 \u0432 \u043D\u0430\u0447\u0430\u043B\u0435',
+        missingTag:
+          '\u041E\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442 \u0442\u0435\u0433. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /chat save <\u0442\u0435\u0433>',
+        conversationSaved:
+          '\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0430 \u0441 \u0442\u0435\u0433\u043E\u043C: {tag}.',
+        noConversation:
+          '\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u0430 \u0434\u043B\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F.',
+        noCheckpoint:
+          '\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u043A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u0441 \u0442\u0435\u0433\u043E\u043C: {tag}.',
+        overwritePrompt:
+          '\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C\u043D\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u0441 \u0442\u0435\u0433\u043E\u043C {tag} \u0443\u0436\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442. \u041F\u0435\u0440\u0435\u0437\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0435\u0451?',
+      },
+      copy: {
+        noOutput:
+          '\u041D\u0435\u0442 \u0432\u044B\u0432\u043E\u0434\u0430 \u0432 \u0438\u0441\u0442\u043E\u0440\u0438\u0438',
+        copied:
+          '\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0439 \u0432\u044B\u0432\u043E\u0434 \u0441\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u043D \u0432 \u0431\u0443\u0444\u0435\u0440 \u043E\u0431\u043C\u0435\u043D\u0430',
+        failed:
+          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0432 \u0431\u0443\u0444\u0435\u0440 \u043E\u0431\u043C\u0435\u043D\u0430.',
+        noText:
+          '\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0439 \u0432\u044B\u0432\u043E\u0434 \u0418\u0418 \u043D\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u0442 \u0442\u0435\u043A\u0441\u0442\u0430 \u0434\u043B\u044F \u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F.',
+      },
+      directory: {
+        configNotAvailable:
+          '\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.',
+        providePath:
+          '\u041F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430, \u0443\u043A\u0430\u0436\u0438\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u0438\u043D \u043F\u0443\u0442\u044C \u0434\u043B\u044F \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u0438\u044F.',
+        notSupported:
+          '\u041A\u043E\u043C\u0430\u043D\u0434\u0430 /directory add \u043D\u0435 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u0432 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0445 \u043F\u0440\u043E\u0444\u0438\u043B\u044F\u0445 \u043F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u044B. \u0412\u043C\u0435\u0441\u0442\u043E \u044D\u0442\u043E\u0433\u043E \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 --include-directories \u043F\u0440\u0438 \u0437\u0430\u043F\u0443\u0441\u043A\u0435 \u0441\u0435\u0441\u0441\u0438\u0438.',
+        successfullyAddedFiles: `\u0423\u0441\u043F\u0435\u0448\u043D\u043E \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u044B \u0444\u0430\u0439\u043B\u044B KODA.md \u0438\u0437 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0445 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0439, \u0435\u0441\u043B\u0438 \u043E\u043D\u0438 \u0435\u0441\u0442\u044C:
+- {directories}`,
+        successfullyAdded: `\u0423\u0441\u043F\u0435\u0448\u043D\u043E \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u044B \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438:
+- {directories}`,
+        currentDirectories: `\u0422\u0435\u043A\u0443\u0449\u0438\u0435 \u0434\u0438\u0440\u0435\u043A\u0442\u043E\u0440\u0438\u0438 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438:
+{directories}`,
+      },
+      tools: {
+        noRegistry:
+          '\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0440\u0435\u0435\u0441\u0442\u0440 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432.',
+        available: `\u0414\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B Koda CLI:
+
+`,
+        noTools: `  \u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432
+`,
+      },
+      editorSettings: {
+        title:
+          '\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440',
+        applyTo: '\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A',
+        enterSelectTabFocus:
+          '(\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 Enter \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430, Tab \u0434\u043B\u044F \u0441\u043C\u0435\u043D\u044B \u0444\u043E\u043A\u0443\u0441\u0430)',
+        supportedEditors:
+          '\u0412 \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0435\u0435 \u0432\u0440\u0435\u043C\u044F \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u044E\u0442\u0441\u044F \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0435 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u044B. \u041E\u0431\u0440\u0430\u0442\u0438\u0442\u0435 \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u0435, \u0447\u0442\u043E \u043D\u0435\u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u044B \u043D\u0435\u043B\u044C\u0437\u044F \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u0432 \u0440\u0435\u0436\u0438\u043C\u0435 \u043F\u0435\u0441\u043E\u0447\u043D\u0438\u0446\u044B.',
+        preferredEditor:
+          '\u0412\u0430\u0448 \u043F\u0440\u0435\u0434\u043F\u043E\u0447\u0442\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440: ',
+        none: '\u041D\u0435\u0442',
+      },
+      theme: {
+        title: '\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0442\u0435\u043C\u0443',
+        applyTo: '\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043A',
+        preview:
+          '\u041F\u0440\u0435\u0434\u0432\u0430\u0440\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439 \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440',
+        enterSelectTabFocus:
+          '(\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 Enter \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430, Tab \u0434\u043B\u044F \u0441\u043C\u0435\u043D\u044B \u0444\u043E\u043A\u0443\u0441\u0430)',
+      },
+      stats: {
+        modelStats:
+          '\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u043C\u043E\u0434\u0435\u043B\u0435\u0439 (\u0434\u043B\u044F \u0442\u0435\u0445\u043D\u0430\u0440\u0435\u0439)',
+        toolStats:
+          '\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u043E\u0432 (\u0434\u043B\u044F \u0442\u0435\u0445\u043D\u0430\u0440\u0435\u0439)',
+        metric: '\u041C\u0435\u0442\u0440\u0438\u043A\u0430',
+        api: 'API',
+        requests: '\u0417\u0430\u043F\u0440\u043E\u0441\u044B',
+        errors: '\u041E\u0448\u0438\u0431\u043A\u0438',
+        avgLatency:
+          '\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0437\u0430\u0434\u0435\u0440\u0436\u043A\u0430',
+        tokens: '\u0422\u043E\u043A\u0435\u043D\u044B',
+        total: '\u0412\u0441\u0435\u0433\u043E',
+        prompt: '\u041F\u0440\u043E\u043C\u043F\u0442',
+        cached: '\u041A\u044D\u0448\u0438\u0440\u043E\u0432\u0430\u043D\u043E',
+        thoughts: '\u0420\u0430\u0437\u043C\u044B\u0448\u043B\u0435\u043D\u0438\u044F',
+        tool: '\u0418\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442',
+        toolName:
+          '\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430',
+        output: '\u0412\u044B\u0432\u043E\u0434',
+        calls: '\u0412\u044B\u0437\u043E\u0432\u044B',
+        successRate:
+          '\u0423\u0440\u043E\u0432\u0435\u043D\u044C \u0443\u0441\u043F\u0435\u0445\u0430',
+        avgDuration:
+          '\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C',
+        userDecisionSummary:
+          '\u0421\u0432\u043E\u0434\u043A\u0430 \u0440\u0435\u0448\u0435\u043D\u0438\u0439 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F',
+        totalReviewed:
+          '\u0412\u0441\u0435\u0433\u043E \u0440\u0430\u0441\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u043E \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u0439',
+        accepted: '\u041F\u0440\u0438\u043D\u044F\u0442\u043E',
+        rejected: '\u041E\u0442\u043A\u043B\u043E\u043D\u0435\u043D\u043E',
+        modified: '\u0418\u0437\u043C\u0435\u043D\u0435\u043D\u043E',
+        overallAgreementRate:
+          '\u041E\u0431\u0449\u0438\u0439 \u0443\u0440\u043E\u0432\u0435\u043D\u044C \u0441\u043E\u0433\u043B\u0430\u0441\u0438\u044F',
+        noApiCalls:
+          '\u0412 \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 \u043D\u0435 \u0431\u044B\u043B\u043E \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u043E \u043D\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u0432\u044B\u0437\u043E\u0432\u0430 API.',
+        noToolCalls:
+          '\u0412 \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 \u043D\u0435 \u0431\u044B\u043B\u043E \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u043E \u043D\u0438 \u043E\u0434\u043D\u043E\u0433\u043E \u0432\u044B\u0437\u043E\u0432\u0430 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430.',
+      },
+      memory: {
+        refreshing:
+          '\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u044E \u0438\u0435\u0440\u0430\u0440\u0445\u0438\u0447\u0435\u0441\u043A\u0443\u044E \u043F\u0430\u043C\u044F\u0442\u044C (KODA.md \u0438\u043B\u0438 \u0434\u0440\u0443\u0433\u0438\u0435 \u0444\u0430\u0439\u043B\u044B \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442\u0430)...',
+        refreshSuccess:
+          '\u041F\u0430\u043C\u044F\u0442\u044C \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0430. \u0417\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u043E {charCount} \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432 \u0438\u0437 {fileCount} \u0444\u0430\u0439\u043B\u0430(\u043E\u0432).',
+        refreshSuccessEmpty:
+          '\u041F\u0430\u043C\u044F\u0442\u044C \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0430. \u0421\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E.',
+        refreshError:
+          '\u041E\u0448\u0438\u0431\u043A\u0430 \u043F\u0440\u0438 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0438 \u043F\u0430\u043C\u044F\u0442\u0438: {error}',
+        empty:
+          '\u041F\u0430\u043C\u044F\u0442\u044C \u0441\u0435\u0439\u0447\u0430\u0441 \u043F\u0443\u0441\u0442\u0430.',
+        usage:
+          '\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435: /memory add <\u0442\u0435\u043A\u0441\u0442 \u0434\u043B\u044F \u0437\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u044F>',
+        saving:
+          '\u041F\u043E\u043F\u044B\u0442\u043A\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0432 \u043F\u0430\u043C\u044F\u0442\u044C: "{text}"',
+        refreshingFromSourceFiles:
+          '\u041E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u043F\u0430\u043C\u044F\u0442\u0438 \u0438\u0437 \u0438\u0441\u0445\u043E\u0434\u043D\u044B\u0445 \u0444\u0430\u0439\u043B\u043E\u0432...',
+        refreshSuccessFromSourceFiles:
+          '\u041F\u0430\u043C\u044F\u0442\u044C \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0430. \u0417\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u043E {characters} \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432 \u0438\u0437 {files} \u0444\u0430\u0439\u043B\u0430(\u043E\u0432).',
+        showContent: `\u0422\u0435\u043A\u0443\u0449\u0435\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043F\u0430\u043C\u044F\u0442\u0438 \u0438\u0437 {fileCount} \u0444\u0430\u0439\u043B\u0430(\u043E\u0432):
+
+---
+{memoryContent}
+---`,
+        save: '\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0432 \u043F\u0430\u043C\u044F\u0442\u044C',
+        saveSuccess:
+          '\u0425\u043E\u0440\u043E\u0448\u043E, \u044F \u0437\u0430\u043F\u043E\u043C\u043D\u0438\u043B: "{fact}"',
+        saveModifiedSuccess:
+          '\u0425\u043E\u0440\u043E\u0448\u043E, \u044F \u043E\u0431\u043D\u043E\u0432\u0438\u043B \u0444\u0430\u0439\u043B \u043F\u0430\u043C\u044F\u0442\u0438 \u0441 \u0432\u0430\u0448\u0438\u043C\u0438 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F\u043C\u0438.',
+        saveError:
+          '\u041E\u0448\u0438\u0431\u043A\u0430 \u043F\u0440\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0438 \u043F\u0430\u043C\u044F\u0442\u0438: {error}',
+        validationNonEmpty:
+          '\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440 "fact" \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u043D\u0435\u043F\u0443\u0441\u0442\u043E\u0439 \u0441\u0442\u0440\u043E\u043A\u043E\u0439.',
+      },
+      flashFallback: {
+        proQuotaExceeded: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
+\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
+        freeQuotaExceeded: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
+\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
+        proGenericQuota: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
+\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
+        freeGenericQuota: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
+\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
+        proDefault: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
+\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
+        freeDefault: `\u26A1 \u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0430\u044E\u0441\u044C \u0441 {currentModel} \u043D\u0430 {fallbackModel} \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0441\u0435\u0441\u0441\u0438\u0438: \u0442\u0435\u043A\u0443\u0449\u0430\u044F \u043C\u043E\u0434\u0435\u043B\u044C \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.
+\u26A1 \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 /auth, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0439 \u0442\u043E\u043A\u0435\u043D \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u0438 \u0432\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u0434\u0435\u043B\u044C.`,
+      },
+      trial: {
+        footerLabel:
+          '\u043F\u0440\u043E\u0431\u043D\u044B\u0435 \u0437\u0430\u043F\u0440\u043E\u0441\u044B {used}{limitPart}',
+        limitReached: `\u26A1 \u0412\u044B \u0438\u0437\u0440\u0430\u0441\u0445\u043E\u0434\u043E\u0432\u0430\u043B\u0438 \u0432\u0441\u0435 \u043F\u0440\u043E\u0431\u043D\u044B\u0435 \u0437\u0430\u043F\u0440\u043E\u0441\u044B Koda.
+\u26A1 \u0417\u0430\u043F\u0440\u043E\u0441\u044B \u0431\u0443\u0434\u0443\u0442 \u043F\u0440\u0438\u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u044B \u0434\u043E \u0441\u0431\u0440\u043E\u0441\u0430 \u043B\u0438\u043C\u0438\u0442\u0430.
+\u26A1 \u041D\u0430\u0441\u0442\u0440\u043E\u0439\u0442\u0435 \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u044B\u0439 \u0434\u043E\u0441\u0442\u0443\u043F \u0447\u0435\u0440\u0435\u0437 /auth \u0438\u043B\u0438 \u043E\u0444\u043E\u0440\u043C\u0438\u0442\u0435 \u0442\u0430\u0440\u0438\u0444: https://kodacode.ru `,
+      },
+      auth: {
+        reauthRequired:
+          '\u0422\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044F \u043F\u043E\u0432\u0442\u043E\u0440\u043D\u0430\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F',
+        timeout:
+          '\u0412\u0440\u0435\u043C\u044F \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u0438 \u0438\u0441\u0442\u0435\u043A\u043B\u043E. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0435 \u0440\u0430\u0437.',
+      },
+      prompts: {
+        pressCtrlCAgain:
+          '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 Ctrl+C \u0435\u0449\u0435 \u0440\u0430\u0437, \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0439\u0442\u0438.',
+        pressCtrlDAgain:
+          '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 Ctrl+D \u0435\u0449\u0435 \u0440\u0430\u0437, \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0439\u0442\u0438.',
+        pressEscAgain:
+          '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 Esc \u0435\u0449\u0435 \u0440\u0430\u0437, \u0447\u0442\u043E\u0431\u044B \u043E\u0447\u0438\u0441\u0442\u0438\u0442\u044C.',
+      },
+      extensions: {
+        noActive:
+          '\u041D\u0435\u0442 \u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0445 \u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u0439.',
+        activeTitle:
+          '\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0435 \u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u044F:',
+      },
+      placeholders: {
+        vim: "  \u041D\u0430\u0436\u043C\u0438\u0442\u0435 'i' \u0434\u043B\u044F \u0440\u0435\u0436\u0438\u043C\u0430 INSERT \u0438 'Esc' \u0434\u043B\u044F \u0440\u0435\u0436\u0438\u043C\u0430 NORMAL.",
+        default:
+          '  \u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 @\u043F\u0443\u0442\u044C/\u043A/\u0444\u0430\u0439\u043B\u0443',
+      },
+      confirmation: { yes: '\u0414\u0430', no: '\u041D\u0435\u0442' },
+      toolConfirmation: {
+        modifyInProgress:
+          '\u0418\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435 \u0432 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u0435: ',
+        saveAndCloseExternalEditor:
+          '\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u0435 \u0438 \u0437\u0430\u043A\u0440\u043E\u0439\u0442\u0435 \u0432\u043D\u0435\u0448\u043D\u0438\u0439 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C',
+        applyThisChange:
+          '\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u044D\u0442\u043E \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435?',
+        yesAllowOnce:
+          '\u0414\u0430, \u0440\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044C \u043E\u0434\u0438\u043D \u0440\u0430\u0437',
+        yesAllowAlways:
+          '\u0414\u0430, \u0440\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044C \u0432\u0441\u0435\u0433\u0434\u0430',
+        noEsc: '\u041D\u0435\u0442 (esc)',
+        modifyWithExternalEditor:
+          '\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u0432\u043E \u0432\u043D\u0435\u0448\u043D\u0435\u043C \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u0435',
+        noSuggestChanges:
+          '\u041D\u0435\u0442, \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438\u0442\u044C \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F (esc)',
+        allowExecutionOf:
+          "\u0420\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435: '{command}'?",
+        doYouWantToProceed:
+          '\u0412\u044B \u0445\u043E\u0442\u0438\u0442\u0435 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C?',
+        urlsToFetch:
+          'URL-\u0430\u0434\u0440\u0435\u0441\u0430 \u0434\u043B\u044F \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F:',
+        allowExecutionOfMcpTool:
+          '\u0420\u0430\u0437\u0440\u0435\u0448\u0438\u0442\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u0430 MCP "{toolName}" \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 "{serverName}"?',
+        yesAlwaysAllowToolFromServer:
+          '\u0414\u0430, \u0432\u0441\u0435\u0433\u0434\u0430 \u0440\u0430\u0437\u0440\u0435\u0448\u0430\u0442\u044C \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442 "{toolName}" \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 "{serverName}"',
+        yesAlwaysAllowAllToolsFromServer:
+          '\u0414\u0430, \u0432\u0441\u0435\u0433\u0434\u0430 \u0440\u0430\u0437\u0440\u0435\u0448\u0430\u0442\u044C \u0432\u0441\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442\u044B \u0441 \u0441\u0435\u0440\u0432\u0435\u0440\u0430 "{serverName}"',
+      },
+      init: {
+        error:
+          '\u041E\u0448\u0438\u0431\u043A\u0430 \u0438\u043D\u0438\u0446\u0438\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438: {error}',
+        checkConfig:
+          '\u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 API-\u043A\u043B\u044E\u0447 \u0438 \u043A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044E.',
+      },
+    },
+  },
+  nXt = { en: hDn, ru: ADn },
   NUe = class {
     currentLanguage;
     constructor(e) {
@@ -6585,97 +8458,635 @@ var nXt = { en: hDn, ru: ADn },
       return e;
     }
   },
-  // I18n instance (previously Ie)
   Ie = new NUe();
-function dXt(t) {
-  let e = {
-      type: 'custom',
-      Background: t.background?.primary ?? t.Background ?? '',
-      Foreground: t.text?.primary ?? t.Foreground ?? '',
-      LightBlue: t.text?.link ?? t.LightBlue ?? '',
-      AccentBlue: t.text?.link ?? t.AccentBlue ?? '',
-      AccentPurple: t.text?.accent ?? t.AccentPurple ?? '',
-      AccentCyan: t.text?.link ?? t.AccentCyan ?? '',
-      AccentGreen: t.status?.success ?? t.AccentGreen ?? '',
-      AccentYellow: t.status?.warning ?? t.AccentYellow ?? '',
-      AccentRed: t.status?.error ?? t.AccentRed ?? '',
-      DiffAdded: t.background?.diff?.added ?? t.DiffAdded ?? '',
-      DiffRemoved: t.background?.diff?.removed ?? t.DiffRemoved ?? '',
-      Comment: t.ui?.comment ?? t.Comment ?? '',
-      Gray: t.text?.secondary ?? t.Gray ?? '',
-      GradientColors: t.ui?.gradient ?? t.GradientColors,
-    },
-    r = {
-      hljs: {
-        display: 'block',
-        overflowX: 'auto',
-        padding: '0.5em',
-        background: e.Background,
-        color: e.Foreground,
+function gDn(t) {
+  let e = [];
+  for (let r of t) Array.isArray(r) ? e.push(...r) : e.push(r);
+  return e;
+}
+var aXt = (t, e, r, n, i, a, s, o, l, u, c, p, h, m) => {
+  (0, Ps.useEffect)(() => {
+    (async () => {
+      try {
+        let fe = await n.getToolRegistry(),
+          Z = {},
+          Q = [
+            'search_file_content',
+            'list_directory',
+            'glob',
+            'google_web_search',
+            'save_memory',
+            'run_shell_command',
+          ];
+        for (let ge of Q) {
+          let xe = `toolDescriptions.${ge}`,
+            He = Ie.t(xe);
+          He && He !== xe && (Z[ge] = He);
+        }
+        Object.keys(Z).length > 0 && fe.updateToolDescriptions(Z);
+      } catch (fe) {
+        console.error('Error updating tool descriptions:', fe);
+      }
+    })();
+  }, [n]);
+  let [E, v] = (0, Ps.useState)(null),
+    g = (0, Ps.useRef)(null),
+    _ = (0, Ps.useRef)(!1),
+    [S, b] = (0, Ps.useState)(!1),
+    [I, R] = (0, Ps.useState)(null),
+    [F, G] = jKt(null),
+    U = (0, Ps.useRef)(new Set()),
+    { startNewPrompt: M, getPromptCount: Y } = zg(),
+    z = rme(),
+    se = (0, Ps.useMemo)(() => {
+      if (n.getProjectRoot()) return new xv(n.getProjectRoot());
+    }, [n]),
+    [j, N, H] = YKt(
+      async ($) => {
+        $.length > 0 && (r(IUe($), Date.now()), await ae($));
       },
-      'hljs-keyword': { color: e.AccentBlue },
-      'hljs-literal': { color: e.AccentBlue },
-      'hljs-symbol': { color: e.AccentBlue },
-      'hljs-name': { color: e.AccentBlue },
-      'hljs-link': { color: e.AccentBlue, textDecoration: 'underline' },
-      'hljs-built_in': { color: e.AccentCyan },
-      'hljs-type': { color: e.AccentCyan },
-      'hljs-number': { color: e.AccentGreen },
-      'hljs-class': { color: e.AccentGreen },
-      'hljs-string': { color: e.AccentYellow },
-      'hljs-meta-string': { color: e.AccentYellow },
-      'hljs-regexp': { color: e.AccentRed },
-      'hljs-template-tag': { color: e.AccentRed },
-      'hljs-subst': { color: e.Foreground },
-      'hljs-function': { color: e.Foreground },
-      'hljs-title': { color: e.Foreground },
-      'hljs-params': { color: e.Foreground },
-      'hljs-formula': { color: e.Foreground },
-      'hljs-comment': { color: e.Comment, fontStyle: 'italic' },
-      'hljs-quote': { color: e.Comment, fontStyle: 'italic' },
-      'hljs-doctag': { color: e.Comment },
-      'hljs-meta': { color: e.Gray },
-      'hljs-meta-keyword': { color: e.Gray },
-      'hljs-tag': { color: e.Gray },
-      'hljs-variable': { color: e.AccentPurple },
-      'hljs-template-variable': { color: e.AccentPurple },
-      'hljs-attr': { color: e.LightBlue },
-      'hljs-attribute': { color: e.LightBlue },
-      'hljs-builtin-name': { color: e.LightBlue },
-      'hljs-section': { color: e.AccentYellow },
-      'hljs-emphasis': { fontStyle: 'italic' },
-      'hljs-strong': { fontWeight: 'bold' },
-      'hljs-bullet': { color: e.AccentYellow },
-      'hljs-selector-tag': { color: e.AccentYellow },
-      'hljs-selector-id': { color: e.AccentYellow },
-      'hljs-selector-class': { color: e.AccentYellow },
-      'hljs-selector-attr': { color: e.AccentYellow },
-      'hljs-selector-pseudo': { color: e.AccentYellow },
-      'hljs-addition': { backgroundColor: e.AccentGreen, display: 'inline-block', width: '100%' },
-      'hljs-deletion': { backgroundColor: e.AccentRed, display: 'inline-block', width: '100%' },
+      n,
+      G,
+      o,
+      h
+    ),
+    ee = (0, Ps.useMemo)(() => (j.length ? IUe(j) : void 0), [j]),
+    me = (0, Ps.useRef)(!1),
+    Ae = (0, Ps.useCallback)(async ($) => {
+      (b(!0), await $, b(!1));
+    }, []),
+    { handleShellCommand: X } = HKt(r, G, Ae, i, n, t),
+    re = (0, Ps.useMemo)(
+      () =>
+        j.some(($) => $.status === 'awaiting_approval')
+          ? 'waiting_for_confirmation'
+          : S ||
+              j.some(
+                ($) =>
+                  $.status === 'executing' ||
+                  $.status === 'scheduled' ||
+                  $.status === 'validating' ||
+                  (($.status === 'success' || $.status === 'error' || $.status === 'cancelled') &&
+                    !$.responseSubmittedToGemini)
+              )
+            ? 'responding'
+            : 'idle',
+      [S, j]
+    ),
+    de = (0, Ps.useMemo)(() => {
+      let $ = [
+        'awaiting_approval',
+        'executing',
+        'validating',
+        'scheduled',
+        'success',
+        'error',
+        'cancelled',
+      ];
+      for (let fe of $) {
+        let Z = j.find((Q) => Q.status === fe);
+        if (Z) return Z;
+      }
+      return null;
+    }, [j]),
+    ye = (0, Ps.useMemo)(() => {
+      if (de) {
+        let $ = de.tool?.displayName ?? de.request.name,
+          Z = ('invocation' in de ? de.invocation : void 0)?.getDescription?.(),
+          Q = typeof Z == 'string' ? Z.trim() : '',
+          ge = Q.length > 0,
+          He = {
+            awaiting_approval: {
+              withDescription: 'loading.activity.awaitingApproval.withDescription',
+              withoutDescription: 'loading.activity.awaitingApproval.withoutDescription',
+            },
+            executing: {
+              withDescription: 'loading.activity.executing.withDescription',
+              withoutDescription: 'loading.activity.executing.withoutDescription',
+            },
+            validating: {
+              withDescription: 'loading.activity.validating.withDescription',
+              withoutDescription: 'loading.activity.validating.withoutDescription',
+            },
+            scheduled: {
+              withDescription: 'loading.activity.scheduled.withDescription',
+              withoutDescription: 'loading.activity.scheduled.withoutDescription',
+            },
+            success: {
+              withDescription: 'loading.activity.success.withDescription',
+              withoutDescription: 'loading.activity.success.withoutDescription',
+            },
+            error: {
+              withDescription: 'loading.activity.error.withDescription',
+              withoutDescription: 'loading.activity.error.withoutDescription',
+            },
+            cancelled: {
+              withDescription: 'loading.activity.cancelled.withDescription',
+              withoutDescription: 'loading.activity.cancelled.withoutDescription',
+            },
+          }[de.status];
+        if (!He) return null;
+        let mt = ge ? He.withDescription : He.withoutDescription,
+          Tt = { tool: $ };
+        ge && (Tt.description = Q);
+        let jt = `loading.activity.tool.${de.request.name}.${de.status}`,
+          ht = ge ? `${jt}.withDescription` : `${jt}.withoutDescription`,
+          vt = Ie.t(ht, Tt);
+        return vt !== ht ? vt : Ie.t(mt, Tt);
+      }
+      return re === 'responding'
+        ? Ie.t('loading.activity.processingResponse')
+        : re === 'waiting_for_confirmation'
+          ? Ie.t('loading.activity.awaitingUserConfirmation')
+          : null;
+    }, [de, re]),
+    he = (0, Ps.useCallback)(() => {
+      re === 'responding' &&
+        (_.current ||
+          ((_.current = !0),
+          g.current?.abort(),
+          F.current && r(F.current, Date.now()),
+          r({ type: 'info', text: Ie.t('app.requestCancelled') }, Date.now()),
+          G(null),
+          m(),
+          b(!1)));
+    }, [re, r, G, m, F]);
+  ja(
+    ($) => {
+      $.name === 'escape' && he();
     },
-    n = {
-      text: {
-        primary: e.Foreground,
-        secondary: e.Gray,
-        link: e.AccentBlue,
-        accent: e.AccentPurple,
+    { isActive: re === 'responding' }
+  );
+  let be = (0, Ps.useCallback)(
+      async ($, fe, Z, Q) => {
+        if (_.current) return { queryToSend: null, shouldProceed: !1 };
+        if (typeof $ == 'string' && $.trim().length === 0)
+          return { queryToSend: null, shouldProceed: !1 };
+        let ge = null;
+        if (typeof $ == 'string') {
+          let xe = $.trim();
+          (GM(n, new SN(xe.length, Q, n.getContentGeneratorConfig()?.authType, xe)),
+            i(`User query: '${xe}'`),
+            await z?.logMessage(GQ.USER, xe));
+          let He = await a(xe);
+          if (He)
+            switch (He.type) {
+              case 'schedule_tool': {
+                let { toolName: mt, toolArgs: Tt } = He,
+                  jt = {
+                    callId: `${mt}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                    name: mt,
+                    args: Tt,
+                    isClientInitiated: !0,
+                    prompt_id: Q,
+                  };
+                return (N([jt], Z), { queryToSend: null, shouldProceed: !1 });
+              }
+              case 'submit_prompt':
+                return ((ge = He.content), { queryToSend: ge, shouldProceed: !0 });
+              case 'handled':
+                return { queryToSend: null, shouldProceed: !1 };
+              default: {
+                let mt = He;
+                throw new Error(`Unhandled slash command result type: ${mt}`);
+              }
+            }
+          if (s && X(xe, Z)) return { queryToSend: null, shouldProceed: !1 };
+          if (LKt(xe)) {
+            let mt = await GKt({
+              query: xe,
+              config: n,
+              addItem: r,
+              onDebugMessage: i,
+              messageId: fe,
+              signal: Z,
+            });
+            if (!mt.shouldProceed) return { queryToSend: null, shouldProceed: !1 };
+            ge = mt.processedQuery;
+          } else (r({ type: 'user', text: xe }, fe), (ge = xe));
+        } else ge = $;
+        return ge === null
+          ? (i('Query processing resulted in null, not sending to Gemini.'),
+            { queryToSend: null, shouldProceed: !1 })
+          : { queryToSend: ge, shouldProceed: !0 };
       },
-      background: { primary: e.Background, diff: { added: e.DiffAdded, removed: e.DiffRemoved } },
-      border: { default: e.Gray, focused: e.AccentBlue },
-      ui: { comment: e.Comment, symbol: e.Gray, gradient: e.GradientColors },
-      status: { error: e.AccentRed, success: e.AccentGreen, warning: e.AccentYellow },
-    };
-  return new Xs(t.name, 'custom', r, e, n);
+      [n, r, i, X, a, z, s, N]
+    ),
+    De = (0, Ps.useCallback)(
+      ($, fe, Z) => {
+        if (_.current) return '';
+        let Q = fe + $;
+        F.current?.type !== 'gemini' &&
+          F.current?.type !== 'gemini_content' &&
+          (F.current && r(F.current, Z), G({ type: 'gemini', text: '' }), (Q = $));
+        let ge = $Kt(Q);
+        if (ge === Q.length) G((xe) => ({ type: xe?.type, text: Q }));
+        else {
+          let xe = Q.substring(0, ge),
+            He = Q.substring(ge);
+          (r({ type: F.current?.type, text: xe }, Z),
+            G({ type: 'gemini_content', text: He }),
+            (Q = He));
+        }
+        return Q;
+      },
+      [r, F, G]
+    ),
+    ce = (0, Ps.useCallback)(
+      ($) => {
+        if (!_.current) {
+          if (F.current) {
+            if (F.current.type === 'tool_group') {
+              let fe = F.current.tools.map((Q) =>
+                  Q.status === 'Pending' || Q.status === 'Confirming' || Q.status === 'Executing'
+                    ? { ...Q, status: 'Canceled' }
+                    : Q
+                ),
+                Z = { ...F.current, tools: fe };
+              r(Z, $);
+            } else r(F.current, $);
+            G(null);
+          }
+          (r({ type: 'info', text: 'User cancelled the request.' }, $), b(!1), R(null));
+        }
+      },
+      [r, F, G, R]
+    ),
+    Ce = (0, Ps.useCallback)(
+      ($, fe) => {
+        (F.current && (r(F.current, fe), G(null)),
+          r(
+            {
+              type: 'error',
+              text: lk($.error, n.getContentGeneratorConfig()?.authType, void 0, n.getModel(), rd),
+            },
+            fe
+          ),
+          R(null));
+      },
+      [r, F, G, n, R]
+    ),
+    J = (0, Ps.useCallback)(
+      ($, fe) => {
+        let Z = $.value,
+          ge = {
+            [wf.FINISH_REASON_UNSPECIFIED]: void 0,
+            [wf.STOP]: void 0,
+            [wf.MAX_TOKENS]: 'Response truncated due to token limits.',
+            [wf.SAFETY]: 'Response stopped due to safety reasons.',
+            [wf.RECITATION]: 'Response stopped due to recitation policy.',
+            [wf.LANGUAGE]: 'Response stopped due to unsupported language.',
+            [wf.BLOCKLIST]: 'Response stopped due to forbidden terms.',
+            [wf.PROHIBITED_CONTENT]: 'Response stopped due to prohibited content.',
+            [wf.SPII]: 'Response stopped due to sensitive personally identifiable information.',
+            [wf.OTHER]: 'Response stopped for other reasons.',
+            [wf.MALFORMED_FUNCTION_CALL]: 'Response stopped due to malformed function call.',
+            [wf.IMAGE_SAFETY]: 'Response stopped due to image safety violations.',
+            [wf.UNEXPECTED_TOOL_CALL]: 'Response stopped due to unexpected tool call.',
+          }[Z];
+        ge && r({ type: 'info', text: `\u26A0\uFE0F  ${ge}` }, fe);
+      },
+      [r]
+    ),
+    te = (0, Ps.useCallback)(
+      ($) =>
+        r(
+          {
+            type: 'info',
+            text: `IMPORTANT: This conversation approached the input token limit for ${n.getModel()}. A compressed context will be sent for future messages (compressed from: ${$?.originalTokenCount ?? 'unknown'} to ${$?.newTokenCount ?? 'unknown'} tokens).`,
+          },
+          Date.now()
+        ),
+      [r, n]
+    ),
+    ie = (0, Ps.useCallback)(
+      () =>
+        r(
+          {
+            type: 'info',
+            text: `The session has reached the maximum number of turns: ${n.getMaxSessionTurns()}. Please update this limit in your setting.json file.`,
+          },
+          Date.now()
+        ),
+      [r, n]
+    ),
+    pe = (0, Ps.useCallback)(() => {
+      r(
+        {
+          type: 'info',
+          text: 'A potential loop was detected. This can happen due to repetitive tool calls or other model behavior. The request has been halted.',
+        },
+        Date.now()
+      );
+    }, [r]),
+    ue = (0, Ps.useCallback)(
+      async ($, fe, Z) => {
+        let Q = '',
+          ge = [];
+        for await (let xe of $)
+          switch (xe.type) {
+            case Ls.Thought:
+              R(xe.value);
+              break;
+            case Ls.Content:
+              Q = De(xe.value, Q, fe);
+              break;
+            case Ls.ToolCallRequest:
+              ge.push(xe.value);
+              break;
+            case Ls.UserCancelled:
+              ce(fe);
+              break;
+            case Ls.Error:
+              Ce(xe.value, fe);
+              break;
+            case Ls.ChatCompressed:
+              te(xe.value);
+              break;
+            case Ls.ToolCallConfirmation:
+            case Ls.ToolCallResponse:
+              break;
+            case Ls.MaxSessionTurns:
+              ie();
+              break;
+            case Ls.Finished:
+              J(xe, fe);
+              break;
+            case Ls.LoopDetected:
+              me.current = !0;
+              break;
+            default:
+              return xe;
+          }
+        return (ge.length > 0 && N(ge, Z), 0);
+      },
+      [De, ce, Ce, N, te, J, ie]
+    ),
+    ve = (0, Ps.useCallback)(
+      async ($, fe, Z) => {
+        if ((re === 'responding' || re === 'waiting_for_confirmation') && !fe?.isContinuation)
+          return;
+        let Q = Date.now();
+        (fe?.isContinuation || (p(!1), n.setQuotaErrorOccurred(!1)),
+          (g.current = new AbortController()));
+        let ge = g.current.signal;
+        ((_.current = !1), Z || (Z = n.getSessionId() + '########' + Y()));
+        let { queryToSend: xe, shouldProceed: He } = await be($, Q, ge, Z);
+        if (!(!He || xe === null)) {
+          (fe?.isContinuation || (M(), R(null)), b(!0), v(null));
+          try {
+            let mt = t.sendMessageStream(xe, ge, Z);
+            if ((await ue(mt, Q, ge)) === 1) return;
+            (F.current && (r(F.current, Q), G(null)), me.current && ((me.current = !1), pe()));
+          } catch (mt) {
+            mt instanceof dS
+              ? l()
+              : (!Cs(mt) || mt.name !== 'AbortError') &&
+                r(
+                  {
+                    type: 'error',
+                    text: lk(
+                      ir(mt) || 'Unknown error',
+                      n.getContentGeneratorConfig()?.authType,
+                      void 0,
+                      n.getModel(),
+                      rd
+                    ),
+                  },
+                  Q
+                );
+          } finally {
+            b(!1);
+          }
+        }
+      },
+      [re, p, be, ue, F, r, G, v, t, l, n, M, Y, pe]
+    ),
+    ae = (0, Ps.useCallback)(
+      async ($) => {
+        if (S) return;
+        let fe = $.filter((jt) =>
+            jt.status === 'success' || jt.status === 'error' || jt.status === 'cancelled'
+              ? jt.response?.responseParts !== void 0
+              : !1
+          ),
+          Z = fe.filter((jt) => jt.request.isClientInitiated);
+        Z.length > 0 && H(Z.map((jt) => jt.request.callId));
+        let Q = fe.filter(
+          (jt) =>
+            jt.request.name === 'save_memory' &&
+            jt.status === 'success' &&
+            !U.current.has(jt.request.callId)
+        );
+        Q.length > 0 && (u(), Q.forEach((jt) => U.current.add(jt.request.callId)));
+        let ge = fe.filter((jt) => !jt.request.isClientInitiated);
+        if (ge.length === 0) return;
+        if (ge.every((jt) => jt.status === 'cancelled')) {
+          if (t) {
+            let ht = ge.flatMap((kt) => kt.response.responseParts),
+              vt = [];
+            for (let kt of ht)
+              Array.isArray(kt)
+                ? vt.push(...kt)
+                : typeof kt == 'string'
+                  ? vt.push({ text: kt })
+                  : vt.push(kt);
+            t.addHistory({ role: 'user', parts: vt });
+          }
+          let jt = ge.map((ht) => ht.request.callId);
+          H(jt);
+          return;
+        }
+        let He = ge.map((jt) => jt.response.responseParts),
+          mt = ge.map((jt) => jt.request.callId),
+          Tt = ge.map((jt) => jt.request.prompt_id);
+        (H(mt), !c && ve(gDn(He), { isContinuation: !0 }, Tt[0]));
+      },
+      [S, ve, H, t, u, c]
+    ),
+    k = [F.current, ee].filter(($) => $ != null);
+  return (
+    (0, Ps.useEffect)(() => {
+      (async () => {
+        if (!n.getCheckpointingEnabled()) return;
+        let fe = j.filter(
+          (Z) =>
+            (Z.request.name === 'replace' || Z.request.name === 'write_file') &&
+            Z.status === 'awaiting_approval'
+        );
+        if (fe.length > 0) {
+          let Z = n.getProjectTempDir() ? OUe.join(n.getProjectTempDir(), 'checkpoints') : void 0;
+          if (!Z) return;
+          try {
+            await iXt.mkdir(Z, { recursive: !0 });
+          } catch (Q) {
+            if (!Cs(Q) || Q.code !== 'EEXIST') {
+              i(`Failed to create checkpoint directory: ${ir(Q)}`);
+              return;
+            }
+          }
+          for (let Q of fe) {
+            let ge = Q.request.args.file_path;
+            if (!ge) {
+              i(`Skipping restorable tool call due to missing file_path: ${Q.request.name}`);
+              continue;
+            }
+            try {
+              let xe = await se?.createFileSnapshot(`Snapshot for ${Q.request.name}`);
+              if ((xe || (xe = await se?.getCurrentCommitHash()), !xe)) {
+                i(`Failed to create snapshot for ${ge}. Skipping restorable tool call.`);
+                continue;
+              }
+              let He = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '_'),
+                mt = Q.request.name,
+                Tt = OUe.basename(ge),
+                jt = `${He}-${Tt}-${mt}.json`,
+                ht = await t?.getHistory(),
+                vt = OUe.join(Z, jt);
+              await iXt.writeFile(
+                vt,
+                JSON.stringify(
+                  {
+                    history: e,
+                    clientHistory: ht,
+                    toolCall: { name: Q.request.name, args: Q.request.args },
+                    commitHash: xe,
+                    filePath: ge,
+                  },
+                  null,
+                  2
+                )
+              );
+            } catch (xe) {
+              i(`Failed to write restorable tool call file: ${ir(xe)}`);
+            }
+          }
+        }
+      })();
+    }, [j, n, i, se, e, t]),
+    {
+      streamingState: re,
+      submitQuery: ve,
+      initError: E,
+      pendingHistoryItems: k,
+      thought: I,
+      cancelOngoingRequest: he,
+      activeActivity: ye,
+    }
+  );
+};
+var lb = qe(or(), 1);
+var sXt = (t, e) => {
+  let [r, n] = (0, lb.useState)(0),
+    i = (0, lb.useRef)(null),
+    a = (0, lb.useRef)(e),
+    s = (0, lb.useRef)(t);
+  return (
+    (0, lb.useEffect)(() => {
+      let o = !1;
+      return (
+        a.current !== e && ((o = !0), (a.current = e)),
+        s.current === !1 && t && (o = !0),
+        o && n(0),
+        (s.current = t),
+        t
+          ? (i.current && clearInterval(i.current),
+            (i.current = setInterval(() => {
+              n((l) => l + 1);
+            }, 1e3)))
+          : i.current && (clearInterval(i.current), (i.current = null)),
+        () => {
+          i.current && (clearInterval(i.current), (i.current = null));
+        }
+      );
+    }, [t, e]),
+    r
+  );
+};
+var ub = qe(or(), 1);
+var EDn = 5e3;
+function yDn() {
+  return [
+    'Generating responses with 110% accuracy',
+    'Reticulating splines...',
+    'Consulting the Oracle...',
+    'Waking up the AI overlords...',
+    'Booting up consciousness...',
+    'Calibrating neural pathways...',
+    'Compiling ideas into thoughts...',
+    'Loading witty loading messages...',
+    'Calculating the meaning of life...',
+    'Sharpening the algorithms...',
+    'Preparing digital magic tricks...',
+    'Downloading more RAM...',
+    'Compressing algorithms...',
+    'Decompressing responses...',
+    'Rearranging the bits...',
+    'Initializing the response factory...',
+    'Assembling the knowledge engine...',
+    'Polishing the AI gemstones...',
+    'Warming up the neural networks...',
+    'Fine-tuning the intelligence...',
+    'Loading AI with coffee...',
+    'Preparing your AI-powered response...',
+    'Consulting the digital encyclopedia...',
+    'Generating thoughts with 99.9% confidence',
+  ];
 }
-function pXt(t) {
-  return t.name && !CDn(t.name)
-    ? { isValid: !1, error: `Invalid theme name: ${t.name}` }
-    : { isValid: !0 };
+function oXt(t, e) {
+  let r = (0, ub.useMemo)(() => yDn(), []),
+    [n, i] = (0, ub.useState)(() => r[0] ?? 'Loading...'),
+    a = (0, ub.useCallback)(() => {
+      if (r.length === 0) return 'Loading...';
+      let s = Math.floor(Math.random() * r.length);
+      return r[s];
+    }, [r]);
+  return (
+    (0, ub.useEffect)(() => {
+      let s = null;
+      if (e) i('Waiting for user confirmation...');
+      else if (t) {
+        let o = a();
+        (i(o),
+          (s = setInterval(() => {
+            i((l) => {
+              let u = r.indexOf(l);
+              if (u === -1) return r[0];
+              let c = (u + 1) % r.length;
+              return r[c];
+            });
+          }, EDn)));
+      } else i(r[0]);
+      return () => {
+        s && clearInterval(s);
+      };
+    }, [t, e, a, r]),
+    n
+  );
 }
-function CDn(t) {
-  return t.trim().length > 0 && t.trim().length <= 50;
-}
+var cB = qe(or(), 1);
+var lXt = (t, e) => {
+  let [r, n] = (0, cB.useState)(0),
+    i = t === 'responding',
+    a = sXt(i, r),
+    s = t === 'responding',
+    o = t === 'waiting_for_confirmation',
+    l = oXt(s, o),
+    u = e && t !== 'idle' ? e : l,
+    [c, p] = (0, cB.useState)(0),
+    h = (0, cB.useRef)(null);
+  return (
+    (0, cB.useEffect)(() => {
+      (h.current === 'waiting_for_confirmation' && t === 'responding'
+        ? (n((m) => m + 1), p(0))
+        : t === 'idle' && h.current === 'responding'
+          ? (n((m) => m + 1), p(0))
+          : t === 'waiting_for_confirmation' && p(a),
+        (h.current = t));
+    }, [t, a]),
+    { elapsedTime: t === 'waiting_for_confirmation' ? c : a, currentLoadingPhrase: u }
+  );
+};
 var Qv = qe(or(), 1);
 var uXt = {
     aliceblue: '#f0f8ff',
@@ -6925,6 +9336,95 @@ var ci = {
       return r;
     }
   };
+function dXt(t) {
+  let e = {
+      type: 'custom',
+      Background: t.background?.primary ?? t.Background ?? '',
+      Foreground: t.text?.primary ?? t.Foreground ?? '',
+      LightBlue: t.text?.link ?? t.LightBlue ?? '',
+      AccentBlue: t.text?.link ?? t.AccentBlue ?? '',
+      AccentPurple: t.text?.accent ?? t.AccentPurple ?? '',
+      AccentCyan: t.text?.link ?? t.AccentCyan ?? '',
+      AccentGreen: t.status?.success ?? t.AccentGreen ?? '',
+      AccentYellow: t.status?.warning ?? t.AccentYellow ?? '',
+      AccentRed: t.status?.error ?? t.AccentRed ?? '',
+      DiffAdded: t.background?.diff?.added ?? t.DiffAdded ?? '',
+      DiffRemoved: t.background?.diff?.removed ?? t.DiffRemoved ?? '',
+      Comment: t.ui?.comment ?? t.Comment ?? '',
+      Gray: t.text?.secondary ?? t.Gray ?? '',
+      GradientColors: t.ui?.gradient ?? t.GradientColors,
+    },
+    r = {
+      hljs: {
+        display: 'block',
+        overflowX: 'auto',
+        padding: '0.5em',
+        background: e.Background,
+        color: e.Foreground,
+      },
+      'hljs-keyword': { color: e.AccentBlue },
+      'hljs-literal': { color: e.AccentBlue },
+      'hljs-symbol': { color: e.AccentBlue },
+      'hljs-name': { color: e.AccentBlue },
+      'hljs-link': { color: e.AccentBlue, textDecoration: 'underline' },
+      'hljs-built_in': { color: e.AccentCyan },
+      'hljs-type': { color: e.AccentCyan },
+      'hljs-number': { color: e.AccentGreen },
+      'hljs-class': { color: e.AccentGreen },
+      'hljs-string': { color: e.AccentYellow },
+      'hljs-meta-string': { color: e.AccentYellow },
+      'hljs-regexp': { color: e.AccentRed },
+      'hljs-template-tag': { color: e.AccentRed },
+      'hljs-subst': { color: e.Foreground },
+      'hljs-function': { color: e.Foreground },
+      'hljs-title': { color: e.Foreground },
+      'hljs-params': { color: e.Foreground },
+      'hljs-formula': { color: e.Foreground },
+      'hljs-comment': { color: e.Comment, fontStyle: 'italic' },
+      'hljs-quote': { color: e.Comment, fontStyle: 'italic' },
+      'hljs-doctag': { color: e.Comment },
+      'hljs-meta': { color: e.Gray },
+      'hljs-meta-keyword': { color: e.Gray },
+      'hljs-tag': { color: e.Gray },
+      'hljs-variable': { color: e.AccentPurple },
+      'hljs-template-variable': { color: e.AccentPurple },
+      'hljs-attr': { color: e.LightBlue },
+      'hljs-attribute': { color: e.LightBlue },
+      'hljs-builtin-name': { color: e.LightBlue },
+      'hljs-section': { color: e.AccentYellow },
+      'hljs-emphasis': { fontStyle: 'italic' },
+      'hljs-strong': { fontWeight: 'bold' },
+      'hljs-bullet': { color: e.AccentYellow },
+      'hljs-selector-tag': { color: e.AccentYellow },
+      'hljs-selector-id': { color: e.AccentYellow },
+      'hljs-selector-class': { color: e.AccentYellow },
+      'hljs-selector-attr': { color: e.AccentYellow },
+      'hljs-selector-pseudo': { color: e.AccentYellow },
+      'hljs-addition': { backgroundColor: e.AccentGreen, display: 'inline-block', width: '100%' },
+      'hljs-deletion': { backgroundColor: e.AccentRed, display: 'inline-block', width: '100%' },
+    },
+    n = {
+      text: {
+        primary: e.Foreground,
+        secondary: e.Gray,
+        link: e.AccentBlue,
+        accent: e.AccentPurple,
+      },
+      background: { primary: e.Background, diff: { added: e.DiffAdded, removed: e.DiffRemoved } },
+      border: { default: e.Gray, focused: e.AccentBlue },
+      ui: { comment: e.Comment, symbol: e.Gray, gradient: e.GradientColors },
+      status: { error: e.AccentRed, success: e.AccentGreen, warning: e.AccentYellow },
+    };
+  return new Xs(t.name, 'custom', r, e, n);
+}
+function pXt(t) {
+  return t.name && !CDn(t.name)
+    ? { isValid: !1, error: `Invalid theme name: ${t.name}` }
+    : { isValid: !0 };
+}
+function CDn(t) {
+  return t.trim().length > 0 && t.trim().length <= 50;
+}
 var Jg = {
     text: {
       primary: ci.Foreground,
@@ -8362,8 +10862,8 @@ async function twn(t, e) {
       (await A9(t)).on('error', () => {});
     } catch {}
 }
-var rwn = process.env.GITHUB_DEVICE_CODE_URL || 'https://github.com/login/device/code',
-  nwn = process.env.GITHUB_OAUTH_TOKEN_URL || 'https://github.com/login/oauth/access_token';
+var rwn = 'https://github.com/login/device/code',
+  nwn = 'https://github.com/login/oauth/access_token';
 async function iwn(t, e) {
   let r = await fetch(rwn, {
     method: 'POST',
@@ -9149,9 +11649,9 @@ var qer = {
       }${Ie.t('bugCommand.bugReportDetails')}
 ${u}
 
-${Ie.t('bugCommand.telegramCommunity')} ${process.env.KODA_COMMUNITY_URL || 'https://t.me/kodacommunity'}`;
+${Ie.t('bugCommand.telegramCommunity')} https://t.me/kodacommunity`;
     t.ui.addItem({ type: 'info', text: c }, Date.now());
-    let p = process.env.KODA_COMMUNITY_URL || 'https://t.me/kodacommunity';
+    let p = 'https://t.me/kodacommunity';
     try {
       await A9(p);
     } catch (h) {
@@ -9426,7 +11926,7 @@ var Ker = {
   description: () => Ie.t('commandDescriptions.docs'),
   kind: 'built-in',
   action: async (t) => {
-    let e = process.env.KODA_DOCS_URL || 'https://docs.kodacode.ru/koda-cli/';
+    let e = 'https://docs.kodacode.ru/koda-cli/';
     Jer.env.SANDBOX && Jer.env.SANDBOX !== 'sandbox-exec'
       ? t.ui.addItem(
           { type: 'info', text: Ie.t('commandMessages.docs.openInBrowserMessage', { url: e }) },
@@ -9713,7 +12213,7 @@ var itr = (t) => {
         }),
       kind: 'built-in',
       action: async (u) => {
-        let c = process.env.KODA_IDE_COMPANION_URL || 'https://cli-companion.kodacode.ru/';
+        let c = 'https://cli-companion.kodacode.ru/';
         u.ui.addItem(
           { type: 'info', text: Ie.t('commandMessages.ide.openingBrowser', { url: c }) },
           Date.now()
@@ -11180,12 +13680,9 @@ var x9 = qe(Ft(), 1);
 var gnr = ({ customAsciiArt: t, version: e, nightly: r }) => {
   let { columns: n } = w2(),
     i,
-    largeBanner = Ie.t('banner.large'),
-    mediumBanner = Ie.t('banner.medium'),
-    smallBanner = Ie.t('banner.small'),
-    a = dhe(largeBanner),
-    s = dhe(mediumBanner);
-  t ? (i = t) : n >= a ? (i = largeBanner) : n >= s ? (i = mediumBanner) : (i = smallBanner);
+    a = dhe(uVe),
+    s = dhe(lVe);
+  t ? (i = t) : n >= a ? (i = uVe) : n >= s ? (i = lVe) : (i = Anr);
   let o = dhe(i);
   return (0, x9.jsxs)(Fe, {
     alignItems: 'flex-start',
