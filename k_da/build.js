@@ -312,23 +312,31 @@ sourceFiles.forEach((file, index) => {
     }
 
     if (i18nCommentIndex === -1) {
-      // Priority 3: Find first top-level variable declaration
-      // This is a safe insertion point as it's at the statement level, not inside an expression
-      const firstVarMatch = content.search(/^var [a-zA-Z]/m);
-      if (firstVarMatch > 0) {
-        i18nCommentIndex = firstVarMatch;
-        console.log('   → Inserting i18n data before first variable declaration');
+      // Priority 3: Find last import statement and insert after it
+      const imports = Array.from(content.matchAll(/^import\s+.+?;?\s*$/gm));
+      if (imports.length > 0) {
+        const lastImport = imports[imports.length - 1];
+        i18nCommentIndex = lastImport.index + lastImport[0].length;
+        console.log('   → Inserting i18n data after last import statement');
       } else {
-        // Priority 4: Insert after the file header comment
-        const headerEndMatch = content.match(/\*\/\s*\n/);
-        if (headerEndMatch) {
-          i18nCommentIndex = headerEndMatch.index + headerEndMatch[0].length;
-          console.log('   → Inserting i18n data after file header');
+        // Priority 4: Find first top-level variable declaration
+        // This is a safe insertion point as it's at the statement level, not inside an expression
+        const firstVarMatch = content.search(/^var [a-zA-Z]/m);
+        if (firstVarMatch > 0) {
+          i18nCommentIndex = firstVarMatch;
+          console.log('   → Inserting i18n data before first variable declaration');
         } else {
-          // Priority 5: Find first actual code line (last resort)
-          const firstCodeMatch = content.search(/^[^\s\/\n]/m);
-          i18nCommentIndex = firstCodeMatch > 0 ? firstCodeMatch : 0;
-          console.log('   → Inserting i18n data at beginning of code');
+          // Priority 5: Insert after the file header comment
+          const headerEndMatch = content.match(/\*\/\s*\n/);
+          if (headerEndMatch) {
+            i18nCommentIndex = headerEndMatch.index + headerEndMatch[0].length;
+            console.log('   → Inserting i18n data after file header');
+          } else {
+            // Priority 6: Find first actual code line (last resort)
+            const firstCodeMatch = content.search(/^[^\s\/\n]/m);
+            i18nCommentIndex = firstCodeMatch > 0 ? firstCodeMatch : 0;
+            console.log('   → Inserting i18n data at beginning of code');
+          }
         }
       }
     }
