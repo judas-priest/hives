@@ -254,11 +254,14 @@ function inlineEnvironmentVariables(content) {
     console.log(`   → Inlined ${replacements} environment variable references`);
   } else {
     // Default mode: Inject default values using ||
+    // BUT: Don't wrap when it's on the left side of an assignment (process.env.X = value)
     Object.entries(envVars).forEach(([key, value]) => {
       const safeValue = JSON.stringify(value);
 
       // Replace process.env.KEY with (process.env.KEY || "default_value")
-      const pattern = new RegExp(`process\\.env\\.${key}(?![A-Z0-9_])`, 'g');
+      // Use negative lookbehind to avoid left-hand assignment: (?<!process\.env\.KEY)\s*=
+      // But since JS doesn't support complex lookbehinds well, we'll use a smarter replacement
+      const pattern = new RegExp(`process\\.env\\.${key}(?![A-Z0-9_]|\\s*=)`, 'g');
       const beforeCount = (content.match(pattern) || []).length;
       if (beforeCount > 0) {
         content = content.replace(pattern, `(process.env.${key} || ${safeValue})`);
@@ -299,15 +302,34 @@ sourceFiles.forEach((file, index) => {
       ''
     );
 
-    // Find where to insert the i18n objects (before var hDn = enUS)
-    // Look for the comment about i18n objects or the variable assignment
+    // Find where to insert the i18n objects
+    // Priority 1: Look for existing i18n comment marker
     let i18nCommentIndex = content.indexOf('// i18n objects (enUS, ruRU)');
+
     if (i18nCommentIndex === -1) {
-      // Try to find var hDn = enUS or similar patterns
+      // Priority 2: Try to find var hDn = enUS or similar patterns (freshly split files)
       i18nCommentIndex = content.search(/var\s+\w+\s*=\s*enUS/);
-      if (i18nCommentIndex === -1) {
-        console.warn('   ⚠ Warning: Could not find i18n insertion point, appending at start');
-        i18nCommentIndex = 0;
+    }
+
+    if (i18nCommentIndex === -1) {
+      // Priority 3: Find first top-level variable declaration
+      // This is a safe insertion point as it's at the statement level, not inside an expression
+      const firstVarMatch = content.search(/^var [a-zA-Z]/m);
+      if (firstVarMatch > 0) {
+        i18nCommentIndex = firstVarMatch;
+        console.log('   → Inserting i18n data before first variable declaration');
+      } else {
+        // Priority 4: Insert after the file header comment
+        const headerEndMatch = content.match(/\*\/\s*\n/);
+        if (headerEndMatch) {
+          i18nCommentIndex = headerEndMatch.index + headerEndMatch[0].length;
+          console.log('   → Inserting i18n data after file header');
+        } else {
+          // Priority 5: Find first actual code line (last resort)
+          const firstCodeMatch = content.search(/^[^\s\/\n]/m);
+          i18nCommentIndex = firstCodeMatch > 0 ? firstCodeMatch : 0;
+          console.log('   → Inserting i18n data at beginning of code');
+        }
       }
     }
 
@@ -444,7 +466,7 @@ ${polzaClientCode}
     }
 
     // === Polza AI Build-Time Integration ===
-    // Replace API routing code at build-time (not runtime)
+    // Replace API routing code at build-time when POLZA_API_KEY is set
     if (shouldIncludePolza) {
       console.log('   → Applying Polza AI build-time integration...');
 
@@ -452,29 +474,27 @@ ${polzaClientCode}
       const polzaModel = envVars.POLZA_DEFAULT_MODEL || 'anthropic/claude-sonnet-4.5';
 
       // Replace ZMn() function to return Polza API endpoint
-      const zmnPattern = /function ZMn\(\) \{[\s\S]*?return `\$\{process\.env\.KODA_API_BASE \|\| 'https:\/\/api\.kodacode\.ru'\}\/ftc`;?\s*\}/;
-      const zmnReplacement = `function ZMn() {
-  // Polza AI integration (configured at build-time)
-  return ${JSON.stringify(polzaApiBase)};
-}`;
+      // Match the exact function definition to avoid over-matching
+      const zmnPattern = /function ZMn\(\) \{[\s\n]*return `\$\{process\.env\.KODA_API_BASE \|\| ['"]https:\/\/api\.kodacode\.ru['"]\}\/ftc`;[\s\n]*\}/;
+      const zmnReplacement = `function ZMn() {\n  // Polza AI integration (configured at build-time)\n  return ${JSON.stringify(polzaApiBase)};\n}`;
 
       if (content.match(zmnPattern)) {
         content = content.replace(zmnPattern, zmnReplacement);
         console.log('   → Replaced ZMn() to use Polza API endpoint');
+      } else {
+        console.warn('   ⚠ Warning: Could not find ZMn() function to replace');
       }
 
       // Replace rqe() function to skip GitHub token auth for Polza
-      const rqePattern = /async function rqe\(\) \{[\s\S]*?(?=\n(?:async )?function [A-Za-z]|\nexport )/;
-      const rqeReplacement = `async function rqe() {
-  // Polza AI integration: Use Polza API key authentication (configured at build-time)
-  // No GitHub token needed - Polza manages its own authentication
-  return { count: 0, limit: 999999, remaining: 999999 };
-}
-`;
+      // Match from function start to the next top-level statement (var/function)
+      const rqePattern = /async function rqe\(\) \{[\s\S]*?\n\}\nvar /;
+      const rqeReplacement = `async function rqe() {\n  // Polza AI integration: Use Polza API key authentication (configured at build-time)\n  // No GitHub token needed - Polza manages its own authentication\n  return { count: 0, limit: 999999, remaining: 999999 };\n}\nvar `;
 
       if (content.match(rqePattern)) {
         content = content.replace(rqePattern, rqeReplacement);
         console.log('   → Replaced rqe() to use Polza authentication');
+      } else {
+        console.warn('   ⚠ Warning: Could not find rqe() function to replace');
       }
 
       console.log('   → Polza AI build-time integration complete');
