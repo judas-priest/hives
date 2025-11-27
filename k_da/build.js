@@ -73,11 +73,13 @@ const ruRUFile = fs.readFileSync(path.join(__dirname, 'src/i18n/locales/ru-RU.js
 const enUSObject = enUSFile
   .replace(/^\/\/.*$/gm, '') // Remove comments
   .replace(/export const enUS = /, 'const enUS = ')
+  .replace(/},\s*$/, '};') // Fix trailing comma (should be semicolon)
   .trim();
 
 const ruRUObject = ruRUFile
   .replace(/^\/\/.*$/gm, '') // Remove comments
   .replace(/export const ruRU = /, 'const ruRU = ')
+  .replace(/},\s*$/, '};') // Fix trailing comma (should be semicolon)
   .trim();
 
 // Helper function to inline environment variables
