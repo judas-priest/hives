@@ -66,18 +66,25 @@ async function deobfuscate(inputFile = "original.js") {
   log(`Size: ${fileSize(inputSize)}`);
   log(`Lines: ${content.split("\n").length.toLocaleString()}`);
 
-  // Apply prettier formatting
-  log("Applying prettier formatting...");
-  const prettier = require("prettier");
-  const formatted = await prettier.format(content, {
-    parser: "babel",
-    printWidth: 100,
-    tabWidth: 2,
-    semi: true,
-    singleQuote: true,
-    trailingComma: "es5",
-    arrowParens: "always",
-  });
+  // Apply prettier formatting (optional - skip if prettier not installed)
+  let formatted = content;
+  try {
+    log("Attempting prettier formatting...");
+    const prettier = require("prettier");
+    formatted = await prettier.format(content, {
+      parser: "babel",
+      printWidth: 100,
+      tabWidth: 2,
+      semi: true,
+      singleQuote: true,
+      trailingComma: "es5",
+      arrowParens: "always",
+    });
+    success("Prettier formatting applied");
+  } catch (err) {
+    log("Prettier not available - skipping formatting (file will still work)");
+    formatted = content;
+  }
 
   fs.writeFileSync(outputPath, formatted, "utf8");
   success(`Deobfuscated file written: ${outputPath}`);
@@ -112,39 +119,81 @@ function splitFile() {
   }
   fs.mkdirSync(srcDir, { recursive: true });
 
-  // Define split boundaries
-  const splits = [
-    {
-      filename: "src/01-webpack-runtime.js",
-      start: 5,
-      end: 39,
-      description: "Webpack module system and runtime utilities",
-    },
-    {
-      filename: "src/02-react-bundle.js",
-      start: 39,
-      end: 20500,
-      description: "React library bundle (v19.1.0)",
-    },
-    {
-      filename: "src/03-npm-modules.js",
-      start: 20500,
-      end: 242191,
-      description: "Bundled npm packages and dependencies",
-    },
-    {
-      filename: "src/04-app-code.js",
-      start: 242191,
-      end: 278185,
-      description: "Application code, helpers, and configuration",
-    },
-    {
-      filename: "src/05-main.js",
-      start: 278185,
-      end: lines.length,
-      description: "Main entry function and bootstrap",
-    },
-  ];
+  // Auto-detect if file is minified or formatted
+  const isMinified = lines.length < 10000;
+
+  let splits;
+  if (isMinified) {
+    log("Detected minified file - using simplified split");
+    // For minified files, put all content in 04-app-code.js for extract-i18n to find
+    splits = [
+      {
+        filename: "src/01-webpack-runtime.js",
+        start: 5,
+        end: 6,
+        description: "Webpack module system and runtime utilities",
+      },
+      {
+        filename: "src/02-react-bundle.js",
+        start: 6,
+        end: 7,
+        description: "React library bundle (v19.1.0)",
+      },
+      {
+        filename: "src/03-npm-modules.js",
+        start: 7,
+        end: 8,
+        description: "Bundled npm packages and dependencies",
+      },
+      {
+        filename: "src/04-app-code.js",
+        start: 8,
+        end: lines.length - 1,
+        description: "Application code, helpers, and configuration",
+      },
+      {
+        filename: "src/05-main.js",
+        start: lines.length - 1,
+        end: lines.length,
+        description: "Main entry function and bootstrap",
+      },
+    ];
+  } else {
+    log("Detected formatted file - using detailed split");
+    // For formatted files, use detailed boundaries
+    splits = [
+      {
+        filename: "src/01-webpack-runtime.js",
+        start: 5,
+        end: 39,
+        description: "Webpack module system and runtime utilities",
+      },
+      {
+        filename: "src/02-react-bundle.js",
+        start: 39,
+        end: 20500,
+        description: "React library bundle (v19.1.0)",
+      },
+      {
+        filename: "src/03-npm-modules.js",
+        start: 20500,
+        end: 242191,
+        description: "Bundled npm packages and dependencies",
+      },
+      {
+        filename: "src/04-app-code.js",
+        start: 242191,
+        end: 278185,
+        description: "Application code, helpers, and configuration",
+      },
+      {
+        filename: "src/05-main.js",
+        start: 278185,
+        end: lines.length,
+        description: "Main entry function and bootstrap",
+      },
+    ];
+  }
 
   // Extract each section
   splits.forEach((split, index) => {
@@ -176,6 +225,33 @@ function splitFile() {
 // STEP 3: EXTRACT I18N
 // =============================================================================
 
+// Helper function to extract a balanced object from minified code
+function extractBalancedObject(content, startPattern) {
+  const match = content.match(startPattern);
+  if (!match) return null;
+
+  const startPos = match.index + match[0].length - 1; // Position of opening {
+  let braceCount = 0;
+  let pos = startPos;
+
+  // Find matching closing brace
+  while (pos < content.length) {
+    if (content[pos] === '{') braceCount++;
+    else if (content[pos] === '}') {
+      braceCount--;
+      if (braceCount === 0) {
+        // Found the end, extract the object including the braces
+        const objectStr = content.substring(startPos, pos + 1);
+        const fullMatch = content.substring(match.index, pos + 2); // Include semicolon if present
+        return { objectStr, fullMatch, varName: match[1] };
+      }
+    }
+    pos++;
+  }
+
+  return null;
+}
+
 function extractI18n() {
   section("STEP 3: EXTRACT LOCALIZATION FILES");
 
@@ -187,7 +263,6 @@ function extractI18n() {
   }
 
   const content = fs.readFileSync(appCodeFile, "utf8");
-  const lines = content.split("\n");
 
   // Create directories
   const i18nDir = path.join(__dirname, "src/i18n");
@@ -203,67 +278,31 @@ function extractI18n() {
   // Find i18n objects in the code
   log("Searching for i18n objects...");
 
-  // Find English i18n (var hDn = {)
-  const enStartIndex = lines.findIndex((line) =>
-    line.trim().startsWith("var hDn = {"),
-  );
-  if (enStartIndex === -1) {
-    error("Could not find English i18n object (var hDn = {)");
+  // Find English i18n (var hDn = {...)
+  const enMatch = extractBalancedObject(content, /var\s+(hDn)\s*=\s*(\{)/);
+  if (!enMatch) {
+    error("Could not find English i18n object (var hDn = {...})");
     process.exit(1);
   }
 
-  // Find the end of English i18n (matching closing brace)
-  let braceCount = 0;
-  let enEndIndex = enStartIndex;
-  for (let i = enStartIndex; i < lines.length; i++) {
-    const line = lines[i];
-    braceCount += (line.match(/{/g) || []).length;
-    braceCount -= (line.match(/}/g) || []).length;
-    if (braceCount === 0 && i > enStartIndex) {
-      enEndIndex = i;
-      break;
-    }
-  }
-
-  const enLines = lines.slice(enStartIndex, enEndIndex + 1);
-  const enContent = enLines
-    .join("\n")
-    .replace(/^var hDn = /, "export const enUS = ")
-    .replace(/;$/, "");
-
+  const enContent = `export const enUS = ${enMatch.objectStr};`;
   fs.writeFileSync(path.join(localesDir, "en-US.js"), enContent);
   success("English locale extracted: src/i18n/locales/en-US.js");
 
-  // Find Russian i18n (ADn = {)
-  const ruStartIndex = lines.findIndex((line) =>
-    line.trim().startsWith("ADn = {"),
-  );
-  if (ruStartIndex === -1) {
-    error("Could not find Russian i18n object (ADn = {)");
-    process.exit(1);
+  // Find Russian i18n (usually ADn or similar variable name = {...})
+  // Look for pattern after the English locale
+  const afterEnPos = content.indexOf(enMatch.fullMatch) + enMatch.fullMatch.length;
+  const restContent = content.substring(afterEnPos);
+
+  // Match pattern like: ADn={...} or ADn = {...}
+  const ruMatch = extractBalancedObject(restContent, /([A-Z][a-zA-Z0-9]{2})\s*=\s*(\{)/);
+  if (!ruMatch) {
+    log("⚠ Warning: Could not find Russian i18n object");
+  } else {
+    const ruContent = `export const ruRU = ${ruMatch.objectStr};`;
+    fs.writeFileSync(path.join(localesDir, "ru-RU.js"), ruContent);
+    success("Russian locale extracted: src/i18n/locales/ru-RU.js");
   }
-
-  // Find the end of Russian i18n
-  braceCount = 0;
-  let ruEndIndex = ruStartIndex;
-  for (let i = ruStartIndex; i < lines.length; i++) {
-    const line = lines[i];
-    braceCount += (line.match(/{/g) || []).length;
-    braceCount -= (line.match(/}/g) || []).length;
-    if (braceCount === 0 && i > ruStartIndex) {
-      ruEndIndex = i;
-      break;
-    }
-  }
-
-  const ruLines = lines.slice(ruStartIndex, ruEndIndex + 1);
-  const ruContent = ruLines
-    .join("\n")
-    .replace(/^\s*ADn = /, "export const ruRU = ")
-    .replace(/;$/, "");
-
-  fs.writeFileSync(path.join(localesDir, "ru-RU.js"), ruContent);
-  success("Russian locale extracted: src/i18n/locales/ru-RU.js");
 
   // Extract banners from English locale
   log("Extracting ASCII banners...");
