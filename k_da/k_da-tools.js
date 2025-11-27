@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
 /**
  * K_DA Tools - Integrated deobfuscation and build configuration tool
@@ -8,10 +8,10 @@
  * 2. Configuration & Build: Configures .env, customizes localization, disables tracking, and builds
  *
  * Usage:
- *   node k_da-tools.js deobfuscate [--input original.js]
- *   node k_da-tools.js configure [options]
- *   node k_da-tools.js build
- *   node k_da-tools.js all [options]
+ *   bun k_da-tools.js deobfuscate [--input original.js]
+ *   bun k_da-tools.js configure [options]
+ *   bun k_da-tools.js build
+ *   bun k_da-tools.js all [options]
  */
 
 const fs = require("fs");
@@ -53,6 +53,19 @@ async function deobfuscate(inputFile = "original.js") {
 
   const inputPath = path.join(__dirname, inputFile);
   const outputPath = path.join(__dirname, "k_da_deobfuscated.js");
+
+  // Remove old deobfuscated file to avoid caching
+  if (fs.existsSync(outputPath)) {
+    log("Removing old deobfuscated file to avoid cache conflicts...");
+    fs.unlinkSync(outputPath);
+  }
+
+  // Remove old src directory to avoid caching
+  const srcDir = path.join(__dirname, "src");
+  if (fs.existsSync(srcDir)) {
+    log("Removing old src directory to avoid cache conflicts...");
+    fs.rmSync(srcDir, { recursive: true, force: true });
+  }
 
   if (!fs.existsSync(inputPath)) {
     error(`Input file not found: ${inputPath}`);
@@ -571,7 +584,7 @@ function build() {
   log("Running build script...");
 
   try {
-    execSync(`node ${buildScript}`, {
+    execSync(`bun ${buildScript}`, {
       cwd: __dirname,
       stdio: "inherit",
     });
@@ -628,7 +641,7 @@ async function runAll(options = {}) {
     console.log("  • .env - Configuration file");
     console.log("  • k_da.js - Built executable");
     console.log("  • STRING_EXTRACTION_REPORT.md - Extraction report");
-    console.log("\nTo run: node k_da.js --help\n");
+    console.log("\nTo run: bun k_da.js --help\n");
   } catch (err) {
     error(`Workflow failed: ${err.message}`);
     console.error(err);
@@ -672,7 +685,7 @@ async function main() {
 K_DA Tools - Integrated deobfuscation and build configuration tool
 
 Usage:
-  node k_da-tools.js <command> [options]
+  bun k_da-tools.js <command> [options]
 
 Commands:
   deobfuscate    Deobfuscate original.js into readable format
@@ -693,17 +706,17 @@ Options (for 'all' or 'configure'):
 
 Examples:
   # Complete workflow
-  node k_da-tools.js all
+  bun k_da-tools.js all
 
   # Custom branding
-  node k_da-tools.js all --app-name "My CLI" --company-name "MyCompany"
+  bun k_da-tools.js all --app-name "My CLI" --company-name "MyCompany"
 
   # Individual steps
-  node k_da-tools.js deobfuscate
-  node k_da-tools.js split
-  node k_da-tools.js extract-i18n
-  node k_da-tools.js configure --app-name "My CLI"
-  node k_da-tools.js build
+  bun k_da-tools.js deobfuscate
+  bun k_da-tools.js split
+  bun k_da-tools.js extract-i18n
+  bun k_da-tools.js configure --app-name "My CLI"
+  bun k_da-tools.js build
 
 Workflow:
   1. Deobfuscate: Extracts source code from original.js

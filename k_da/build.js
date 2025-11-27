@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
 /**
  * Build script for K_DA
@@ -6,9 +6,9 @@
  * Inlines i18n data and environment variables from .env file
  *
  * Usage:
- *   node build.js              # Build with .env file (if exists)
- *   node build.js --no-env     # Build without .env substitution
- *   node build.js --inline-env # Inline all .env values (no runtime env access)
+ *   bun build.js              # Build with .env file (if exists)
+ *   bun build.js --no-env     # Build without .env substitution
+ *   bun build.js --inline-env # Inline all .env values (no runtime env access)
  */
 
 const fs = require('fs');
@@ -20,6 +20,13 @@ const noEnv = args.includes('--no-env');
 const inlineEnv = args.includes('--inline-env');
 
 console.log('Building k_da.js from split sources...\n');
+
+// Remove old build to avoid caching
+const outputPath = path.join(__dirname, 'k_da.js');
+if (fs.existsSync(outputPath)) {
+  console.log('Removing old k_da.js to avoid cache conflicts...');
+  fs.unlinkSync(outputPath);
+}
 
 // Files to concatenate in order
 const sourceFiles = [
@@ -263,7 +270,6 @@ ${ruRUObject}
 });
 
 // Write the built file
-const outputPath = path.join(__dirname, 'k_da.js');
 fs.writeFileSync(outputPath, output);
 fs.chmodSync(outputPath, '755');
 
@@ -275,4 +281,4 @@ console.log('✓ i18n locale data inlined successfully');
 if (envFileLoaded) {
   console.log(`✓ Environment variables from .env ${inlineEnv ? 'inlined' : 'set as defaults'}`);
 }
-console.log('\nTo run: ./k_da/k_da.js or node k_da/k_da.js');
+console.log('\nTo run: ./k_da/k_da.js or bun k_da/k_da.js');
