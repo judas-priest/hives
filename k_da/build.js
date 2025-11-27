@@ -180,8 +180,8 @@ ${ruRUObject}
     // This prevents duplicate i18n data and ensures changes to locale files are applied
     console.log('   → Removing old hard-coded i18n objects from app code...');
 
-    // Pattern to find the old English locale object (var hDn={help:{basics:)
-    const oldEnPattern = /var\s+\w{3}\s*=\s*\{help:\{basics:/;
+        // Remove English locale object (var hDn = { ... })
+    const oldEnPattern = /var\s+hDn\s*=\s*\{/;
     const enMatch = content.match(oldEnPattern);
     if (enMatch) {
       const startPos = enMatch.index;
@@ -220,8 +220,8 @@ ${ruRUObject}
       }
     }
 
-    // Pattern to find the old Russian locale object (can be "var ADn=" or just "ADn=")
-    const oldRuPattern = /(var\s+)?([A-Z][a-zA-Z0-9]{2})\s*=\s*\{help:\{basics:/;
+    // Remove Russian locale object (ADn = { ... })
+    const oldRuPattern = /\bADn\s*=\s*\{/;
     const ruMatch = content.match(oldRuPattern);
     if (ruMatch) {
       const startPos = ruMatch.index;
@@ -255,6 +255,32 @@ ${ruRUObject}
         }
         pos++;
       }
+    }
+
+    // Fix references to deleted locale objects
+    console.log('   → Fixing references to deleted locale objects...');
+    let referenceFixes = 0;
+    
+    // Replace references to hDn with enUS
+    content = content.replace(/\bhDn\b/g, () => {
+      referenceFixes++;
+      return 'enUS';
+    });
+    
+    // Replace references to ADn with ruRU
+    content = content.replace(/\bADn\b/g, () => {
+      referenceFixes++;
+      return 'ruRU';
+    });
+
+    // Fix variable declaration for nXt (add const if missing)
+    content = content.replace(
+      /(\s+)nXt\s*=\s*\{\s*en:\s*enUS,\s*ru:\s*ruRU\s*\}/,
+      '$1const nXt = { en: enUS, ru: ruRU }'
+    );
+    
+    if (referenceFixes > 0) {
+      console.log(`   → Fixed ${referenceFixes} references to deleted locale objects`);
     }
 
     // Apply environment variable inlining/defaults
