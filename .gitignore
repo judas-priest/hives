@@ -4,3 +4,5 @@ node_modules/
 k_da/k_da.js
 k_da/k_da_deobfuscated.js
 k_da/src/
+# But allow polza-client.js as it's a source module, not generated
+!k_da/src/polza-client.js
