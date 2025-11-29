@@ -38,13 +38,16 @@ class FixedLZPDecompressor:
         """
         Implements JavaScript patternreplace function
 
-        CRITICAL FIX: JavaScript code does s.split(patterns[pattern]).join(pattern)
+        CRITICAL: JavaScript code does s.split(patterns[pattern]).join(pattern)
         This means it replaces the VALUE with the KEY (reverse direction!)
 
         JavaScript line 822-823:
           for (pattern in patterns) {
             s = s.split(patterns[pattern]).join(pattern);
           }
+
+        This function is ONLY used for encoding the mask (lzpmask=True).
+        For domain decompression, use patternexpand() instead.
         """
         if lzpmask:
             # Patterns for LZP mask decoding
@@ -56,7 +59,7 @@ class FixedLZPDecompressor:
                 'CA': ',', 'IA': '.', 'BA': '?'
             }
         else:
-            # Patterns for domain data
+            # Patterns for domain data (encoding direction: VALUE -> KEY)
             patterns = {
                 '!A': 'porn', '!B': 'film', '!C': 'lord', '!D': 'kino', '!E': 'oker', '!F': 'trad',
                 '!G': 'line', '!H': 'game', '!I': 'pdom', '!J': 'tion', '!K': '.com', '!L': 'leon',
@@ -76,9 +79,56 @@ class FixedLZPDecompressor:
             }
 
         result = s
-        # CRITICAL: Replace VALUE with KEY (reversed from typical replacement)
+        # Replace VALUE with KEY (reversed from typical replacement)
         for pattern_key, pattern_value in patterns.items():
             result = result.replace(pattern_value, pattern_key)
+
+        return result
+
+    def patternexpand(self, s: str) -> str:
+        """
+        Expands compressed patterns in decompressed domain data.
+        This is the OPPOSITE of patternreplace - it expands KEY -> VALUE.
+
+        CRITICAL FIX FOR BUG #57:
+        After LZP decompression, the domain data still contains compressed patterns.
+        These patterns must be expanded to get readable domain names.
+
+        For example:
+        - 'sV' -> 'sex' (s + V->ex)
+        - 'mI' -> 'mon' (m + I->on)
+        - '!A' -> 'porn'
+        - '!K' -> '.com'
+
+        This function must be applied AFTER unlzp decompression.
+        """
+        # Domain patterns - expand KEY to VALUE (opposite of patternreplace)
+        # Order matters: process longer patterns first to avoid partial replacements
+        patterns_ordered = [
+            # Two-character patterns first (to avoid conflicts)
+            ('!A', 'porn'), ('!B', 'film'), ('!C', 'lord'), ('!D', 'kino'), ('!E', 'oker'), ('!F', 'trad'),
+            ('!G', 'line'), ('!H', 'game'), ('!I', 'pdom'), ('!J', 'tion'), ('!K', '.com'), ('!L', 'leon'),
+            ('!M', 'port'), ('!N', 'shop'), ('!O', 'club'), ('!P', 'prav'), ('!Q', 'vest'), ('!R', 'inco'),
+            ('!S', 'mark'), ('!T', 'ital'), ('!U', 'slot'), ('!V', 'play'), ('!W', 'eria'), ('!X', 'russ'),
+            ('!Y', 'vide'), ('!Z', 'tube'), ('!@', 'medi'), ('!#', 'ster'), ('!$', 'star'), ('!%', 'nter'),
+            ('!^', 'scho'), ('!&', 'free'), ('!*', 'enta'), ('!(', 'best'), ('!)', 'mega'), ('!=', 'gama'),
+            ('!+', 'prof'), ('!/', 'oney'), ('!,', 'rypt'), ('!<', 'kra3'), ('!>', 'stor'), ('!~', 'ture'),
+            ('![', 'tech'), ('!]', 'ance'), ('!{', 'coin'), ('!}', 'seed'), ('!`', 'anim'), ('!:', 'stro'),
+            ('!;', 'ment'), ('!?', 'site'),
+            # Single-character patterns last
+            ('A', 'in'), ('B', 'an'), ('C', 'er'), ('D', 'ar'), ('E', 'or'),
+            ('F', 'et'), ('G', 'al'), ('H', 'st'), ('I', 'on'), ('J', 'en'), ('K', 'at'), ('L', 'ro'), ('M', 'es'),
+            ('N', 'as'), ('O', 'el'), ('P', 'it'), ('Q', 'ch'), ('R', 'am'), ('S', 'ol'), ('T', 'om'), ('U', 'ra'),
+            ('V', 'ex'), ('W', 'is'), ('X', 'ic'), ('Y', 're'), ('Z', 'os'), ('@', 'ka'), ('#', 'ot'), ('$', 'us'),
+            ('%', 'ap'), ('^', 'ov'), ('&', 'im'), ('*', '-s'), ('(', 'ad'), (')', 'il'), ('=', 'op'), ('+', 'ed'),
+            ('/', 'em'), (',', 'a-'), ('<', 'od'), ('>', 'ir'), ('~', 'id'), ('[', 'ob'), (']', 'ag'), ('{', 'ig'),
+            ('}', 'ip'), ('`', 'ok'), (':', 'e-'), (';', 'ec'), ('?', 'un')
+        ]
+
+        result = s
+        # Expand KEY to VALUE (normal replacement direction)
+        for pattern_key, pattern_value in patterns_ordered:
+            result = result.replace(pattern_key, pattern_value)
 
         return result
 
@@ -463,10 +513,17 @@ class FixedPACDecompiler:
 
                     # Extract required characters from leftover (line 914)
                     if len(leftover) >= dmnl:
-                        self.domains[zone][length_key] = leftover[:dmnl]
+                        # Extract the compressed domain data
+                        compressed_data = leftover[:dmnl]
                         leftover = leftover[dmnl:]
-                        zone_decompressed += dmnl
-                        self.stats['total_domains_decompressed'] += dmnl
+
+                        # CRITICAL FIX: Expand patterns to get readable domains
+                        # The decompressed data still contains compressed patterns that must be expanded
+                        expanded_data = self.lzp_decompressor.patternexpand(compressed_data)
+
+                        self.domains[zone][length_key] = expanded_data
+                        zone_decompressed += len(expanded_data)
+                        self.stats['total_domains_decompressed'] += len(expanded_data)
                     else:
                         # Not enough data
                         self.domains[zone][length_key] = f"<LZP_ERROR: need {dmnl}, got {len(leftover)}>"
@@ -522,7 +579,7 @@ class FixedPACDecompiler:
                     "source_file": self.pac_file_path,
                     "file_size": len(self.pac_content),
                     "proxy_rules": self.proxy_rules,
-                    "decompiler_version": "FIXED - corrected patternreplace and unlzp buffering"
+                    "decompiler_version": "FIXED v2 - Added pattern expansion after LZP decompression (Bug #57)"
                 },
                 "statistics": self.stats,
                 "domains": self.domains,
