@@ -551,6 +551,22 @@ class RefinedPACDecompiler:
         try:
             print(f"\n📝 Exporting results...")
 
+            # CRITICAL FIX FOR BUG #57:
+            # Clean domain data by removing null characters before JSON export
+            # Null characters are padding/markers from LZP decompression
+            clean_domains = {}
+            if export_domains:
+                for zone, domain_dict in self.domains.items():
+                    clean_domains[zone] = {}
+                    for length_key, data in domain_dict.items():
+                        if isinstance(data, str) and not data.startswith('<LZP_ERROR'):
+                            # Remove all null characters from the domain data
+                            clean_data = data.replace('\x00', '')
+                            clean_domains[zone][length_key] = clean_data
+                        else:
+                            # Keep error messages as-is
+                            clean_domains[zone][length_key] = data
+
             # Create output structure
             output_data = {
                 "metadata": {
@@ -559,7 +575,7 @@ class RefinedPACDecompiler:
                     "proxy_rules": self.proxy_rules
                 },
                 "statistics": self.stats,
-                "domains": {} if not export_domains else self.domains,
+                "domains": clean_domains,
                 "ip_addresses": {
                     "count": len(self.d_ipaddr_decoded),
                     "addresses": self.d_ipaddr_decoded[:100] if export_ips else []
