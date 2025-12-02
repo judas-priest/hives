@@ -1,6 +1,11 @@
 /**
- * Autocomplete Module
+ * Autocomplete Module (Enhanced)
  * Provides tab completion for commands, files, and directories
+ * Features:
+ * - Fuzzy matching for commands and files
+ * - Inline suggestions (like zsh-autosuggestions)
+ * - Enhanced visual preview with colors and icons
+ * - Smart command history integration
  */
 
 import fs from 'fs/promises';
@@ -8,11 +13,26 @@ import { existsSync, readdirSync, statSync } from 'fs';
 import path from 'path';
 import glob from 'fast-glob';
 
+// ANSI color codes for enhanced preview
+const colors = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  dim: '\x1b[2m',
+  cyan: '\x1b[36m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  red: '\x1b[31m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  gray: '\x1b[90m'
+};
+
 /**
  * Available slash commands
  */
 const SLASH_COMMANDS = [
   '/help',
+  '/version',
   '/tools',
   '/memory',
   '/settings',
@@ -39,7 +59,88 @@ const MEMORY_SUBCOMMANDS = ['set', 'add', 'get', 'list', 'search', 'delete', 're
 const SETTINGS_SUBCOMMANDS = ['set', 'get', 'reset', 'path'];
 
 /**
- * Create autocomplete function for readline
+ * Command history for inline suggestions
+ */
+let commandHistory = [];
+
+/**
+ * Set command history for autocomplete suggestions
+ * @param {Array<string>} history - Command history array
+ */
+export function setCommandHistory(history) {
+  commandHistory = history || [];
+}
+
+/**
+ * Calculate fuzzy match score
+ * Higher score = better match
+ * @param {string} pattern - The search pattern
+ * @param {string} text - The text to match against
+ * @returns {number} Match score (0 = no match, higher = better match)
+ */
+function fuzzyScore(pattern, text) {
+  pattern = pattern.toLowerCase();
+  text = text.toLowerCase();
+
+  // Exact match gets highest score
+  if (text === pattern) return 1000;
+
+  // Starts with pattern gets high score
+  if (text.startsWith(pattern)) return 500 + pattern.length;
+
+  // Contains pattern gets medium score
+  if (text.includes(pattern)) return 250 + pattern.length;
+
+  // Fuzzy character-by-character matching
+  let score = 0;
+  let patternIdx = 0;
+  let consecutiveMatches = 0;
+
+  for (let i = 0; i < text.length && patternIdx < pattern.length; i++) {
+    if (text[i] === pattern[patternIdx]) {
+      score += 1 + consecutiveMatches * 2; // Bonus for consecutive matches
+      consecutiveMatches++;
+      patternIdx++;
+    } else {
+      consecutiveMatches = 0;
+    }
+  }
+
+  // Return score only if all pattern characters were matched
+  return patternIdx === pattern.length ? score : 0;
+}
+
+/**
+ * Get inline suggestion based on command history
+ * @param {string} currentLine - Current input line
+ * @returns {string|null} Suggested completion or null
+ */
+export function getInlineSuggestion(currentLine) {
+  if (!currentLine || currentLine.length < 2) return null;
+
+  // Find best match from history
+  let bestMatch = null;
+  let bestScore = 0;
+
+  for (const historyItem of commandHistory) {
+    if (historyItem.startsWith(currentLine) && historyItem !== currentLine) {
+      const score = fuzzyScore(currentLine, historyItem);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = historyItem;
+      }
+    }
+  }
+
+  if (bestMatch) {
+    return bestMatch.substring(currentLine.length);
+  }
+
+  return null;
+}
+
+/**
+ * Create autocomplete function for readline with fuzzy matching
  * @param {Array<string>} customCommands - List of custom command names
  * @returns {Function} Completer function for readline
  */
@@ -49,20 +150,66 @@ export function createCompleter(customCommands = []) {
 
   return function completer(line) {
     const trimmedLine = line.trim();
-    
+
     // Handle @ file completion
     if (trimmedLine.includes('@')) {
       return handleFileCompletion(trimmedLine);
     }
 
-    // Handle slash command completion
+    // Handle slash command completion with fuzzy matching
     if (trimmedLine.startsWith('/')) {
-      return handleCommandCompletion(trimmedLine, allCommands);
+      return handleCommandCompletionFuzzy(trimmedLine, allCommands);
     }
 
     // No completion available
     return [[], line];
   };
+}
+
+/**
+ * Handle command completion with fuzzy matching
+ * @param {string} line - Current input line
+ * @param {Array<string>} allCommands - All available commands
+ * @returns {Array} [completions, partial]
+ */
+function handleCommandCompletionFuzzy(line, allCommands) {
+  const parts = line.split(/\s+/);
+  const command = parts[0];
+
+  // Completing command itself
+  if (parts.length === 1 && !line.endsWith(' ')) {
+    // Use fuzzy matching to find commands
+    const scoredCommands = allCommands.map(cmd => ({
+      cmd,
+      score: fuzzyScore(command, cmd)
+    }));
+
+    // Filter and sort by score
+    const hits = scoredCommands
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.cmd);
+
+    return [hits.length > 0 ? hits : allCommands, command];
+  }
+
+  // Completing subcommands
+  if (line.startsWith('/memory ') && parts.length <= 2 && !line.endsWith(' ')) {
+    const partial = parts[1] || '';
+    const hits = MEMORY_SUBCOMMANDS.filter(sub => fuzzyScore(partial, sub) > 0)
+      .sort((a, b) => fuzzyScore(partial, b) - fuzzyScore(partial, a));
+    return [hits.length > 0 ? hits : MEMORY_SUBCOMMANDS, partial];
+  }
+
+  if (line.startsWith('/settings ') && parts.length <= 2 && !line.endsWith(' ')) {
+    const partial = parts[1] || '';
+    const hits = SETTINGS_SUBCOMMANDS.filter(sub => fuzzyScore(partial, sub) > 0)
+      .sort((a, b) => fuzzyScore(partial, b) - fuzzyScore(partial, a));
+    return [hits.length > 0 ? hits : SETTINGS_SUBCOMMANDS, partial];
+  }
+
+  // Fallback to original completion
+  return handleCommandCompletion(line, allCommands);
 }
 
 /**
@@ -127,48 +274,109 @@ export function showCommandPreview(line, rl) {
 }
 
 /**
- * Format file preview output
+ * Format file preview output with enhanced colors and icons
  */
 function formatFilePreview(files, partialPath) {
   const maxFiles = 8;
   const displayFiles = files.slice(0, maxFiles);
-  
-  let output = `${'─'.repeat(50)}\n`;
-  output += `📁 Files matching "${partialPath}":\n`;
-  output += `${'─'.repeat(50)}\n`;
-  
-  displayFiles.forEach(file => {
-    const icon = file.endsWith('/') ? '📁' : '📄';
-    output += `  ${icon} ${file}\n`;
+
+  let output = `${colors.cyan}${'─'.repeat(60)}${colors.reset}\n`;
+  output += `${colors.bright}${colors.yellow}📁 Files matching "${colors.green}${partialPath}${colors.yellow}":${colors.reset}\n`;
+  output += `${colors.cyan}${'─'.repeat(60)}${colors.reset}\n`;
+
+  displayFiles.forEach((file, index) => {
+    const isDir = file.endsWith('/');
+    const icon = isDir ? '📁' : getFileIcon(file);
+    const color = isDir ? colors.blue : colors.reset;
+    const prefix = index === 0 ? colors.bright + '➤' : ' ';
+    output += `${prefix} ${icon} ${color}${file}${colors.reset}\n`;
   });
-  
+
   if (files.length > maxFiles) {
-    output += `  ... and ${files.length - maxFiles} more\n`;
+    output += `${colors.dim}  ... and ${files.length - maxFiles} more${colors.reset}\n`;
   }
-  
-  output += `${'─'.repeat(50)}\n`;
-  output += `Press TAB to autocomplete`;
-  
+
+  output += `${colors.cyan}${'─'.repeat(60)}${colors.reset}\n`;
+  output += `${colors.gray}💡 Press ${colors.bright}TAB${colors.reset}${colors.gray} to autocomplete | ${colors.bright}Ctrl+C${colors.reset}${colors.gray} to cancel${colors.reset}`;
+
   return output;
 }
 
 /**
- * Format command preview output
+ * Get appropriate icon for file based on extension
+ */
+function getFileIcon(filename) {
+  const ext = path.extname(filename).toLowerCase();
+  const icons = {
+    '.js': '📜',
+    '.mjs': '📜',
+    '.ts': '📘',
+    '.json': '📋',
+    '.md': '📝',
+    '.txt': '📄',
+    '.log': '📊',
+    '.py': '🐍',
+    '.sh': '⚡',
+    '.yml': '⚙️',
+    '.yaml': '⚙️',
+    '.toml': '⚙️',
+    '.env': '🔐',
+    '.git': '🔀',
+    '.png': '🖼️',
+    '.jpg': '🖼️',
+    '.jpeg': '🖼️',
+    '.svg': '🎨',
+    '.pdf': '📕',
+    '.zip': '📦',
+    '.tar': '📦',
+    '.gz': '📦'
+  };
+  return icons[ext] || '📄';
+}
+
+/**
+ * Format command preview output with enhanced colors and formatting
  */
 function formatCommandPreview(commands, partial) {
-  let output = `${'─'.repeat(50)}\n`;
-  output += `⚡ Commands matching "${partial}":\n`;
-  output += `${'─'.repeat(50)}\n`;
-  
-  commands.forEach(cmd => {
+  let output = `${colors.cyan}${'─'.repeat(70)}${colors.reset}\n`;
+  output += `${colors.bright}${colors.yellow}⚡ Commands matching "${colors.green}${partial}${colors.yellow}":${colors.reset}\n`;
+  output += `${colors.cyan}${'─'.repeat(70)}${colors.reset}\n`;
+
+  commands.forEach((cmd, index) => {
     const description = getCommandDescription(cmd);
-    output += `  ${cmd.padEnd(15)} ${description}\n`;
+    const prefix = index === 0 ? colors.bright + '➤' : ' ';
+
+    // Highlight the matching part of the command
+    const highlightedCmd = highlightMatch(cmd, partial);
+
+    output += `${prefix} ${colors.bright}${colors.cyan}${highlightedCmd.padEnd(20)}${colors.reset} ${colors.dim}${description}${colors.reset}\n`;
   });
-  
-  output += `${'─'.repeat(50)}\n`;
-  output += `Press TAB to autocomplete`;
-  
+
+  output += `${colors.cyan}${'─'.repeat(70)}${colors.reset}\n`;
+  output += `${colors.gray}💡 Press ${colors.bright}TAB${colors.reset}${colors.gray} to autocomplete | ${colors.bright}Ctrl+C${colors.reset}${colors.gray} to cancel${colors.reset}`;
+
   return output;
+}
+
+/**
+ * Highlight matching characters in a command
+ */
+function highlightMatch(text, pattern) {
+  if (!pattern || pattern.length === 0) return text;
+
+  const lowerText = text.toLowerCase();
+  const lowerPattern = pattern.toLowerCase();
+
+  // Find start of match
+  const matchIndex = lowerText.indexOf(lowerPattern);
+
+  if (matchIndex === -1) return text;
+
+  const before = text.substring(0, matchIndex);
+  const match = text.substring(matchIndex, matchIndex + pattern.length);
+  const after = text.substring(matchIndex + pattern.length);
+
+  return `${before}${colors.green}${colors.bright}${match}${colors.reset}${colors.cyan}${after}`;
 }
 
 /**
@@ -177,6 +385,7 @@ function formatCommandPreview(commands, partial) {
 function getCommandDescription(command) {
   const descriptions = {
     '/help': 'Show available commands',
+    '/version': 'Show version information',
     '/tools': 'List available tools',
     '/memory': 'Manage persistent memory',
     '/settings': 'View/modify settings',
@@ -191,7 +400,7 @@ function getCommandDescription(command) {
     '/init': 'Create a POLZA.md file',
     '/exit': 'Exit the CLI'
   };
-  
+
   return descriptions[command] || 'Custom command';
 }
 
@@ -200,7 +409,7 @@ function getCommandDescription(command) {
  */
 function getAvailableCommands() {
   return [
-    '/help', '/tools', '/memory', '/settings', '/restore', '/clear',
+    '/help', '/version', '/tools', '/memory', '/settings', '/restore', '/clear',
     '/history', '/sessions', '/save', '/load', '/markdown', '/yolo', '/init', '/exit'
   ];
 }

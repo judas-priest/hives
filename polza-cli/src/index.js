@@ -113,6 +113,7 @@ class PolzaCLI {
 
     console.log(`\n${colors.yellow}Built-in Commands:${colors.reset}`);
     console.log(`  ${colors.dim}/help${colors.reset}      - Show available commands`);
+    console.log(`  ${colors.dim}/version${colors.reset}   - Show version information`);
     console.log(`  ${colors.dim}/tools${colors.reset}     - List available tools`);
     console.log(`  ${colors.dim}/memory${colors.reset}    - Manage persistent memory`);
     console.log(`  ${colors.dim}/settings${colors.reset}  - View/modify settings`);
@@ -242,6 +243,10 @@ class PolzaCLI {
     switch (cmd) {
       case '/help':
         this.showHelp();
+        break;
+
+      case '/version':
+        this.showVersion();
         break;
 
       case '/tools':
@@ -592,6 +597,7 @@ class PolzaCLI {
 
     console.log(`${colors.yellow}Built-in Commands:${colors.reset}`);
     console.log(`  ${colors.cyan}/help${colors.reset}                    - Show this help`);
+    console.log(`  ${colors.cyan}/version${colors.reset}                 - Show version information`);
     console.log(`  ${colors.cyan}/tools${colors.reset}                   - List available tools`);
     console.log(`  ${colors.cyan}/memory [subcommand]${colors.reset}     - Manage persistent memory & POLZA.md`);
     console.log(`  ${colors.cyan}/settings [subcommand]${colors.reset}   - View/modify settings`);
@@ -639,6 +645,30 @@ class PolzaCLI {
     console.log(`  polza-cli -p "Explain @README.md"`);
     console.log(`  polza-cli -p "List files: !ls -la" --yolo`);
     console.log(`  polza-cli -p "Show git status: !git status" --yolo`);
+    console.log();
+  }
+
+  /**
+   * Show version information
+   */
+  showVersion() {
+    console.log(`\n${colors.bright}${colors.green}Polza CLI${colors.reset} ${colors.dim}(Enhanced Edition)${colors.reset}`);
+    console.log(`${colors.yellow}Version:${colors.reset} 1.0.0`);
+    console.log(`${colors.yellow}Node.js:${colors.reset} ${process.version}`);
+    console.log(`${colors.yellow}Platform:${colors.reset} ${process.platform} (${process.arch})`);
+    console.log(`\n${colors.bright}Features:${colors.reset}`);
+    console.log(`  ✅ Enhanced command preview with fuzzy matching`);
+    console.log(`  ✅ Inline command suggestions (zsh-style)`);
+    console.log(`  ✅ Smart file and command autocompletion`);
+    console.log(`  ✅ Tab autocompletion for commands and files`);
+    console.log(`  ✅ File inclusion syntax (@file.js)`);
+    console.log(`  ✅ Shell command execution (!command)`);
+    console.log(`  ✅ Custom commands via TOML files`);
+    console.log(`  ✅ Persistent memory management`);
+    console.log(`  ✅ Custom instructions (POLZA.md)`);
+    console.log(`  ✅ Session management & history`);
+    console.log(`\n${colors.yellow}Repository:${colors.reset} https://github.com/judas-priest/hives`);
+    console.log(`${colors.yellow}License:${colors.reset} Unlicense (Public Domain)`);
     console.log();
   }
 

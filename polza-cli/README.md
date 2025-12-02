@@ -18,15 +18,29 @@ This enhanced version includes all features from the original gemini-cli:
 
 ## 🆕 Latest Enhancements (v1.0.0)
 
-Based on user feedback, we've added these powerful new features:
+Based on user feedback and gemini-cli inspiration, we've added these powerful new features:
 
-### 1. **Tab Autocompletion** ⌨️
+### 1. **Enhanced Command Preview System** 🎯
+- **Interactive Preview**: Visual command and file previews appear as you type (like zsh)
+- **Fuzzy Matching**: Intelligent command matching - type `/mem` and see all memory commands
+- **Highlighted Matches**: Matching characters are highlighted in preview for clarity
+- **Rich Icons**: File-type specific icons (📜 for JS, 📘 for TS, 🐍 for Python, etc.)
+- **Colorized Output**: Beautiful syntax highlighting in preview panels
+- **Smart Hints**: Helpful keyboard shortcuts displayed in preview
+
+### 2. **Tab Autocompletion** ⌨️
 - **Command Completion**: Press TAB while typing `/help` → automatically completes to `/help`
 - **File Path Completion**: Type `@README` and press TAB → suggests matching files
 - **Subcommand Completion**: Type `/memory ` and press TAB → shows available subcommands
+- **Fuzzy Search**: Tab completion now uses fuzzy matching for better suggestions
 - Works with both `/` commands and `@` file references
 
-### 2. **Enhanced Shell Execution** 🔧
+### 3. **Inline Suggestions** 💡
+- **History-based Suggestions**: Get suggestions based on your command history
+- **zsh-autosuggestions Style**: Similar to zsh-autosuggestions plugin
+- **Smart Completion**: Suggests most relevant commands as you type
+
+### 4. **Enhanced Shell Execution** 🔧
 Now supports **both syntaxes** for shell commands:
 - **Direct syntax**: `!ls -la` (NEW! simpler and cleaner)
 - **Braced syntax**: `!{ls -la}` (original syntax, still supported)
@@ -37,7 +51,7 @@ You > Show files: !ls -la
 You > What's my directory? !pwd
 ```
 
-### 3. **Custom Instructions (POLZA.md)** 📝
+### 5. **Custom Instructions (POLZA.md)** 📝
 Like GEMINI.md, but for Polza CLI! Define project-specific instructions that the AI will follow:
 
 - Create with `/init` command
@@ -55,15 +69,19 @@ Example POLZA.md:
 - Add JSDoc comments for public functions
 ```
 
-### 4. **Session Management** 💾
+### 6. **Session Management** 💾
 - **Save to specific folders**: Sessions are now project-scoped
 - **Better organization**: Each project gets its own session directory
 - **Easy restoration**: `/restore` command lists all available sessions
 
-### 5. **Improved Memory Management** 🧠
+### 7. **Improved Memory Management** 🧠
 - `/memory show` - View custom instructions from POLZA.md files
 - `/memory refresh` - Reload POLZA.md without restarting
 - Better visibility of loaded configuration files
+
+### 8. **Version Command** ℹ️
+- `/version` - Display version information, platform details, and feature list
+- Quick access to CLI capabilities and system information
 
 ## Overview
 
