@@ -8,7 +8,9 @@ import https from 'https';
 export class PolzaClient {
   constructor(config = {}) {
     this.apiKey = config.apiKey || process.env.POLZA_API_KEY;
-    this.baseUrl = config.baseUrl || process.env.POLZA_API_BASE || 'https://api.polza.ai/api/v1';
+    let baseUrl = config.baseUrl || process.env.POLZA_API_BASE || 'https://api.polza.ai/api/v1';
+    // Ensure baseUrl ends with a slash for proper URL construction
+    this.baseUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
     this.model = config.model || process.env.POLZA_DEFAULT_MODEL || 'anthropic/claude-sonnet-4.5';
     this.temperature = config.temperature || parseFloat(process.env.POLZA_TEMPERATURE || '0.7');
     this.maxTokens = config.maxTokens || parseInt(process.env.POLZA_MAX_TOKENS || '4096', 10);
@@ -22,7 +24,7 @@ export class PolzaClient {
    * Create a chat completion
    */
   async createChatCompletion(messages, options = {}) {
-    const url = new URL('/chat/completions', this.baseUrl);
+    const url = new URL('chat/completions', this.baseUrl);
 
     const requestBody = {
       model: options.model || this.model,
@@ -57,7 +59,7 @@ export class PolzaClient {
    * List available models
    */
   async listModels() {
-    const url = new URL('/models', this.baseUrl);
+    const url = new URL('models', this.baseUrl);
     return this._makeRequest(url, 'GET');
   }
 
