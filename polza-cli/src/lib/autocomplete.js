@@ -236,6 +236,9 @@ function handleCommandCompletionFuzzy(line, allCommands) {
 /**
  * Show interactive preview for @ file references
  * This provides real-time feedback like zsh
+ *
+ * IMPORTANT: Uses process.stdout.write() instead of rl.write() to avoid
+ * triggering readline 'line' events which would cause unwanted AI queries
  */
 export function showFilePreview(line, rl) {
   if (!line.includes('@')) {
@@ -244,7 +247,7 @@ export function showFilePreview(line, rl) {
 
   const lastAtIndex = line.lastIndexOf('@');
   const afterAt = line.substring(lastAtIndex + 1);
-  
+
   // Only show preview if user is actively typing a path (not just @)
   if (afterAt.length === 0) {
     return;
@@ -255,11 +258,16 @@ export function showFilePreview(line, rl) {
 
   try {
     const completions = findFileCompletions(partialPath);
-    
+
     if (completions.length > 0) {
-      // Clear current line and show preview
-      rl.write(`\n${formatFilePreview(completions, partialPath)}\n`);
-      rl.write(`${line}`);
+      // Use process.stdout.write instead of rl.write to avoid triggering line events
+      // Save cursor, move down, print preview, restore cursor
+      const preview = formatFilePreview(completions, partialPath);
+
+      // Clear from cursor to end of screen, print preview, then refresh readline
+      process.stdout.write('\x1b[J'); // Clear from cursor to end of screen
+      process.stdout.write('\n' + preview + '\n');
+      rl._refreshLine(); // Refresh the input line
     }
   } catch (error) {
     // Silent fail for preview
@@ -269,6 +277,9 @@ export function showFilePreview(line, rl) {
 /**
  * Show interactive preview for / commands
  * This provides real-time feedback like zsh
+ *
+ * IMPORTANT: Uses process.stdout.write() instead of rl.write() to avoid
+ * triggering readline 'line' events which would cause unwanted AI queries
  */
 export function showCommandPreview(line, rl) {
   if (!line.startsWith('/')) {
@@ -284,7 +295,7 @@ export function showCommandPreview(line, rl) {
   }
 
   const allCommands = getAvailableCommands();
-  
+
   // Use fuzzy matching to find commands
   const scoredCommands = allCommands.map(cmd => ({
     cmd,
@@ -298,10 +309,14 @@ export function showCommandPreview(line, rl) {
     .map(item => item.cmd);
 
   // Only show preview if there are matches and user isn't just typing "/"
-  if (matches.length > 0 && command.length > 0) {
-    // Clear current line and show preview
-    rl.write(`\n${formatCommandPreview(matches, command)}\n`);
-    rl.write(`${line}`);
+  if (matches.length > 0 && command.length > 1) {
+    // Use process.stdout.write instead of rl.write to avoid triggering line events
+    const preview = formatCommandPreview(matches, command);
+
+    // Clear from cursor to end of screen, print preview, then refresh readline
+    process.stdout.write('\x1b[J'); // Clear from cursor to end of screen
+    process.stdout.write('\n' + preview + '\n');
+    rl._refreshLine(); // Refresh the input line
   }
 }
 

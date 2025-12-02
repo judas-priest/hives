@@ -17,7 +17,7 @@ import { processPrompt, hasSpecialSyntax } from './lib/prompt-processor.js';
 import { CommandLoader, parseCustomCommand } from './lib/command-loader.js';
 import { MemoryManager } from './lib/memory-manager.js';
 import { SettingsManager } from './lib/settings-manager.js';
-import { createCompleter, updateCompleter } from './lib/autocomplete.js';
+import { createCompleter, updateCompleter, showFilePreview, showCommandPreview } from './lib/autocomplete.js';
 import { PolzaMdLoader, createDefaultPolzaMd } from './lib/polza-md-loader.js';
 
 // ANSI color codes
@@ -198,8 +198,38 @@ class PolzaCLI {
 
     this.rl.prompt();
 
+    // Add keypress handler for live preview (like gemini-cli)
+    // Uses debouncing to avoid excessive updates
+    let previewTimeout = null;
+    this.rl.input.on('keypress', (str, key) => {
+      // Clear any pending preview timeout
+      if (previewTimeout) {
+        clearTimeout(previewTimeout);
+      }
+
+      // Debounce preview updates to avoid excessive rendering
+      previewTimeout = setTimeout(() => {
+        const currentLine = this.rl.line;
+
+        // Show file preview for @ references
+        if (currentLine.includes('@')) {
+          showFilePreview(currentLine, this.rl);
+        }
+        // Show command preview for / commands
+        else if (currentLine.startsWith('/')) {
+          showCommandPreview(currentLine, this.rl);
+        }
+      }, 100); // 100ms debounce
+    });
+
     this.rl.on('line', async (input) => {
       const trimmedInput = input.trim();
+
+      // Clear any pending preview when line is submitted
+      if (previewTimeout) {
+        clearTimeout(previewTimeout);
+        previewTimeout = null;
+      }
 
       if (!trimmedInput) {
         this.rl.prompt();
