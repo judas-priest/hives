@@ -18,8 +18,11 @@ Polza CLI is an interactive command-line tool that provides:
 - ✅ **Polza AI Integration**: Access to multiple AI models (Anthropic Claude, OpenAI GPT, DeepSeek, etc.)
 - ✅ **Tool Calling Support**: AI automatically uses tools when needed
 - ✅ **Persistent Session History**: Conversation context maintained during session
+- ✅ **Session Management**: Save and load chat sessions for later
+- ✅ **Markdown Rendering**: Beautiful terminal rendering of markdown responses
+- ✅ **Automatic Logging**: All interactions logged to `~/.config/polza-cli/logs`
 - ✅ **Cost Tracking**: See token usage and costs for each request
-- ✅ **Zero Dependencies**: Uses only Node.js built-in modules
+- ✅ **History Navigation**: Browse and restore previous conversations
 
 ## Prerequisites
 
@@ -95,12 +98,18 @@ Polza CLI
 Chat with AI and access your file system
 
 Model: anthropic/claude-sonnet-4.5
+Session ID: session-2025-12-02T18-30-45-123Z
+Config Dir: /home/user/.config/polza-cli
 Commands:
-  /help     - Show available commands
-  /tools    - List available file system tools
-  /clear    - Clear conversation history
-  /history  - Show conversation history
-  /exit     - Exit the CLI
+  /help      - Show available commands
+  /tools     - List available file system tools
+  /clear     - Clear conversation history
+  /history   - Show conversation history
+  /sessions  - List saved sessions
+  /save      - Save current session
+  /load      - Load a session
+  /markdown  - Toggle markdown rendering
+  /exit      - Exit the CLI
 
 You >
 ```
@@ -113,7 +122,11 @@ You >
 | `/tools` | List all available file system tools |
 | `/clear` | Clear conversation history |
 | `/history` | Display conversation history |
-| `/exit` | Exit the CLI |
+| `/sessions` | List all saved sessions |
+| `/save` | Save current session to disk |
+| `/load <session-id>` | Load a previously saved session |
+| `/markdown` | Toggle markdown rendering on/off |
+| `/exit` | Save and exit the CLI |
 
 ### Example Conversations
 
@@ -220,11 +233,13 @@ export POLZA_DEFAULT_MODEL=openai/gpt-4o
 ```
 polza-cli/
 ├── src/
-│   ├── index.js              # Main CLI entry point
+│   ├── index.js                   # Main CLI entry point
 │   ├── lib/
-│   │   └── polza-client.js   # Polza AI client implementation
+│   │   ├── polza-client.js        # Polza AI client implementation
+│   │   ├── history-manager.js     # Session and history management
+│   │   └── markdown-renderer.js   # Markdown rendering utilities
 │   └── tools/
-│       └── filesystem.js     # File system tools
+│       └── filesystem.js          # File system tools
 ├── package.json
 ├── .env.example
 ├── .gitignore
@@ -346,6 +361,58 @@ case 'my_tool':
   return await myToolHandler(args.param1);
 ```
 
+## New Features
+
+### Session Management
+
+Save and restore your chat sessions:
+
+```bash
+# Save current session
+You > /save
+Session saved: session-2025-12-02T18-30-45-123Z
+
+# List all saved sessions
+You > /sessions
+Saved Sessions:
+1. session-2025-12-02T18-30-45-123Z
+   Date: 12/2/2025, 6:30:45 PM | Size: 4.52 KB
+
+# Load a previous session
+You > /load session-2025-12-02T18-30-45-123Z
+Session loaded: session-2025-12-02T18-30-45-123Z
+Messages: 12
+```
+
+All sessions are stored in `~/.config/polza-cli/sessions/`.
+
+### Markdown Rendering
+
+Beautiful terminal rendering of markdown responses with:
+- **Syntax highlighting** for code blocks
+- **Formatted headers** with colors
+- **Bold and italic** text styling
+- **Lists** with proper bullets
+- **Links** with visible URLs
+- **Tables** and horizontal rules
+
+Toggle markdown rendering on/off with `/markdown`.
+
+### Automatic Logging
+
+All interactions are automatically logged to `~/.config/polza-cli/logs/`:
+- User inputs
+- AI responses
+- Tool calls and results
+- Token usage and costs
+- Error messages
+
+Each session has its own log file with JSON-formatted entries for easy parsing.
+
+### Persistent History
+
+Conversation history is automatically saved after each interaction to `~/.config/polza-cli/history/`, ensuring you never lose your chat context.
+
 ## Comparison with Similar CLIs
 
 | Feature | Polza CLI | gemini-cli | k_da | agent_polza2 |
@@ -355,7 +422,11 @@ case 'my_tool':
 | Interface | Interactive Chat | TUI + Chat | TUI | JSON Interface |
 | File System Tools | ✅ | ✅ | Limited | ✅ |
 | Tool Calling | ✅ | ✅ | ❌ | ✅ |
-| Dependencies | Zero (built-in only) | Many | Many | Many |
+| Session Management | ✅ | ✅ | ❌ | ❌ |
+| Markdown Rendering | ✅ | ✅ | ❌ | ❌ |
+| Automatic Logging | ✅ | ✅ | ❌ | ❌ |
+| History Persistence | ✅ | ✅ | ❌ | ❌ |
+| Dependencies | Minimal | Many | Many | Many |
 | Simplicity | High | Medium | Low | Medium |
 
 ## Security Considerations
