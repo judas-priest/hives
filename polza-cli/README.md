@@ -1,28 +1,36 @@
-# Polza CLI
+# Polza CLI (Enhanced Edition)
 
-A command-line interface client with chat support and file system access using Polza AI.
+A powerful command-line interface client with AI chat, file system access, and advanced features inspired by gemini-cli.
+
+## 🚀 New Features (Gemini-CLI Inspired)
+
+This enhanced version includes all features from the original gemini-cli:
+
+✅ **File Inclusion (@file.js, @src/)** - Include file contents directly in prompts
+✅ **Shell Execution (!{command})** - Execute shell commands within prompts (YOLO mode)
+✅ **Command-Line Flags** - `-p` (non-interactive), `-m` (model selection), `--yolo`, `--help`
+✅ **CLI Commands** - `/help`, `/exit`, `/clear`, `/memory`, `/tools`, `/settings`, `/restore`
+✅ **Built-in Tools** - grep, shell execution, file operations, glob patterns
+✅ **YOLO Mode** - `--yolomode` flag disables confirmations (use with caution!)
+✅ **Custom Commands** - Define custom commands via TOML files
+✅ **Persistent Memory** - Store and retrieve information across sessions
+✅ **Settings Management** - Configure and save preferences
 
 ## Overview
 
-Polza CLI is an interactive command-line tool that provides:
+Polza CLI provides:
 
 - **AI-Powered Chat**: Conversational interface using Polza AI's language models
 - **File System Access**: Built-in tools for reading, writing, and managing files
+- **Advanced Tools**: grep, shell execution, glob patterns, web search (placeholder)
 - **Tool Calling**: Automatic tool execution based on conversation context
+- **File Inclusion Syntax**: `@file.js` to include files directly in prompts
+- **Shell Command Execution**: `!{ls -la}` to run shell commands (requires YOLO mode)
+- **Custom Commands**: Define reusable prompts via TOML files
+- **Persistent Memory**: Remember information across sessions with `/memory`
+- **Settings Management**: Configure preferences with `/settings`
 - **Conversation History**: Maintains context throughout your session
-
-## Features
-
-- ✅ **Interactive Chat Interface**: Natural language conversations with AI
-- ✅ **File System Tools**: Read, write, list, create, and delete files/directories
-- ✅ **Polza AI Integration**: Access to multiple AI models (Anthropic Claude, OpenAI GPT, DeepSeek, etc.)
-- ✅ **Tool Calling Support**: AI automatically uses tools when needed
-- ✅ **Persistent Session History**: Conversation context maintained during session
-- ✅ **Session Management**: Save and load chat sessions for later
-- ✅ **Markdown Rendering**: Beautiful terminal rendering of markdown responses
-- ✅ **Automatic Logging**: All interactions logged to `~/.config/polza-cli/logs`
-- ✅ **Cost Tracking**: See token usage and costs for each request
-- ✅ **History Navigation**: Browse and restore previous conversations
+- **Session Management**: Save and restore chat sessions
 
 ## Prerequisites
 
@@ -36,18 +44,11 @@ Polza CLI is an interactive command-line tool that provides:
 ```bash
 cd polza-cli
 chmod +x src/index.js
+npm install
 ./src/index.js
 ```
 
-### Option 2: Install Locally
-
-```bash
-cd polza-cli
-npm install
-npm start
-```
-
-### Option 3: Install Globally
+### Option 2: Install Globally
 
 ```bash
 cd polza-cli
@@ -58,8 +59,6 @@ polza-cli
 ## Configuration
 
 ### Set Your API Key
-
-You need a Polza AI API key to use this CLI. Set it as an environment variable:
 
 ```bash
 export POLZA_API_KEY=ak_your_api_key_here
@@ -84,127 +83,400 @@ cp .env.example .env
 
 ## Usage
 
-### Starting the CLI
+### Basic Usage
 
 ```bash
 export POLZA_API_KEY=ak_your_key_here
-node src/index.js
+polza-cli
 ```
 
-You'll see a prompt:
+### Non-Interactive Mode
 
-```
-Polza CLI
-Chat with AI and access your file system
+```bash
+# Run a single prompt
+polza-cli -p "Explain @README.md"
 
-Model: anthropic/claude-sonnet-4.5
-Session ID: session-2025-12-02T18-30-45-123Z
-Config Dir: /home/user/.config/polza-cli
-Commands:
-  /help      - Show available commands
-  /tools     - List available file system tools
-  /clear     - Clear conversation history
-  /history   - Show conversation history
-  /sessions  - List saved sessions
-  /save      - Save current session
-  /load      - Load a session
-  /markdown  - Toggle markdown rendering
-  /exit      - Exit the CLI
-
-You >
+# With file inclusion
+polza-cli -p "Analyze @src/index.js and suggest improvements"
 ```
 
-### Available Commands
+### YOLO Mode (Shell Execution)
+
+```bash
+# Enable shell command execution
+polza-cli --yolo
+
+# Or use short form
+polza-cli -y
+
+# Use in non-interactive mode
+polza-cli -p "Show directory: !{ls -la}" --yolo
+```
+
+### Model Selection
+
+```bash
+# Use a different model
+polza-cli -m "openai/gpt-4o"
+
+# Combine with other flags
+polza-cli -m "openai/gpt-4o-mini" --yolo
+```
+
+### Interactive Mode with Initial Prompt
+
+```bash
+# Start with a prompt, then continue interactively
+polza-cli -i "Help me understand this codebase"
+```
+
+## Command-Line Flags
+
+| Flag | Alias | Description |
+|------|-------|-------------|
+| `--prompt` | `-p` | Run in non-interactive mode with a prompt |
+| `--prompt-interactive` | `-i` | Start with a prompt, then enter interactive mode |
+| `--model` | `-m` | Select the AI model to use |
+| `--yolomode` | `--yolo` | Enable YOLO mode (auto-approve shell commands) |
+| `--output-format` | `-o` | Output format (`text` or `json`) |
+| `--help` | `-h` | Show help |
+| `--version` | `-v` | Show version |
+
+## Built-in Commands
 
 | Command | Description |
 |---------|-------------|
 | `/help` | Show help information and usage examples |
-| `/tools` | List all available file system tools |
+| `/tools` | List all available tools (file system, grep, shell, etc.) |
+| `/memory [subcommand]` | Manage persistent memory |
+| `/settings [subcommand]` | View/modify settings |
+| `/restore [session-id]` | Restore a saved session |
 | `/clear` | Clear conversation history |
 | `/history` | Display conversation history |
 | `/sessions` | List all saved sessions |
 | `/save` | Save current session to disk |
 | `/load <session-id>` | Load a previously saved session |
 | `/markdown` | Toggle markdown rendering on/off |
+| `/yolo` | Toggle YOLO mode on/off |
 | `/exit` | Save and exit the CLI |
 
-### Example Conversations
+## Special Syntax
 
-#### Simple Chat
+### File Inclusion (`@file.js`, `@src/`)
 
-```
-You > Hello! What can you help me with?
-Assistant > Hello! I can help you with various tasks including:
-- File system operations (reading, writing, listing files)
-- Answering questions and providing information
-- Code analysis and generation
-- And much more! What would you like to do?
-```
-
-#### File Operations
+Include file contents directly in your prompts:
 
 ```
-You > Read the contents of README.md
-[Tool] Executing read_file...
-Assistant > I've read the README.md file. It contains documentation for...
-
-You > List all files in the current directory
-[Tool] Executing list_directory...
-Assistant > Here are the files in the current directory:
-- README.md (file)
-- package.json (file)
-- src/ (directory)
-...
+@file.js                    - Include a specific file
+@src/                       - Include directory listing
+@./relative/path/file.txt   - Relative paths
+@"path with spaces/file.js" - Quoted paths for files with spaces
 ```
 
-#### Create a File
+**Examples:**
 
 ```
-You > Create a file called test.txt with the content "Hello World"
-[Tool] Executing write_file...
-Assistant > I've successfully created test.txt with the content "Hello World".
+You > Explain @README.md
+
+You > What does @src/index.js do?
+
+You > Compare @package.json and @package-lock.json
+
+You > Analyze all files in @src/
 ```
 
-## File System Tools
+When you use `@file.js`, the CLI:
+1. Reads the file content
+2. Wraps it in XML-style tags: `<file path="...">content</file>`
+3. Includes it in your prompt to the AI
+4. The AI can then analyze, explain, or work with the file
 
-The CLI provides the following file system tools that the AI can use automatically:
+### Shell Execution (`!{command}`)
 
-### read_file
-Read the contents of a file from the file system.
+Execute shell commands within your prompts (requires `--yolo` mode):
 
-**Parameters:**
-- `file_path` (string) - The absolute or relative path to the file
+```
+!{ls -la}          - List files
+!{pwd}             - Print working directory
+!{git status}      - Run git commands
+!{grep -r "TODO"}  - Search files
+```
 
-### write_file
-Write content to a file in the file system.
+**Examples:**
 
-**Parameters:**
-- `file_path` (string) - The absolute or relative path to the file
-- `content` (string) - The content to write
+```bash
+# Start with YOLO mode
+polza-cli --yolo
 
-### list_directory
-List files and directories in a given directory.
+You > What files are in this directory? !{ls -la}
 
-**Parameters:**
-- `directory_path` (string) - The absolute or relative path to the directory
+You > Show git status: !{git status}
 
-### create_directory
-Create a new directory.
+You > Find all TODO comments: !{grep -r "TODO" src/}
+```
 
-**Parameters:**
-- `directory_path` (string) - The absolute or relative path to create
+**Safety Note**: Shell commands are disabled by default. You must explicitly enable YOLO mode with `--yolo` flag. Use with caution!
 
-### delete_file
-Delete a file from the file system.
+## Memory Management (`/memory`)
 
-**Parameters:**
-- `file_path` (string) - The absolute or relative path to the file
+Store and retrieve information across sessions:
 
-### file_exists
-Check if a file or directory exists.
+### Memory Subcommands
 
-**Parameters:**
-- `path` (string) - The absolute or relative path to check
+| Subcommand | Usage | Description |
+|-----------|-------|-------------|
+| `set` | `/memory set <key> <value>` | Save a memory |
+| `get` | `/memory get <key>` | Retrieve a memory |
+| `list` | `/memory list` | List all memories |
+| `search` | `/memory search <query>` | Search memories |
+| `delete` | `/memory delete <key>` | Delete a memory |
+| `clear` | `/memory clear` | Clear all memories |
+
+### Memory Examples
+
+```
+You > /memory set project-name "My Awesome Project"
+Memory saved: project-name = My Awesome Project
+
+You > /memory set api-key "secret123"
+Memory saved: api-key = secret123
+
+You > /memory list
+Memory Entries:
+  project-name: My Awesome Project
+  api-key: secret123
+
+You > /memory get project-name
+project-name: My Awesome Project
+
+You > /memory search "project"
+Search Results:
+  project-name: My Awesome Project
+
+You > /memory delete api-key
+Memory deleted: api-key
+```
+
+Memory is stored in `~/.config/polza-cli/memory.json` and persists across sessions.
+
+## Settings Management (`/settings`)
+
+Configure and save your preferences:
+
+### Settings Subcommands
+
+| Subcommand | Usage | Description |
+|-----------|-------|-------------|
+| `set` | `/settings set <key> <value>` | Change a setting |
+| `get` | `/settings get <key>` | Get a setting value |
+| `reset` | `/settings reset` | Reset to defaults |
+| `path` | `/settings path` | Show settings file path |
+| (none) | `/settings` | Show all current settings |
+
+### Settings Examples
+
+```
+You > /settings
+Current Settings:
+  model: anthropic/claude-sonnet-4.5
+  temperature: 0.7
+  maxTokens: 4096
+  markdownEnabled: true
+  yolomode: false
+
+You > /settings set model "openai/gpt-4o"
+Setting saved: model = openai/gpt-4o
+
+You > /settings set temperature 0.9
+Setting saved: temperature = 0.9
+
+You > /settings get model
+model: openai/gpt-4o
+
+You > /settings reset
+Settings reset to defaults
+```
+
+Settings are stored in `~/.config/polza-cli/settings.json`.
+
+## Custom Commands (TOML Files)
+
+Define reusable prompts in TOML files for common tasks.
+
+### Command Directories
+
+Commands are loaded from these directories (in priority order):
+
+1. `.polza/commands/` - Project-specific commands
+2. `~/.polza-cli/commands/` - User-global commands
+3. `polza-cli/commands/` - Built-in commands
+
+### TOML Command Format
+
+```toml
+description = "Command description"
+
+prompt = """
+Your prompt template here.
+Use {{args}} to insert command arguments.
+"""
+
+[[examples]]
+usage = "/command-name argument"
+description = "Example description"
+```
+
+### Built-in Custom Commands
+
+#### `/grep-code` - Search code files
+
+```bash
+You > /grep-code TODO
+# Searches for "TODO" and summarizes findings
+```
+
+#### `/analyze-file` - Analyze a file
+
+```bash
+You > /analyze-file src/index.js
+# Provides detailed analysis of the file
+```
+
+#### `/test-gen` - Generate unit tests
+
+```bash
+You > /test-gen src/utils/helpers.js
+# Generates comprehensive unit tests
+```
+
+### Creating Custom Commands
+
+Create `~/.polza-cli/commands/my-command.toml`:
+
+```toml
+description = "My custom command"
+
+prompt = """
+Please help me with: {{args}}
+
+Additional instructions...
+"""
+
+[[examples]]
+usage = "/my-command some argument"
+description = "Example usage"
+```
+
+Then use it:
+
+```
+You > /my-command fix this bug
+```
+
+### Advanced: Using Special Syntax in Commands
+
+Commands can use `@file` and `!{shell}` syntax:
+
+```toml
+description = "Analyze git status"
+
+prompt = """
+Please analyze the git repository status:
+
+Git Status:
+!{git status}
+
+Recent Commits:
+!{git log -5 --oneline}
+
+Analyze: {{args}}
+"""
+```
+
+## Available Tools
+
+The AI can automatically use these tools:
+
+### File System Tools
+
+- `read_file` - Read file contents
+- `write_file` - Create or modify files
+- `list_directory` - List directory contents
+- `create_directory` - Create directories
+- `delete_file` - Delete files
+- `file_exists` - Check if file/directory exists
+
+### Advanced Tools
+
+- `grep_files` - Search for patterns in files (regex support)
+- `execute_shell` - Run shell commands (requires YOLO mode)
+- `web_search` - Search the web (placeholder - needs API integration)
+- `glob_files` - Find files matching glob patterns
+
+## Example Workflows
+
+### 1. Analyze a Project
+
+```bash
+polza-cli
+
+You > Analyze @README.md and tell me what this project does
+
+You > List all JavaScript files using the glob tool
+
+You > Search for all TODO comments in the codebase
+
+You > /save
+Session saved
+```
+
+### 2. Generate Tests with YOLO Mode
+
+```bash
+polza-cli --yolo
+
+You > /test-gen src/utils/helpers.js
+
+You > Run the tests: !{npm test}
+
+You > Show test coverage: !{npm run coverage}
+```
+
+### 3. Quick File Analysis (Non-Interactive)
+
+```bash
+polza-cli -p "Summarize @package.json and list all dependencies"
+
+polza-cli -p "Explain what @src/index.js does in simple terms"
+
+polza-cli -p "Compare @.env.example and suggest what's missing" -m "openai/gpt-4o"
+```
+
+### 4. Code Review with File Inclusion
+
+```bash
+You > Review @src/components/Header.js for best practices
+
+You > Compare @src/old-api.js and @src/new-api.js and explain the differences
+
+You > Check if @tests/unit/helpers.test.js covers all functions in @src/utils/helpers.js
+```
+
+### 5. Using Memory Across Sessions
+
+```bash
+# Session 1
+You > /memory set preferred-style "Use functional components with hooks"
+You > /memory set api-endpoint "https://api.example.com/v1"
+You > /exit
+
+# Session 2 (later)
+You > What's my preferred coding style?
+Assistant > Let me check your memory...
+# AI uses memory_get tool automatically
+
+You > Generate a component following my preferred style
+```
 
 ## Available Models
 
@@ -212,7 +484,7 @@ Polza CLI supports various AI models through Polza AI:
 
 | Provider | Model ID | Description |
 |----------|----------|-------------|
-| Anthropic | `anthropic/claude-sonnet-4.5` | Latest Claude Sonnet (recommended) |
+| Anthropic | `anthropic/claude-sonnet-4.5` | Latest Claude Sonnet (default) |
 | Anthropic | `anthropic/claude-3-5-sonnet` | Claude 3.5 Sonnet |
 | OpenAI | `openai/gpt-4o` | GPT-4 Optimized |
 | OpenAI | `openai/o1-preview` | O1 with reasoning |
@@ -220,10 +492,13 @@ Polza CLI supports various AI models through Polza AI:
 | DeepSeek | `deepseek/deepseek-r1` | DeepSeek R1 with reasoning |
 | Google | `google/gemini-pro` | Google Gemini Pro |
 
-To use a different model, set the `POLZA_DEFAULT_MODEL` environment variable:
+Change model:
 
 ```bash
-export POLZA_DEFAULT_MODEL=openai/gpt-4o
+polza-cli -m "openai/gpt-4o"
+
+# Or in-session
+You > /settings set model "openai/gpt-4o"
 ```
 
 ## Architecture
@@ -233,45 +508,44 @@ export POLZA_DEFAULT_MODEL=openai/gpt-4o
 ```
 polza-cli/
 ├── src/
-│   ├── index.js                   # Main CLI entry point
+│   ├── index.js                   # Main CLI entry point (enhanced)
 │   ├── lib/
-│   │   ├── polza-client.js        # Polza AI client implementation
-│   │   ├── history-manager.js     # Session and history management
-│   │   └── markdown-renderer.js   # Markdown rendering utilities
+│   │   ├── polza-client.js        # Polza AI API client
+│   │   ├── history-manager.js     # Session history management
+│   │   ├── markdown-renderer.js   # Markdown rendering
+│   │   ├── prompt-processor.js    # @file and !{shell} processor
+│   │   ├── command-loader.js      # TOML command loader
+│   │   ├── memory-manager.js      # Persistent memory system
+│   │   └── settings-manager.js    # Settings management
 │   └── tools/
-│       └── filesystem.js          # File system tools
+│       ├── filesystem.js          # File system tools
+│       └── advanced.js            # grep, shell, web_search, glob
+├── commands/                      # Built-in TOML commands
+│   ├── grep-code.toml
+│   ├── analyze-file.toml
+│   └── test-gen.toml
 ├── package.json
-├── .env.example
-├── .gitignore
 └── README.md
 ```
 
-### Components
+### How It Works
 
-1. **Main CLI (`src/index.js`)**:
-   - Interactive chat loop using readline
-   - Command handling (/help, /tools, etc.)
-   - Conversation history management
-   - Tool call orchestration
+1. **User Input**: You type a message (with optional `@file` or `!{shell}` syntax)
+2. **Prompt Processing**: `@file` includes are resolved, `!{shell}` commands executed (if YOLO mode)
+3. **AI Processing**: Processed prompt sent to Polza AI with available tools
+4. **Tool Calling**: AI decides which tools to use (read_file, grep_files, etc.)
+5. **Tool Execution**: Tools execute locally, results sent back to AI
+6. **Final Response**: AI processes tool results and provides answer
+7. **History**: All messages and tool calls stored in conversation history
 
-2. **Polza Client (`src/lib/polza-client.js`)**:
-   - HTTP client for Polza AI API
-   - Chat completion with tool calling
-   - Model listing and configuration
+## Security Considerations
 
-3. **File System Tools (`src/tools/filesystem.js`)**:
-   - Tool definitions in OpenAI function calling format
-   - Tool execution handlers
-   - File system operations
-
-## How It Works
-
-1. **User Input**: You type a message
-2. **AI Processing**: The message is sent to Polza AI with available tools
-3. **Tool Calling**: If the AI needs to use tools (e.g., read a file), it returns tool calls
-4. **Tool Execution**: Tools are executed locally and results are sent back
-5. **Final Response**: The AI processes tool results and provides a final answer
-6. **History**: All messages and tool calls are stored in conversation history
+- The CLI has full access to your file system
+- **YOLO Mode Warning**: Shell execution (`!{command}`) bypasses confirmations
+- Review file paths before confirming destructive operations
+- Never share your API key in code or commits
+- Use environment variables for sensitive configuration
+- Custom commands from untrusted sources could be dangerous
 
 ## Troubleshooting
 
@@ -283,61 +557,78 @@ polza-cli/
 export POLZA_API_KEY=ak_your_key_here
 ```
 
-Or create a `.env` file with your API key.
+### Shell Commands Not Working
 
-### 401 Unauthorized Error
+**Problem**: `!{command}` syntax not executing
 
-**Problem**: Invalid or expired API key
-
-**Solution**:
-1. Verify your API key at [polza.ai/dashboard](https://polza.ai/dashboard)
-2. Make sure there are no extra spaces in your key
-3. Check if your key has been rotated or expired
-
-### 402 Payment Required Error
-
-**Problem**: Insufficient funds in your Polza AI account
-
-**Solution**: Add funds at [polza.ai/billing](https://polza.ai/billing)
-
-### Connection Errors
-
-**Problem**: Cannot connect to Polza AI API
-
-**Solution**:
-1. Check your internet connection
-2. Verify the API base URL is correct
-3. Check if there are any proxy or firewall issues
-
-## Development
-
-### Running in Development
+**Solution**: Enable YOLO mode:
 
 ```bash
-cd polza-cli
-npm run dev
+polza-cli --yolo
 ```
 
-### Code Structure
+Or toggle in-session:
 
-The code is organized into three main components:
+```
+You > /yolo
+YOLO mode ENABLED
+```
 
-- **CLI Interface**: Interactive readline-based chat interface
-- **Polza Client**: HTTP client for Polza AI API
-- **Tools**: Modular tool system for file system operations
+### File Not Found with `@file` Syntax
+
+**Problem**: `@file.js` shows "File not found"
+
+**Solutions**:
+- Use absolute paths: `@/full/path/to/file.js`
+- Use relative paths from current directory: `@./src/file.js`
+- Quote paths with spaces: `@"path with spaces/file.js"`
+- The CLI will try to find the file with glob patterns if exact path fails
+
+### Custom Commands Not Loading
+
+**Problem**: `/my-command` shows "Command not found"
+
+**Solutions**:
+- Check TOML syntax is valid
+- Ensure file is in one of the command directories
+- Verify the `prompt` field exists in the TOML file
+- Check file permissions
+
+## Comparison with gemini-cli
+
+| Feature | Polza CLI | gemini-cli |
+|---------|-----------|------------|
+| Runtime | Node.js | Node.js |
+| AI Provider | Polza AI (multi-provider) | Google Gemini |
+| File Inclusion (`@file`) | ✅ | ✅ |
+| Shell Execution (`!{cmd}`) | ✅ (YOLO mode) | ✅ |
+| Custom Commands (TOML) | ✅ | ✅ |
+| CLI Flags (-p, -m, --yolo) | ✅ | ✅ |
+| Built-in Tools | ✅ | ✅ |
+| Grep Tool | ✅ | ✅ |
+| Memory Management | ✅ | ✅ (different impl) |
+| Settings Management | ✅ | ✅ (different impl) |
+| Session Management | ✅ | ✅ |
+| Markdown Rendering | ✅ | ✅ |
+| Web Search | 🚧 (placeholder) | ✅ |
+| MCP Support | ❌ | ✅ |
+| Free Tier | Based on Polza AI | Yes (60 req/min) |
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ### Adding New Tools
 
 To add a new tool:
 
-1. Add tool definition to `fileSystemTools` array in `src/tools/filesystem.js`
-2. Implement the tool handler in `executeFileSystemTool` function
+1. Add tool definition to `src/tools/advanced.js` or `src/tools/filesystem.js`
+2. Implement the tool handler function
 3. The AI will automatically be able to use the new tool
 
 Example:
 
 ```javascript
-// 1. Add tool definition
 {
   type: 'function',
   function: {
@@ -355,95 +646,11 @@ Example:
     }
   }
 }
-
-// 2. Add handler
-case 'my_tool':
-  return await myToolHandler(args.param1);
 ```
-
-## New Features
-
-### Session Management
-
-Save and restore your chat sessions:
-
-```bash
-# Save current session
-You > /save
-Session saved: session-2025-12-02T18-30-45-123Z
-
-# List all saved sessions
-You > /sessions
-Saved Sessions:
-1. session-2025-12-02T18-30-45-123Z
-   Date: 12/2/2025, 6:30:45 PM | Size: 4.52 KB
-
-# Load a previous session
-You > /load session-2025-12-02T18-30-45-123Z
-Session loaded: session-2025-12-02T18-30-45-123Z
-Messages: 12
-```
-
-All sessions are stored in `~/.config/polza-cli/sessions/`.
-
-### Markdown Rendering
-
-Beautiful terminal rendering of markdown responses with:
-- **Syntax highlighting** for code blocks
-- **Formatted headers** with colors
-- **Bold and italic** text styling
-- **Lists** with proper bullets
-- **Links** with visible URLs
-- **Tables** and horizontal rules
-
-Toggle markdown rendering on/off with `/markdown`.
-
-### Automatic Logging
-
-All interactions are automatically logged to `~/.config/polza-cli/logs/`:
-- User inputs
-- AI responses
-- Tool calls and results
-- Token usage and costs
-- Error messages
-
-Each session has its own log file with JSON-formatted entries for easy parsing.
-
-### Persistent History
-
-Conversation history is automatically saved after each interaction to `~/.config/polza-cli/history/`, ensuring you never lose your chat context.
-
-## Comparison with Similar CLIs
-
-| Feature | Polza CLI | gemini-cli | k_da | agent_polza2 |
-|---------|-----------|------------|------|--------------|
-| Runtime | Node.js | Node.js | Node.js | Bun |
-| AI Provider | Polza AI | Google Gemini | Koda | OpenCode/Polza |
-| Interface | Interactive Chat | TUI + Chat | TUI | JSON Interface |
-| File System Tools | ✅ | ✅ | Limited | ✅ |
-| Tool Calling | ✅ | ✅ | ❌ | ✅ |
-| Session Management | ✅ | ✅ | ❌ | ❌ |
-| Markdown Rendering | ✅ | ✅ | ❌ | ❌ |
-| Automatic Logging | ✅ | ✅ | ❌ | ❌ |
-| History Persistence | ✅ | ✅ | ❌ | ❌ |
-| Dependencies | Minimal | Many | Many | Many |
-| Simplicity | High | Medium | Low | Medium |
-
-## Security Considerations
-
-- The CLI has full access to your file system
-- Be careful when asking the AI to delete files
-- Review file paths before confirming destructive operations
-- Never share your API key in code or commits
-- Use environment variables for sensitive configuration
 
 ## License
 
 Unlicense (Public Domain)
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## Resources
 
@@ -451,6 +658,7 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 - [Polza AI Documentation](https://docs.polza.ai)
 - [Polza AI Dashboard](https://polza.ai/dashboard)
 - [API Reference](https://docs.polza.ai/api-reference)
+- [gemini-cli (inspiration)](https://github.com/google-gemini/gemini-cli)
 
 ## Support
 
@@ -460,4 +668,4 @@ For issues related to:
 
 ---
 
-Built with ❤️ using Polza AI
+Built with ❤️ using Polza AI | Enhanced with gemini-cli features

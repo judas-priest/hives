@@ -1,0 +1,18 @@
+# Grep Code Command
+# Search for patterns in code files
+
+description = "Search for a pattern in code files and summarize findings"
+
+prompt = """
+Please analyze and summarize the search results for the pattern: {{args}}
+
+I'll use the grep tool to search for this pattern in the codebase.
+"""
+
+[[examples]]
+usage = "/grep-code TODO"
+description = "Find all TODO comments in the code"
+
+[[examples]]
+usage = "/grep-code 'function.*export'"
+description = "Find all exported functions"

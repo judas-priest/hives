@@ -1,0 +1,20 @@
+# Analyze File Command
+# Analyze a specific file with AI
+
+description = "Analyze a file and provide insights about its contents"
+
+prompt = """
+Please analyze the following file: {{args}}
+
+Provide:
+1. A summary of what the file does
+2. Key functions/classes/components
+3. Any potential issues or improvements
+4. Dependencies or imports used
+
+Use the read_file tool to access the file content.
+"""
+
+[[examples]]
+usage = "/analyze-file src/index.js"
+description = "Analyze the main index file"

@@ -1,0 +1,23 @@
+# Test Generation Command
+# Generate tests for a file
+
+description = "Generate unit tests for a given file"
+
+prompt = """
+Please generate comprehensive unit tests for the file: {{args}}
+
+1. Read the file to understand its functionality
+2. Identify all functions/methods that need testing
+3. Generate test cases covering:
+   - Happy path scenarios
+   - Edge cases
+   - Error handling
+4. Use appropriate testing framework (Jest, Mocha, etc.)
+5. Include setup and teardown if needed
+
+Generate the complete test file with all necessary imports and test cases.
+"""
+
+[[examples]]
+usage = "/test-gen src/utils/helpers.js"
+description = "Generate tests for helpers file"
