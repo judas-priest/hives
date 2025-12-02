@@ -1,0 +1,30 @@
+{
+  "name": "polza-cli",
+  "version": "1.0.0",
+  "description": "A CLI client with chat support and file system access using Polza AI",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "polza-cli": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
+  },
+  "keywords": [
+    "ai",
+    "cli",
+    "chat",
+    "polza",
+    "filesystem",
+    "assistant"
+  ],
+  "author": "",
+  "license": "Unlicense",
+  "dependencies": {
+    "readline": "^1.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
