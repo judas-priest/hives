@@ -1,0 +1,29 @@
+{
+  "name": "@hives/messenger",
+  "version": "1.0.0",
+  "description": "Modern fullstack messenger with E2E encryption, voice/video calls, and P2P support",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "test": "echo \"Tests coming soon\" && exit 0"
+  },
+  "keywords": [
+    "messenger",
+    "webrtc",
+    "encryption",
+    "voice-call",
+    "video-call",
+    "p2p",
+    "chat"
+  ],
+  "author": "Hives Community",
+  "license": "Unlicense",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
