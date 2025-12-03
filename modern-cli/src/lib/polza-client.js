@@ -146,37 +146,71 @@ export class PolzaClient {
    * Chat with tool execution loop
    */
   async chatWithTools(message, options = {}) {
-    const { model, tools = [], toolHandlers = {}, maxIterations = 5 } = options;
+    const { model, tools = [], toolHandlers = {}, maxIterations = 5, images } = options;
+
+    // Start with the initial user message
+    const response = await this.chat(message, { model, tools, images });
+    let assistantMessage = response.choices[0].message;
 
     let iterations = 0;
-    let currentMessage = message;
 
-    while (iterations < maxIterations) {
-      const response = await this.chat(currentMessage, { model, tools });
-      const assistantMessage = response.choices[0].message;
+    // Tool execution loop - continue while there are tool calls
+    while (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0 && iterations < maxIterations) {
+      // Execute tool calls
+      const toolResults = await this.handleToolCalls(
+        assistantMessage.tool_calls,
+        toolHandlers
+      );
 
-      // Check if there are tool calls
-      if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
-        // Execute tool calls
-        const toolResults = await this.handleToolCalls(
-          assistantMessage.tool_calls,
-          toolHandlers
-        );
+      // Add assistant message and tool results to history
+      this.conversationHistory.push(assistantMessage);
+      this.conversationHistory.push(...toolResults);
 
-        // Add assistant message and tool results to history
-        this.conversationHistory.push(assistantMessage);
-        this.conversationHistory.push(...toolResults);
+      // Continue with tool results (no new user message needed)
+      // Build request with conversation history
+      const requestBody = {
+        model,
+        messages: this.conversationHistory,
+        stream: false,
+      };
 
-        // Continue the loop with tool results
-        currentMessage = null; // No new user message
-        iterations++;
-      } else {
-        // No more tool calls, return the final response
-        return response;
+      // Only include tools if provided and not empty
+      if (tools && tools.length > 0) {
+        requestBody.tools = tools;
       }
+
+      const nextResponse = await fetch(`${this.apiBase}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!nextResponse.ok) {
+        const errorText = await nextResponse.text();
+        throw new Error(`Polza API error: ${nextResponse.status} - ${errorText}`);
+      }
+
+      const nextData = await nextResponse.json();
+      assistantMessage = nextData.choices[0].message;
+
+      iterations++;
     }
 
-    throw new Error('Max tool call iterations reached');
+    if (iterations >= maxIterations && assistantMessage.tool_calls?.length > 0) {
+      throw new Error('Max tool call iterations reached');
+    }
+
+    // Return final response with last assistant message
+    return {
+      ...response,
+      choices: [{
+        ...response.choices[0],
+        message: assistantMessage,
+      }],
+    };
   }
 
   /**

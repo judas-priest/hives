@@ -97,10 +97,14 @@ export async function startInteractive(config) {
       // Process prompt (handle @file, @image and !shell syntax)
       const { text: processedPrompt, images } = await processPrompt(userInput, config.yoloMode);
 
+      // Pause readline while showing spinner to avoid conflicts
+      rl.pause();
+
       // Show thinking spinner
       const spinner = ora({
         text: 'Thinking...',
         color: 'cyan',
+        stream: process.stderr, // Use stderr to avoid conflicts with stdout
       }).start();
 
       try {
@@ -113,6 +117,7 @@ export async function startInteractive(config) {
         });
 
         spinner.stop();
+        spinner.clear(); // Clear spinner artifacts
 
         // Render response
         const assistantMessage = response.choices[0].message.content;
@@ -121,8 +126,14 @@ export async function startInteractive(config) {
         console.log();
       } catch (error) {
         spinner.stop();
+        spinner.clear(); // Clear spinner artifacts
         console.error(chalk.red('✗ Error:'), error.message);
         console.log();
+      } finally {
+        // Always resume readline after spinner is done
+        if (!isClosed) {
+          rl.resume();
+        }
       }
     } catch (error) {
       // Handle different readline errors gracefully
