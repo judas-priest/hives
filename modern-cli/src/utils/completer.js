@@ -14,10 +14,15 @@ const SLASH_COMMANDS = [
   '/quit',
   '/clear',
   '/history',
+  '/reset',
   '/version',
   '/model',
   '/yolo',
+  '/stream',
   '/tools',
+  '/save',
+  '/load',
+  '/sessions',
 ];
 
 /**
