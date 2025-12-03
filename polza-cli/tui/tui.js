@@ -14,4 +14,4 @@ register({
 });
 
 // Import and run the TUI
-import('./index-tui.jsx');
+import('./index.jsx');

@@ -4,7 +4,7 @@
  * Basic tests for Polza CLI (no API key required for structure validation)
  */
 
-import { fileSystemTools, executeFileSystemTool } from './src/tools/filesystem.js';
+import { fileSystemTools, executeFileSystemTool } from './shared/tools/filesystem.js';
 import fs from 'fs/promises';
 import path from 'path';
 

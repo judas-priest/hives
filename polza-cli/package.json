@@ -2,17 +2,17 @@
   "name": "polza-cli",
   "version": "1.0.0",
   "description": "A CLI client with chat support and file system access using Polza AI",
-  "main": "src/index.js",
+  "main": "cli/index.js",
   "type": "module",
   "bin": {
-    "polza-cli": "./src/index.js",
-    "polza-tui": "./src/tui.js"
+    "polza-cli": "./cli/index.js",
+    "polza-tui": "./tui/tui.js"
   },
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node src/index.js",
-    "start:tui": "node src/tui.js",
-    "tui": "node src/tui.js"
+    "start": "node cli/index.js",
+    "dev": "node cli/index.js",
+    "start:tui": "node tui/tui.js",
+    "tui": "node tui/tui.js"
   },
   "keywords": [
     "ai",

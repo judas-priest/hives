@@ -6,7 +6,7 @@
  */
 
 import readline from 'readline';
-import { createCompleter, fuzzyScore } from './src/lib/autocomplete.js';
+import { createCompleter, fuzzyScore } from './shared/lib/autocomplete.js';
 
 console.log('🎯 Interactive Fuzzy Matching Test');
 console.log('Try typing commands like: /mem, /ver, /hel, /s, /yol');

@@ -9,15 +9,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { render, Box, Text, useInput, useApp } from 'ink';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { PolzaClient } from './lib/polza-client.js';
-import { fileSystemTools, executeFileSystemTool } from './tools/filesystem.js';
-import { advancedTools, executeAdvancedTool } from './tools/advanced.js';
-import { HistoryManager } from './lib/history-manager.js';
-import { CommandLoader } from './lib/command-loader.js';
-import { MemoryManager } from './lib/memory-manager.js';
-import { SettingsManager } from './lib/settings-manager.js';
-import { PolzaMdLoader } from './lib/polza-md-loader.js';
-import { processPrompt, hasSpecialSyntax } from './lib/prompt-processor.js';
+import { PolzaClient } from '../shared/lib/polza-client.js';
+import { fileSystemTools, executeFileSystemTool } from '../shared/tools/filesystem.js';
+import { advancedTools, executeAdvancedTool } from '../shared/tools/advanced.js';
+import { HistoryManager } from '../shared/lib/history-manager.js';
+import { CommandLoader } from '../shared/lib/command-loader.js';
+import { MemoryManager } from '../shared/lib/memory-manager.js';
+import { SettingsManager } from '../shared/lib/settings-manager.js';
+import { PolzaMdLoader } from '../shared/lib/polza-md-loader.js';
+import { processPrompt, hasSpecialSyntax } from '../shared/lib/prompt-processor.js';
 
 // Import TUI components
 import Header from './components/Header.jsx';

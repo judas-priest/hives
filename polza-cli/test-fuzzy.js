@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Тест fuzzy matching для Polza CLI
-import { fuzzyScore } from './src/lib/autocomplete.js';
+import { fuzzyScore } from './shared/lib/autocomplete.js';
 
 console.log('🧪 Testing Fuzzy Matching:\n');
 

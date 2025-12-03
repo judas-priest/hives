@@ -4,6 +4,16 @@ A powerful command-line interface client with AI chat, file system access, and a
 
 > **🎨 NEW! Modern TUI Edition**: Check out the completely redesigned [Terminal User Interface](./README-TUI.md) built with React/Ink for a beautiful, modern experience!
 
+## 📁 Project Structure
+
+This project is now organized into separate folders for better maintainability:
+
+- **`cli/`** - Traditional command-line interface (readline-based)
+- **`tui/`** - Modern terminal user interface (React/Ink-based)
+- **`shared/`** - Shared libraries and tools used by both CLI and TUI
+  - `shared/lib/` - Core libraries (client, history, memory, etc.)
+  - `shared/tools/` - File system and advanced tools
+
 ## 🚀 New Features (Gemini-CLI Inspired)
 
 This enhanced version includes all features from the original gemini-cli:
@@ -112,9 +122,13 @@ Polza CLI provides:
 
 ```bash
 cd polza-cli
-chmod +x src/index.js
 npm install
-./src/index.js
+
+# Run CLI version
+node cli/index.js
+
+# Or run TUI version
+node tui/tui.js
 ```
 
 ### Option 2: Install Globally
@@ -122,7 +136,12 @@ npm install
 ```bash
 cd polza-cli
 npm install -g .
+
+# Run CLI version
 polza-cli
+
+# Or run TUI version
+polza-tui
 ```
 
 ## Configuration

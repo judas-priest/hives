@@ -4,8 +4,8 @@
  * Example usage of Polza CLI programmatically
  */
 
-import { PolzaClient } from './src/lib/polza-client.js';
-import { fileSystemTools, executeFileSystemTool } from './src/tools/filesystem.js';
+import { PolzaClient } from './shared/lib/polza-client.js';
+import { fileSystemTools, executeFileSystemTool } from './shared/tools/filesystem.js';
 
 async function main() {
   try {

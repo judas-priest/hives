@@ -8,17 +8,17 @@
 import readline from 'readline';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { PolzaClient } from './lib/polza-client.js';
-import { fileSystemTools, executeFileSystemTool } from './tools/filesystem.js';
-import { advancedTools, executeAdvancedTool } from './tools/advanced.js';
-import { HistoryManager } from './lib/history-manager.js';
-import { renderMarkdown, hasMarkdown } from './lib/markdown-renderer.js';
-import { processPrompt, hasSpecialSyntax } from './lib/prompt-processor.js';
-import { CommandLoader, parseCustomCommand } from './lib/command-loader.js';
-import { MemoryManager } from './lib/memory-manager.js';
-import { SettingsManager } from './lib/settings-manager.js';
-import { createCompleter, updateCompleter, showFilePreview, showCommandPreview, clearPreview } from './lib/autocomplete.js';
-import { PolzaMdLoader, createDefaultPolzaMd } from './lib/polza-md-loader.js';
+import { PolzaClient } from '../shared/lib/polza-client.js';
+import { fileSystemTools, executeFileSystemTool } from '../shared/tools/filesystem.js';
+import { advancedTools, executeAdvancedTool } from '../shared/tools/advanced.js';
+import { HistoryManager } from '../shared/lib/history-manager.js';
+import { renderMarkdown, hasMarkdown } from '../shared/lib/markdown-renderer.js';
+import { processPrompt, hasSpecialSyntax } from '../shared/lib/prompt-processor.js';
+import { CommandLoader, parseCustomCommand } from '../shared/lib/command-loader.js';
+import { MemoryManager } from '../shared/lib/memory-manager.js';
+import { SettingsManager } from '../shared/lib/settings-manager.js';
+import { createCompleter, updateCompleter, showFilePreview, showCommandPreview, clearPreview } from '../shared/lib/autocomplete.js';
+import { PolzaMdLoader, createDefaultPolzaMd } from '../shared/lib/polza-md-loader.js';
 
 // ANSI color codes
 const colors = {
