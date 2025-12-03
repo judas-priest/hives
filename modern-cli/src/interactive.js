@@ -2,7 +2,7 @@
  * Interactive Mode - Main chat interface
  */
 
-import * as readline from 'readline/promises';
+import * as readline from 'readline';
 import { stdin as input, stdout as output } from 'process';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -11,13 +11,13 @@ import { getTools, getToolHandlers } from './lib/tools.js';
 import { renderMarkdown } from './ui/markdown.js';
 import { processPrompt } from './utils/prompt-processor.js';
 import { handleCommand } from './commands/index.js';
+import { createCompleter } from './utils/completer.js';
+import { reverseSearch } from './utils/reverse-search.js';
 
 /**
  * Start interactive session
  */
 export async function startInteractive(config) {
-  const rl = readline.createInterface({ input, output });
-
   // Initialize Polza client
   const client = new PolzaClient(config.apiKey, config.apiBase);
 
@@ -25,19 +25,64 @@ export async function startInteractive(config) {
   const tools = getTools(config.yoloMode);
   const toolHandlers = getToolHandlers(config.yoloMode);
 
+  // Command history for fuzzy search
+  const commandHistory = [];
+
+  // Create completer with history access
+  const completer = createCompleter(() => commandHistory);
+
+  // Create readline interface with autocomplete
+  const rl = readline.createInterface({
+    input,
+    output,
+    completer,
+    terminal: true,
+  });
+
+  // Promisify the question method
+  const question = (prompt) => {
+    return new Promise((resolve) => {
+      rl.question(prompt, resolve);
+    });
+  };
+
   console.log(chalk.gray('  Current model: ') + chalk.cyan(config.model));
   if (config.yoloMode) {
     console.log(chalk.yellow('  ⚠️  YOLO Mode: ') + chalk.gray('Shell commands auto-approved'));
   }
+  console.log(chalk.gray('  💡 Tip: ') + chalk.dim('Press Tab for autocomplete, use /help for commands'));
   console.log();
 
+  // Track if readline is closed
+  let isClosed = false;
+
+  // Handle readline close event
+  rl.on('close', () => {
+    isClosed = true;
+  });
+
+  // Handle SIGINT (Ctrl+C) gracefully
+  rl.on('SIGINT', () => {
+    console.log(chalk.yellow('\n\n(To exit, type /exit or press Ctrl+C again)\n'));
+    rl.prompt();
+  });
+
   // REPL loop
-  while (true) {
+  while (!isClosed) {
     try {
-      const userInput = await rl.question(chalk.green.bold('You > '));
+      const userInput = await question(chalk.green.bold('You > '));
 
       if (!userInput.trim()) {
         continue;
+      }
+
+      // Add to history
+      if (userInput.trim()) {
+        commandHistory.push(userInput.trim());
+        // Keep history size manageable
+        if (commandHistory.length > 100) {
+          commandHistory.shift();
+        }
       }
 
       // Handle slash commands
@@ -79,13 +124,23 @@ export async function startInteractive(config) {
         console.log();
       }
     } catch (error) {
-      if (error.message === 'ERR_USE_AFTER_CLOSE') {
+      // Handle different readline errors gracefully
+      if (error.message === 'ERR_USE_AFTER_CLOSE' ||
+          error.code === 'ERR_USE_AFTER_CLOSE' ||
+          error.message?.includes('readline was closed')) {
+        break;
+      }
+      // Check if readline was closed externally (Ctrl+D, EOF, etc.)
+      if (isClosed) {
         break;
       }
       console.error(chalk.red('✗ Error:'), error.message);
     }
   }
 
-  rl.close();
+  // Close readline if not already closed
+  if (!isClosed) {
+    rl.close();
+  }
   console.log(chalk.cyan('\n👋 Goodbye!\n'));
 }

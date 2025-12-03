@@ -92,6 +92,18 @@ function showHelp() {
   console.log(`  ${chalk.green('@src/'.padEnd(20))} ${chalk.gray('Include directory listing')}`);
   console.log(`  ${chalk.green('!ls -la'.padEnd(20))} ${chalk.gray('Execute shell command (YOLO mode)')}`);
 
+  console.log(chalk.cyan.bold('\n⌨️  Keyboard Shortcuts:\n'));
+
+  console.log(`  ${chalk.green('Tab'.padEnd(20))} ${chalk.gray('Autocomplete commands, files, and history')}`);
+  console.log(`  ${chalk.green('Ctrl+C'.padEnd(20))} ${chalk.gray('Cancel current input')}`);
+  console.log(`  ${chalk.green('Ctrl+D'.padEnd(20))} ${chalk.gray('Exit CLI')}`);
+
+  console.log(chalk.cyan.bold('\n💡 Features:\n'));
+
+  console.log(`  ${chalk.green('Fuzzy Matching'.padEnd(20))} ${chalk.gray('Type partial text + Tab for smart completion')}`);
+  console.log(`  ${chalk.green('History Search'.padEnd(20))} ${chalk.gray('Tab completes from your command history')}`);
+  console.log(`  ${chalk.green('File Completion'.padEnd(20))} ${chalk.gray('Type @file + Tab to browse files')}`);
+
   console.log();
 }
 
