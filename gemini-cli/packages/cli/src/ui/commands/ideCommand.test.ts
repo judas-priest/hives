@@ -117,7 +117,7 @@ describe('ideCommand', () => {
       expect(result).toEqual({
         type: 'message',
         messageType: 'info',
-        content: '🟢 Connected to VS Code',
+        content: '🟢 VS Code',
       });
     });
 
@@ -225,7 +225,7 @@ describe('ideCommand', () => {
       expect(mockContext.ui.addItem).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'info',
-          text: '🟢 Connected to VS Code',
+          text: '🟢 VS Code',
         }),
         expect.any(Number),
       );
