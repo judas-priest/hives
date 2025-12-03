@@ -6,13 +6,12 @@
   "type": "module",
   "bin": {
     "polza-cli": "./cli/index.js",
-    "polza-tui": "./tui/bin.js"
+    "polza-tui": "./cli/index.js"
   },
   "scripts": {
     "start": "node cli/index.js",
     "dev": "node cli/index.js",
-    "start:tui": "tsx tui/tui.js",
-    "tui": "tsx tui/tui.js"
+    "tui": "node cli/index.js"
   },
   "keywords": [
     "ai",
@@ -31,11 +30,9 @@
     "date-fns": "^4.1.0",
     "fast-glob": "^3.3.2",
     "gradient-string": "^3.0.0",
-    "ink": "^6.5.1",
     "marked": "^15.0.6",
     "marked-terminal": "^7.3.0",
     "minimatch": "^10.0.1",
-    "react": "^19.2.0",
     "toml": "^3.0.0",
     "yargs": "^17.7.2"
   },
@@ -46,7 +43,6 @@
     "@swc/cli": "^0.7.9",
     "@swc/core": "^1.15.3",
     "esbuild": "^0.27.0",
-    "esbuild-register": "^3.6.0",
-    "tsx": "^4.21.0"
+    "esbuild-register": "^3.6.0"
   }
 }
