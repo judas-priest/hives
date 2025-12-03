@@ -17,7 +17,7 @@ export class PolzaClient {
    * Send a chat message with tool support
    */
   async chat(message, options = {}) {
-    const { model = 'anthropic/claude-sonnet-4.5', tools = [], stream = false } = options;
+    const { model = 'anthropic/claude-sonnet-4.5', tools, stream = false } = options;
 
     const requestBody = {
       model,
@@ -25,7 +25,8 @@ export class PolzaClient {
       stream,
     };
 
-    if (tools.length > 0) {
+    // Only include tools if provided and not empty
+    if (tools && tools.length > 0) {
       requestBody.tools = tools;
     }
 
