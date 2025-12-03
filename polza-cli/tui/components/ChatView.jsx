@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import { renderMarkdown, hasMarkdown } from '../lib/markdown-renderer.js';
+import { renderMarkdown, hasMarkdown } from '../../shared/lib/markdown-renderer.js';
 
 /**
  * ChatView component - displays conversation history
