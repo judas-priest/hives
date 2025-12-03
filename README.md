@@ -1,53 +1,108 @@
-# Hives CLI
+# Hives
 
 [![License](https://img.shields.io/badge/license-Unlicense-blue.svg)](LICENSE)
 [![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 
-**A modern command-line interface inspired by [Gemini CLI](https://github.com/google-gemini/gemini-cli), powered by Polza AI.**
+**Modern command-line interfaces powered by AI.**
 
-Hives CLI brings AI-powered assistance directly into your terminal, providing a lightweight and powerful interface for interacting with AI models while working on your projects.
+Hives is a collection of AI-powered CLI tools designed for developers. Choose the CLI that best fits your workflow:
 
-## 🚀 Why Hives CLI?
+## 📦 Available CLI Tools
 
-- **🎯 Modern Interface**: Clean, user-friendly CLI inspired by Gemini CLI's design
+### 🆕 [Modern CLI](./modern-cli/) - **Recommended**
+
+A completely new, modern CLI client inspired by Gemini CLI:
+
+- **🎨 Beautiful UI**: Gradient banners, colored output, markdown rendering
+- **🤖 Multi-Provider**: Claude, GPT-4, Gemini, and more via Polza AI
+- **🔧 Powerful Tools**: File operations, shell execution, glob patterns
+- **📝 File Inclusion**: Use `@file.js` syntax
+- **🚀 Shell Commands**: Execute with `!ls -la` (YOLO mode)
+- **⚡ Simple Architecture**: Lightweight, fast, easy to understand
+- **💬 Interactive & Non-Interactive**: Perfect for both chat and scripting
+
+[Read Modern CLI Documentation →](./modern-cli/README.md)
+
+### 🔹 [Polza CLI](./polza-cli/)
+
+Enhanced CLI with TUI support:
+
+- **🎯 Traditional CLI**: Readline-based interface
+- **🧠 AI-Powered**: Leverages Polza AI
+- **🔧 Built-in Tools**: File operations, shell commands, grep, glob patterns
+- **🔌 Extensible**: Custom commands and persistent memory
+- **📝 Markdown Support**: Beautiful terminal markdown rendering
+- **⌨️ Smart Completion**: Tab completion and fuzzy matching
+
+[Read Polza CLI Documentation →](./polza-cli/README.md)
+
+### 🔹 [Hives Wrapper](./hives.js)
+
+Simple wrapper around polza-cli for quick access:
+
+- **🚀 Quick Start**: Just run `node hives.js`
+- **🎨 Branded**: Custom Hives banner
+- **🔄 Passthrough**: All polza-cli features
+
+## 🚀 Why Hives?
+
+- **🎯 Modern Interface**: Clean, user-friendly CLIs inspired by Gemini CLI's design
 - **🧠 AI-Powered**: Leverages Polza AI for intelligent conversations and assistance
 - **🔧 Built-in Tools**: File operations, shell commands, grep, glob patterns
 - **💻 Terminal-First**: Designed for developers who live in the command line
 - **🔌 Extensible**: Custom commands and persistent memory
 - **📝 Markdown Support**: Beautiful terminal markdown rendering
-- **⌨️ Smart Completion**: Tab completion and fuzzy matching for commands
+- **⚡ Choice**: Pick the CLI that fits your workflow
 
-## 📦 Installation
+## 📦 Quick Start
 
 ### Prerequisites
 
 - Node.js version 18 or higher
 - Polza AI API key (get one at [polza.ai](https://polza.ai))
 
-### Quick Install
-
-#### Option 1: Run Directly
+### Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/judas-priest/hives.git
 cd hives
 
-# Install dependencies for polza-cli
-cd polza-cli && npm install && cd ..
-
-# Run Hives CLI
-node hives.js
+# Set your API key
+export POLZA_API_KEY=ak_your_key_here
 ```
 
-#### Option 2: Install Globally
+### Try Modern CLI (Recommended)
 
 ```bash
-cd hives
-npm install -g .
+# Install dependencies
+cd modern-cli && npm install
 
-# Run from anywhere
-hives
+# Run it!
+node src/index.js
+
+# Or non-interactive
+node src/index.js -p "Explain async/await in JavaScript"
+```
+
+### Try Polza CLI
+
+```bash
+# Install dependencies
+cd polza-cli && npm install
+
+# Run it!
+node cli/index.js
+```
+
+### Try Hives Wrapper
+
+```bash
+# Install polza-cli dependencies first
+cd polza-cli && npm install && cd ..
+
+# Run Hives wrapper
+node hives.js
 ```
 
 ## 🔐 Configuration
@@ -186,26 +241,55 @@ Responses are beautifully rendered in your terminal with:
 
 ## 🏗️ Architecture
 
-Hives CLI is built on top of [polza-cli](./polza-cli/), a powerful CLI framework that provides:
+The Hives project contains multiple CLI implementations, each with different focuses:
 
-- **Polza Client**: AI model integration
-- **File System Tools**: Read, write, and manage files
-- **Advanced Tools**: grep, glob patterns, shell execution
-- **History Manager**: Persistent command history
-- **Memory Manager**: Cross-session memory
-- **Settings Manager**: User preferences
-- **Markdown Renderer**: Terminal markdown formatting
+### Modern CLI (New!)
 
-The architecture separates concerns cleanly:
+Clean, simple architecture inspired by Gemini CLI:
+
+```
+modern-cli/
+├── src/
+│   ├── index.js              # Main entry point
+│   ├── interactive.js        # Interactive mode
+│   ├── non-interactive.js    # Non-interactive mode
+│   ├── lib/
+│   │   ├── polza-client.js   # Polza AI API client
+│   │   └── tools.js          # Tool definitions
+│   ├── ui/
+│   │   ├── banner.js         # Welcome banner
+│   │   └── markdown.js       # Markdown rendering
+│   ├── utils/                # Utilities
+│   └── commands/             # Slash commands
+└── package.json
+```
+
+### Polza CLI
+
+Powerful CLI framework with advanced features:
+
+```
+polza-cli/
+├── cli/                      # CLI interface
+├── shared/
+│   ├── lib/                  # Core libraries
+│   │   ├── polza-client.js   # AI integration
+│   │   ├── history-manager.js
+│   │   ├── memory-manager.js
+│   │   └── ...
+│   └── tools/                # File system and advanced tools
+└── commands/                 # Custom TOML commands
+```
+
+### Repository Structure
 
 ```
 hives/
-├── hives.js              # Main CLI entry point (wrapper)
-├── polza-cli/            # Core CLI implementation
-│   ├── cli/              # CLI interface
-│   └── shared/           # Shared libraries and tools
-├── gemini-cli/           # Reference implementation
-└── hive-mind2/           # AI orchestration system
+├── modern-cli/            # Modern CLI (recommended)
+├── polza-cli/             # Polza CLI framework
+├── hives.js               # Simple wrapper
+├── gemini-cli/            # Reference implementation
+└── hive-mind2/            # AI orchestration system
 ```
 
 ## 🔗 Related Projects
