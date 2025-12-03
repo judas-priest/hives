@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hives Messenger - Secure Communication</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>🐝 Hives Messenger</h1>
+      <p class="tagline">Secure messaging with E2E encryption and voice/video calls</p>
+    </header>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen active">
+      <div class="card">
+        <h2>Welcome</h2>
+        <p>Enter your details to start messaging</p>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required
+                   placeholder="Enter your username" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="room-id">Room ID:</label>
+            <input type="text" id="room-id" name="room-id" required
+                   placeholder="Enter room ID to join" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="enable-encryption" checked>
+              Enable end-to-end encryption
+            </label>
+          </div>
+          <div class="form-group">
+            <label>Transfer Mode:</label>
+            <div class="radio-group">
+              <label>
+                <input type="radio" name="transfer-mode" value="server" checked>
+                Server-based (always available)
+              </label>
+              <label>
+                <input type="radio" name="transfer-mode" value="p2p">
+                Peer-to-peer (direct connection)
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Join Room</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="screen">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="user-info">
+          <div class="user-avatar">👤</div>
+          <div class="user-details">
+            <strong id="current-user">User</strong>
+            <span id="current-room" class="room-badge">Room</span>
+          </div>
+        </div>
+
+        <div class="settings-panel">
+          <h3>Settings</h3>
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="encryption-status" disabled checked>
+              E2E Encryption
+            </label>
+            <span id="encryption-indicator" class="indicator">🔒</span>
+          </div>
+          <div class="setting-item">
+            <label>Transfer Mode:</label>
+            <span id="transfer-mode-display" class="badge">Server</span>
+          </div>
+        </div>
+
+        <div class="users-list">
+          <h3>Online Users</h3>
+          <ul id="users-online"></ul>
+        </div>
+
+        <button id="leave-room-btn" class="btn btn-secondary">Leave Room</button>
+      </aside>
+
+      <!-- Main Chat Area -->
+      <main class="chat-main">
+        <div class="chat-header">
+          <h2>Chat Room: <span id="room-name">General</span></h2>
+          <div class="chat-actions">
+            <button id="clear-chat-btn" class="btn btn-small" title="Clear chat">🗑️</button>
+          </div>
+        </div>
+
+        <div id="messages-container" class="messages-container"></div>
+
+        <div class="message-input-container">
+          <input type="text" id="message-input" placeholder="Type a message..."
+                 autocomplete="off" maxlength="1000">
+          <button id="send-btn" class="btn btn-primary">Send</button>
+        </div>
+      </main>
+
+      <!-- Call Panel -->
+      <aside class="call-panel" id="call-panel">
+        <h3>Voice & Video Calls</h3>
+
+        <!-- Call Controls -->
+        <div class="call-controls">
+          <label for="call-target">Select user to call:</label>
+          <select id="call-target">
+            <option value="">Select a user...</option>
+          </select>
+
+          <div class="call-buttons">
+            <button id="voice-call-btn" class="btn btn-success" disabled>
+              📞 Voice Call
+            </button>
+            <button id="video-call-btn" class="btn btn-success" disabled>
+              📹 Video Call
+            </button>
+          </div>
+        </div>
+
+        <!-- Call Status -->
+        <div id="call-status" class="call-status hidden">
+          <div class="status-content">
+            <p id="call-status-text">Idle</p>
+            <button id="end-call-btn" class="btn btn-danger hidden">End Call</button>
+            <button id="accept-call-btn" class="btn btn-success hidden">Accept</button>
+            <button id="reject-call-btn" class="btn btn-danger hidden">Reject</button>
+          </div>
+        </div>
+
+        <!-- Video Container -->
+        <div id="video-container" class="video-container hidden">
+          <video id="local-video" autoplay muted playsinline></video>
+          <video id="remote-video" autoplay playsinline></video>
+          <div class="video-labels">
+            <span class="video-label">You</span>
+            <span class="video-label">Remote</span>
+          </div>
+        </div>
+
+        <!-- Audio Container -->
+        <audio id="remote-audio" autoplay></audio>
+      </aside>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span id="connection-status" class="status-badge disconnected">Disconnected</span>
+      <span id="status-message">Not connected</span>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
