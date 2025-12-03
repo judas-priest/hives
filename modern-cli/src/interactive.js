@@ -94,8 +94,8 @@ export async function startInteractive(config) {
         continue;
       }
 
-      // Process prompt (handle @file and !shell syntax)
-      const processedPrompt = await processPrompt(userInput, config.yoloMode);
+      // Process prompt (handle @file, @image and !shell syntax)
+      const { text: processedPrompt, images } = await processPrompt(userInput, config.yoloMode);
 
       // Show thinking spinner
       const spinner = ora({
@@ -104,11 +104,12 @@ export async function startInteractive(config) {
       }).start();
 
       try {
-        // Send to AI with tools
+        // Send to AI with tools and optional images
         const response = await client.chatWithTools(processedPrompt, {
           model: config.model,
           tools,
           toolHandlers,
+          images: images.length > 0 ? images : undefined,
         });
 
         spinner.stop();

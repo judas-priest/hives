@@ -17,11 +17,30 @@ export class PolzaClient {
    * Send a chat message with tool support
    */
   async chat(message, options = {}) {
-    const { model = 'anthropic/claude-sonnet-4.5', tools, stream = false } = options;
+    const { model = 'anthropic/claude-sonnet-4.5', tools, stream = false, images } = options;
+
+    // Build message content - support both text and multimodal
+    let userMessage;
+    if (images && images.length > 0) {
+      // Multimodal message with images
+      userMessage = {
+        role: 'user',
+        content: [
+          { type: 'text', text: message },
+          ...images.map(img => ({
+            type: 'image_url',
+            image_url: { url: img },
+          })),
+        ],
+      };
+    } else {
+      // Text-only message
+      userMessage = { role: 'user', content: message };
+    }
 
     const requestBody = {
       model,
-      messages: [...this.conversationHistory, { role: 'user', content: message }],
+      messages: [...this.conversationHistory, userMessage],
       stream,
     };
 

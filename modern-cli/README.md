@@ -13,9 +13,13 @@ Hives Modern CLI brings AI-powered assistance directly into your terminal with a
 - 🤖 **AI-Powered** - Chat with Claude, GPT-4, and other models via Polza AI
 - 🔧 **Built-in Tools** - File operations, shell commands, glob patterns
 - 📝 **File Inclusion** - Use `@file.js` syntax to include files in prompts
+- 🖼️ **Multimodal Support** - Include images in prompts with `@image.png`
+- 💾 **Session Management** - Save and restore conversation checkpoints
+- ⚡ **Streaming Responses** - Real-time AI responses (toggle with `/stream`)
 - 🚀 **Shell Execution** - Run shell commands with `!ls -la` (YOLO mode)
 - 💬 **Interactive & Non-Interactive** - Use in chat mode or for quick queries
 - 🎯 **Multiple Output Formats** - Text, JSON, or streaming JSON
+- ⌨️ **Autocomplete & Fuzzy Search** - Tab completion for commands, files, and history
 - ⌨️ **Slash Commands** - Quick access to features with `/help`, `/model`, etc.
 
 ## 📦 Installation
@@ -116,12 +120,18 @@ Use these commands during interactive sessions:
 |---------|-------------|
 | `/help` | Show help and available commands |
 | `/exit` | Exit the CLI |
+| `/quit` | Alias for /exit |
 | `/clear` | Clear the screen |
 | `/history` | Show conversation history |
+| `/reset` | Clear conversation history |
 | `/version` | Show version information |
 | `/model [name]` | Change or show current AI model |
 | `/yolo` | Toggle YOLO mode on/off |
+| `/stream` | Toggle streaming mode on/off |
 | `/tools` | List available tools |
+| `/save [name]` | Save current session |
+| `/load <name>` | Load saved session |
+| `/sessions` | List all saved sessions |
 
 ## 🎨 Special Syntax
 
@@ -142,6 +152,22 @@ When you use `@file.js`, the CLI:
 2. Wraps it in XML-style tags
 3. Includes it in your prompt to the AI
 
+### Image Inclusion (`@image`)
+
+Include images for multimodal AI analysis:
+
+```
+You > What's in this screenshot? @screenshot.png
+
+You > Analyze this diagram @architecture.jpg
+
+You > Compare @photo1.png and @photo2.png
+```
+
+Supported formats: PNG, JPG, JPEG, GIF, BMP, WEBP, SVG
+
+Images are automatically converted to base64 data URLs and sent to the AI.
+
 ### Shell Execution (`!command`)
 
 Execute shell commands within prompts (requires `--yolo` mode):
@@ -155,6 +181,48 @@ You > Git status: !{git status}
 ```
 
 **Safety Note**: Shell commands require YOLO mode (`--yolo` flag). Use with caution!
+
+## 💾 Session Management
+
+Save and restore your conversations for later:
+
+### Save Current Session
+
+```
+You > /save my-project-session
+✓ Session saved: my-project-session.json
+```
+
+### Load Saved Session
+
+```
+You > /load my-project-session
+✓ Session loaded: my-project-session.json
+  Saved at: 2025-12-03T19:25:40.839Z
+  Messages: 15
+  Model: anthropic/claude-sonnet-4.5
+```
+
+### List All Sessions
+
+```
+You > /sessions
+
+📁 Saved Sessions:
+
+  my-project-session
+    Saved: 12/3/2025, 7:25:40 PM
+    Messages: 15 | Model: anthropic/claude-sonnet-4.5
+
+  debug-session
+    Saved: 12/2/2025, 3:14:22 PM
+    Messages: 8 | Model: openai/gpt-4o
+```
+
+Sessions are stored in `~/.hives-cli/sessions/` and include:
+- Full conversation history
+- Model settings
+- YOLO mode state
 
 ## 🔧 Available Tools
 

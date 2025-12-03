@@ -4,6 +4,7 @@
 
 import chalk from 'chalk';
 import { getVersion } from '../utils/version.js';
+import { saveSession, loadSession, listSessions, deleteSession } from '../utils/session.js';
 
 /**
  * Handle slash commands
@@ -58,6 +59,32 @@ export async function handleCommand(input, context) {
       showTools(config.yoloMode);
       return false;
 
+    case 'save':
+      handleSaveSession(client, config, args);
+      return false;
+
+    case 'load':
+      handleLoadSession(client, config, args);
+      return false;
+
+    case 'sessions':
+      listSessions();
+      return false;
+
+    case 'stream':
+      config.stream = !config.stream;
+      console.log(
+        config.stream
+          ? chalk.green('✓ Streaming: ENABLED\n')
+          : chalk.gray('✓ Streaming: DISABLED\n')
+      );
+      return false;
+
+    case 'reset':
+      client.clearHistory();
+      console.log(chalk.green('✓ Conversation history cleared\n'));
+      return false;
+
     default:
       console.log(chalk.red(`✗ Unknown command: ${command}`));
       console.log(chalk.gray('Type /help for available commands\n'));
@@ -76,10 +103,15 @@ function showHelp() {
     ['/exit', 'Exit the CLI'],
     ['/clear', 'Clear the screen'],
     ['/history', 'Show conversation history'],
+    ['/reset', 'Clear conversation history'],
     ['/version', 'Show version information'],
     ['/model [name]', 'Change or show current AI model'],
     ['/yolo', 'Toggle YOLO mode (shell execution)'],
+    ['/stream', 'Toggle streaming mode'],
     ['/tools', 'List available tools'],
+    ['/save [name]', 'Save current session'],
+    ['/load <name>', 'Load saved session'],
+    ['/sessions', 'List all saved sessions'],
   ];
 
   for (const [cmd, desc] of commands) {
@@ -165,4 +197,40 @@ function showTools(yoloMode) {
   }
 
   console.log();
+}
+
+/**
+ * Handle save session command
+ */
+function handleSaveSession(client, config, args) {
+  const name = args.length > 0 ? args.join('-') : `session-${Date.now()}`;
+  const data = {
+    model: config.model,
+    conversationHistory: client.getHistory(),
+    yoloMode: config.yoloMode,
+  };
+  saveSession(name, data);
+}
+
+/**
+ * Handle load session command
+ */
+function handleLoadSession(client, config, args) {
+  if (args.length === 0) {
+    console.log(chalk.yellow('⚠️  Please provide a session name'));
+    console.log(chalk.gray('Usage: /load <session-name>'));
+    console.log(chalk.gray('Tip: Use /sessions to list all saved sessions\n'));
+    return;
+  }
+
+  const name = args.join('-');
+  const sessionData = loadSession(name);
+
+  if (sessionData) {
+    // Restore session data
+    client.conversationHistory = sessionData.conversationHistory || [];
+    config.model = sessionData.model;
+    config.yoloMode = sessionData.metadata?.yoloMode || false;
+    console.log();
+  }
 }
