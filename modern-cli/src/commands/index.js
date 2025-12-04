@@ -131,6 +131,26 @@ export async function handleCommand(input, context) {
       handleExport(client, args);
       return false;
 
+    case 'theme':
+      await handleThemeCommand(args, context);
+      return false;
+
+    case 'restore':
+      await handleRestoreCommand(args, context);
+      return false;
+
+    case 'checkpoint':
+      await handleCheckpointCommand(args, context);
+      return false;
+
+    case 'mcp':
+      await handleMCPCommand(args, context);
+      return false;
+
+    case 'vim':
+      handleVimCommand(context);
+      return false;
+
     default:
       // Check if it's a custom command
       if (context.customCommands && context.customCommands.hasCommand(command)) {
@@ -177,6 +197,11 @@ function showHelp() {
     ['/settings [action]', 'View/manage settings'],
     ['/commands', 'List custom commands'],
     ['/examples [scope]', 'Create example custom commands'],
+    ['/theme [name]', 'Change or preview color theme'],
+    ['/checkpoint [action]', 'Manage file checkpoints'],
+    ['/restore <id>', 'Restore files from checkpoint'],
+    ['/mcp [action]', 'Manage MCP servers and tools'],
+    ['/vim', 'Toggle vim keybindings'],
   ];
 
   for (const [cmd, desc] of commands) {
@@ -506,4 +531,279 @@ function handleExport(client, args) {
   const filename = args[1] || `session-${Date.now()}.${format === 'json' ? 'json' : 'md'}`;
 
   exportSession(client.getHistory(), filename, format);
+}
+
+/**
+ * Handle theme command
+ */
+async function handleThemeCommand(args, context) {
+  const subcommand = args[0]?.toLowerCase();
+
+  if (!context.themeManager) {
+    console.log(chalk.yellow('\n⚠️  Theme manager not initialized\n'));
+    return;
+  }
+
+  switch (subcommand) {
+    case 'list':
+    case undefined:
+      // List all available themes
+      const themes = context.themeManager.getAllThemes();
+      const currentTheme = context.themeManager.currentTheme;
+
+      console.log(chalk.cyan.bold('\n🎨 Available Themes:\n'));
+
+      for (const theme of themes) {
+        const isCurrent = theme.id === currentTheme;
+        const marker = isCurrent ? chalk.green('✓') : ' ';
+        const customBadge = theme.custom ? chalk.gray(' [custom]') : '';
+        console.log(`  ${marker} ${chalk.green(theme.name.padEnd(15))} ${chalk.gray(theme.description)}${customBadge}`);
+      }
+
+      console.log(chalk.cyan('\n💡 Usage:\n'));
+      console.log(`  ${chalk.green('/theme <name>'.padEnd(25))} ${chalk.gray('Switch to theme')}`);
+      console.log(`  ${chalk.green('/theme preview <name>'.padEnd(25))} ${chalk.gray('Preview a theme')}`);
+      console.log(`  ${chalk.green('/theme list'.padEnd(25))} ${chalk.gray('List all themes')}`);
+      console.log();
+      break;
+
+    case 'preview':
+      if (args.length < 2) {
+        console.log(chalk.yellow('\n⚠️  Please provide a theme name'));
+        console.log(chalk.gray('Usage: /theme preview <name>\n'));
+        return;
+      }
+      const previewTheme = args[1];
+      context.themeManager.previewTheme(previewTheme);
+      break;
+
+    default:
+      // Set theme
+      const themeName = subcommand;
+      if (context.themeManager.setTheme(themeName)) {
+        await context.themeManager.saveThemePreference(themeName);
+        console.log(chalk.green(`\n✓ Theme changed to: ${themeName}\n`));
+        console.log(chalk.gray('💡 Tip: Use /theme preview <name> to preview themes before switching\n'));
+      } else {
+        console.log(chalk.red(`\n✗ Theme '${themeName}' not found`));
+        console.log(chalk.gray('Use /theme list to see available themes\n'));
+      }
+      break;
+  }
+}
+
+/**
+ * Handle restore command
+ */
+async function handleRestoreCommand(args, context) {
+  if (!context.checkpointManager) {
+    console.log(chalk.yellow('\n⚠️  Checkpoint manager not initialized\n'));
+    return;
+  }
+
+  if (args.length === 0) {
+    // Show available checkpoints
+    context.checkpointManager.listCheckpoints();
+    return;
+  }
+
+  const checkpointId = args[0];
+  await context.checkpointManager.restoreCheckpoint(checkpointId);
+}
+
+/**
+ * Handle checkpoint command
+ */
+async function handleCheckpointCommand(args, context) {
+  const subcommand = args[0]?.toLowerCase();
+
+  if (!context.checkpointManager) {
+    console.log(chalk.yellow('\n⚠️  Checkpoint manager not initialized\n'));
+    return;
+  }
+
+  switch (subcommand) {
+    case 'list':
+    case undefined:
+      context.checkpointManager.listCheckpoints();
+      break;
+
+    case 'show':
+      if (args.length < 2) {
+        console.log(chalk.yellow('\n⚠️  Please provide a checkpoint ID'));
+        console.log(chalk.gray('Usage: /checkpoint show <id>\n'));
+        return;
+      }
+      await context.checkpointManager.showCheckpoint(args[1]);
+      break;
+
+    case 'clean':
+      const days = args[1] ? parseInt(args[1]) : 30;
+      await context.checkpointManager.cleanCheckpoints(days);
+      break;
+
+    case 'stats':
+      const stats = context.checkpointManager.getStats();
+      console.log(chalk.cyan.bold('\n📊 Checkpoint Statistics:\n'));
+
+      if (!stats.enabled) {
+        console.log(chalk.yellow('  Checkpointing is disabled'));
+        console.log(chalk.gray('  Enable it in settings: /settings set checkpointing.enabled true\n'));
+      } else {
+        console.log(`  ${chalk.green('Enabled:')} ${stats.enabled ? 'Yes' : 'No'}`);
+        console.log(`  ${chalk.green('Total Checkpoints:')} ${stats.count}`);
+        if (stats.oldestTimestamp) {
+          console.log(`  ${chalk.green('Oldest:')} ${new Date(stats.oldestTimestamp).toLocaleString()}`);
+        }
+        if (stats.newestTimestamp) {
+          console.log(`  ${chalk.green('Newest:')} ${new Date(stats.newestTimestamp).toLocaleString()}`);
+        }
+        console.log(`  ${chalk.green('Storage:')} ${stats.shadowRepoPath}\n`);
+      }
+      break;
+
+    case 'enable':
+      await context.settingsManager.set('checkpointing.enabled', true);
+      await context.settingsManager.saveSettings();
+      await context.checkpointManager.initialize();
+      console.log(chalk.green('\n✓ Checkpointing enabled\n'));
+      break;
+
+    case 'disable':
+      await context.settingsManager.set('checkpointing.enabled', false);
+      await context.settingsManager.saveSettings();
+      context.checkpointManager.enabled = false;
+      console.log(chalk.green('\n✓ Checkpointing disabled\n'));
+      break;
+
+    default:
+      console.log(chalk.cyan.bold('\n📦 Checkpoint Commands:\n'));
+      console.log(`  ${chalk.green('/checkpoint list'.padEnd(30))} ${chalk.gray('List all checkpoints')}`);
+      console.log(`  ${chalk.green('/checkpoint show <id>'.padEnd(30))} ${chalk.gray('Show checkpoint details')}`);
+      console.log(`  ${chalk.green('/checkpoint stats'.padEnd(30))} ${chalk.gray('Show checkpoint statistics')}`);
+      console.log(`  ${chalk.green('/checkpoint clean [days]'.padEnd(30))} ${chalk.gray('Clean old checkpoints')}`);
+      console.log(`  ${chalk.green('/checkpoint enable'.padEnd(30))} ${chalk.gray('Enable checkpointing')}`);
+      console.log(`  ${chalk.green('/checkpoint disable'.padEnd(30))} ${chalk.gray('Disable checkpointing')}`);
+      console.log(`  ${chalk.green('/restore <id>'.padEnd(30))} ${chalk.gray('Restore from checkpoint')}`);
+      console.log();
+  }
+}
+
+/**
+ * Handle MCP command
+ */
+async function handleMCPCommand(args, context) {
+  const subcommand = args[0]?.toLowerCase();
+
+  if (!context.mcpManager) {
+    console.log(chalk.yellow('\n⚠️  MCP manager not initialized\n'));
+    return;
+  }
+
+  switch (subcommand) {
+    case 'list':
+    case undefined:
+      context.mcpManager.listServers();
+      break;
+
+    case 'tools':
+      context.mcpManager.listTools();
+      break;
+
+    case 'desc':
+    case 'descriptions':
+      context.mcpManager.showToolDescriptions();
+      break;
+
+    case 'schema':
+      if (args.length < 2) {
+        console.log(chalk.yellow('\n⚠️  Please provide a tool ID'));
+        console.log(chalk.gray('Usage: /mcp schema <server:tool>\n'));
+        return;
+      }
+      context.mcpManager.showToolSchema(args[1]);
+      break;
+
+    case 'refresh':
+    case 'restart':
+      if (args.length < 2) {
+        // Restart all servers
+        console.log(chalk.cyan('\n🔄 Restarting all MCP servers...\n'));
+        const servers = Array.from(context.mcpManager.servers.keys());
+        for (const name of servers) {
+          await context.mcpManager.restartServer(name);
+        }
+        console.log(chalk.green('✓ All servers restarted\n'));
+      } else {
+        // Restart specific server
+        const serverName = args[1];
+        console.log(chalk.cyan(`\n🔄 Restarting ${serverName}...\n`));
+        await context.mcpManager.restartServer(serverName);
+        console.log(chalk.green(`✓ ${serverName} restarted\n`));
+      }
+      break;
+
+    case 'stop':
+      if (args.length < 2) {
+        console.log(chalk.yellow('\n⚠️  Please provide a server name'));
+        console.log(chalk.gray('Usage: /mcp stop <server-name>\n'));
+        return;
+      }
+      const serverToStop = args[1];
+      if (await context.mcpManager.stopServer(serverToStop)) {
+        console.log(chalk.green(`\n✓ Stopped ${serverToStop}\n`));
+      } else {
+        console.log(chalk.red(`\n✗ Server '${serverToStop}' not running\n`));
+      }
+      break;
+
+    case 'start':
+      if (args.length < 2) {
+        console.log(chalk.yellow('\n⚠️  Please provide a server name'));
+        console.log(chalk.gray('Usage: /mcp start <server-name>\n'));
+        return;
+      }
+      const serverToStart = args[1];
+      const config = context.mcpManager.serverConfigs[serverToStart];
+      if (config) {
+        console.log(chalk.cyan(`\n🔄 Starting ${serverToStart}...\n`));
+        await context.mcpManager.startServer(serverToStart, config);
+      } else {
+        console.log(chalk.red(`\n✗ Server '${serverToStart}' not configured\n`));
+      }
+      break;
+
+    case 'stats':
+      const stats = context.mcpManager.getStats();
+      console.log(chalk.cyan.bold('\n📊 MCP Statistics:\n'));
+      console.log(`  ${chalk.green('Configured Servers:')} ${stats.configuredServers}`);
+      console.log(`  ${chalk.green('Running Servers:')} ${stats.runningServers}`);
+      console.log(`  ${chalk.green('Available Tools:')} ${stats.availableTools}`);
+      console.log();
+      break;
+
+    default:
+      console.log(chalk.cyan.bold('\n🔌 MCP Commands:\n'));
+      console.log(`  ${chalk.green('/mcp list'.padEnd(30))} ${chalk.gray('List all MCP servers')}`);
+      console.log(`  ${chalk.green('/mcp tools'.padEnd(30))} ${chalk.gray('List available tools')}`);
+      console.log(`  ${chalk.green('/mcp desc'.padEnd(30))} ${chalk.gray('Show tool descriptions')}`);
+      console.log(`  ${chalk.green('/mcp schema <tool>'.padEnd(30))} ${chalk.gray('Show tool schema')}`);
+      console.log(`  ${chalk.green('/mcp start <server>'.padEnd(30))} ${chalk.gray('Start MCP server')}`);
+      console.log(`  ${chalk.green('/mcp stop <server>'.padEnd(30))} ${chalk.gray('Stop MCP server')}`);
+      console.log(`  ${chalk.green('/mcp refresh [server]'.padEnd(30))} ${chalk.gray('Restart server(s)')}`);
+      console.log(`  ${chalk.green('/mcp stats'.padEnd(30))} ${chalk.gray('Show MCP statistics')}`);
+      console.log();
+  }
+}
+
+/**
+ * Handle vim command
+ */
+function handleVimCommand(context) {
+  if (!context.vimMode) {
+    console.log(chalk.yellow('\n⚠️  Vim mode not initialized\n'));
+    return;
+  }
+
+  context.vimMode.toggle();
 }

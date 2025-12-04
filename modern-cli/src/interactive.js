@@ -15,6 +15,10 @@ import { createEnhancedReadline } from './utils/enhanced-readline.js';
 import { ContextManager } from './utils/context.js';
 import { CustomCommandsManager } from './utils/custom-commands.js';
 import { SettingsManager } from './utils/settings.js';
+import { ThemeManager } from './utils/themes.js';
+import { CheckpointManager } from './utils/checkpoints.js';
+import { MCPManager } from './utils/mcp.js';
+import { VimMode } from './utils/vim-mode.js';
 
 /**
  * Start interactive session
@@ -23,6 +27,18 @@ export async function startInteractive(config) {
   // Initialize managers
   const settingsManager = new SettingsManager();
   await settingsManager.loadSettings();
+
+  // Initialize theme manager
+  const themeManager = new ThemeManager(settingsManager);
+  await themeManager.loadTheme();
+
+  // Initialize checkpoint manager
+  const checkpointManager = new CheckpointManager(settingsManager);
+  await checkpointManager.initialize();
+
+  // Initialize MCP manager
+  const mcpManager = new MCPManager(settingsManager);
+  await mcpManager.initialize();
 
   // Initialize Polza client
   const client = new PolzaClient(config.apiKey, config.apiBase);
@@ -53,6 +69,10 @@ export async function startInteractive(config) {
     completer,
     terminal: true,
   });
+
+  // Initialize vim mode
+  const vimMode = new VimMode(rl, settingsManager);
+  await vimMode.initialize();
 
   // Promisify the question method
   const question = (prompt) => {
@@ -170,7 +190,11 @@ export async function startInteractive(config) {
           rl,
           contextManager,
           customCommands,
-          settingsManager
+          settingsManager,
+          themeManager,
+          checkpointManager,
+          mcpManager,
+          vimMode
         };
         const shouldExit = await handleCommand(userInput, context);
         if (shouldExit) {

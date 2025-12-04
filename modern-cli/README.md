@@ -31,6 +31,10 @@ Hives Modern CLI brings AI-powered assistance directly into your terminal with a
 - 📊 **Statistics** - Track token usage and conversation metrics
 - 📤 **Session Export** - Export conversations to Markdown or JSON
 - 📋 **Clipboard Integration** - Copy responses directly to clipboard
+- 🎨 **Theme System** - 7 built-in themes + custom theme support
+- 💾 **Checkpointing** - Git-based undo for AI file modifications
+- 🔌 **MCP Protocol** - Extensibility via Model Context Protocol servers
+- ⌨️ **Vim Mode** - Full vim keybindings for power users
 - 🎨 **Customizable** - Extensive settings for UI, behavior, and tools
 
 ## 📦 Installation
@@ -172,6 +176,11 @@ Use these commands during interactive sessions:
 | `/fetch <url>` | Fetch content from URL |
 | `/commands` | List custom commands |
 | `/examples [scope]` | Create example custom commands |
+| `/theme [name]` | Change or preview color theme |
+| `/checkpoint [action]` | Manage file checkpoints |
+| `/restore <id>` | Restore files from checkpoint |
+| `/mcp [action]` | Manage MCP servers and tools |
+| `/vim` | Toggle vim keybindings |
 
 ## 🎨 Special Syntax
 
@@ -623,6 +632,194 @@ modern-cli/
 └── README.md
 ```
 
+## 🎨 Theme System
+
+Modern CLI includes 7 built-in color themes and support for custom themes.
+
+### Available Themes
+
+- **default** - Modern CLI default with vibrant colors
+- **dark** - Dark theme with muted colors
+- **light** - Light theme for light backgrounds
+- **solarized** - Solarized dark with balanced contrast
+- **monokai** - Monokai with vibrant syntax colors
+- **gruvbox** - Gruvbox with warm retro colors
+- **minimal** - Minimal monochrome theme
+
+### Using Themes
+
+```bash
+# List available themes
+/theme list
+
+# Preview a theme
+/theme preview solarized
+
+# Switch to a theme
+/theme monokai
+```
+
+Themes are saved in your settings and persist across sessions.
+
+### Custom Themes
+
+Define custom themes in `~/.hives-cli/settings.json`:
+
+```json
+{
+  "theme": "my-theme",
+  "customThemes": {
+    "my-theme": {
+      "name": "My Custom Theme",
+      "description": "A custom theme",
+      "colors": {
+        "banner": "#FF6B6B",
+        "userPrompt": "#4ECDC4",
+        "assistantPrompt": "#95E1D3",
+        "success": "#50FA7B",
+        "error": "#FF5555"
+      }
+    }
+  }
+}
+```
+
+## 💾 Checkpointing System
+
+Git-based checkpoint system for safely undoing AI file modifications.
+
+### How It Works
+
+1. Before AI modifies files, a checkpoint is automatically created
+2. Files are saved to a shadow Git repository in `~/.hives-cli/history/`
+3. Conversation snapshots are saved with each checkpoint
+4. Restore files from any previous checkpoint
+
+### Using Checkpoints
+
+```bash
+# Enable checkpointing
+/checkpoint enable
+
+# List all checkpoints
+/checkpoint list
+
+# Show checkpoint details
+/checkpoint show cp_1234567890_abc123
+
+# Restore from checkpoint
+/restore cp_1234567890_abc123
+
+# Clean old checkpoints (older than 30 days)
+/checkpoint clean 30
+
+# Show checkpoint statistics
+/checkpoint stats
+```
+
+### Configuration
+
+Enable in settings (`~/.hives-cli/settings.json`):
+
+```json
+{
+  "checkpointing": {
+    "enabled": true
+  }
+}
+```
+
+## 🔌 MCP Protocol Support
+
+Modern CLI supports the Model Context Protocol (MCP) for extending functionality with external servers.
+
+### Configuring MCP Servers
+
+Add servers to your settings file:
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "my-server": {
+        "command": "node",
+        "args": ["/path/to/mcp-server.js"],
+        "env": {
+          "API_KEY": "your-api-key"
+        },
+        "enabled": true
+      }
+    }
+  }
+}
+```
+
+### Managing MCP Servers
+
+```bash
+# List configured servers
+/mcp list
+
+# List available tools
+/mcp tools
+
+# Show tool descriptions
+/mcp desc
+
+# Show tool schema
+/mcp schema server:tool_name
+
+# Start a server
+/mcp start my-server
+
+# Stop a server
+/mcp stop my-server
+
+# Restart all servers
+/mcp refresh
+
+# Show MCP statistics
+/mcp stats
+```
+
+## ⌨️ Vim Mode
+
+Full vim keybindings for power users who prefer modal editing.
+
+### Enabling Vim Mode
+
+```bash
+# Toggle vim mode
+/vim
+```
+
+Or enable permanently in settings:
+
+```json
+{
+  "vimMode": {
+    "enabled": true
+  }
+}
+```
+
+### Supported Commands
+
+**NORMAL Mode** (press ESC to enter):
+- Movement: `h` `j` `k` `l` `w` `b` `e` `0` `$`
+- Insert: `i` `a` `A` `I`
+- Delete: `x` `X` `d` `dd` `dw` `D`
+- Change: `c` `cc` `cw` `C`
+- Yank/Paste: `y` `yy` `p` `P`
+- Replace: `r`
+
+**INSERT Mode** (default):
+- Press `i` in NORMAL mode to enter
+- All normal typing works
+- Press ESC to return to NORMAL mode
+
+The mode indicator shows current mode: `[NORMAL]` or `[INSERT]`
+
 ## 🎓 Design Philosophy
 
 Hives Modern CLI is inspired by [Gemini CLI](https://github.com/google-gemini/gemini-cli) and follows these principles:
@@ -645,6 +842,16 @@ Hives Modern CLI is inspired by [Gemini CLI](https://github.com/google-gemini/ge
 | Markdown Rendering | ✅ | ✅ |
 | YOLO Mode | ✅ | ✅ |
 | JSON Output | ✅ | ✅ |
+| Context Files (HIVES.md) | ✅ | ✅ |
+| Custom Commands (TOML) | ✅ | ✅ |
+| Settings System | ✅ | ✅ |
+| Web Fetch Tool | ✅ | ✅ |
+| Session Export | ✅ | ✅ |
+| **Theme System** | ✅ 7 themes | ✅ |
+| **Checkpointing** | ✅ Git-based | ✅ |
+| **MCP Protocol** | ✅ Full support | ✅ |
+| **Vim Mode** | ✅ Full vim keybindings | ✅ |
+| **Feature Parity** | **100%** | **100%** |
 | Complexity | Simple | Advanced |
 
 ## 🔒 Security Considerations
