@@ -165,13 +165,3 @@ Your forked repository: unidel2035/hives
 Original repository (upstream): judas-priest/hives
 
 Proceed.
-
----
-
-Issue to solve: undefined
-Your prepared branch: issue-100-252141d6
-Your prepared working directory: /tmp/gh-issue-solver-1764851340464
-Your forked repository: unidel2035/hives
-Original repository (upstream): judas-priest/hives
-
-Proceed.
