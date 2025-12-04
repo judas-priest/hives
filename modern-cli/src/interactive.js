@@ -46,6 +46,9 @@ export async function startInteractive(config) {
   };
 
   console.log(chalk.gray('  Current model: ') + chalk.cyan(config.model));
+  if (config.stream) {
+    console.log(chalk.green('  ⚡ Streaming: ') + chalk.gray('Enabled (character-by-character)'));
+  }
   if (config.yoloMode) {
     console.log(chalk.yellow('  ⚠️  YOLO Mode: ') + chalk.gray('Shell commands auto-approved'));
   }
