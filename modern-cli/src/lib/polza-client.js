@@ -49,12 +49,19 @@ export class PolzaClient {
       requestBody.tools = tools;
     }
 
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.apiKey}`,
+    };
+
+    // Add Accept header for streaming
+    if (stream) {
+      headers['Accept'] = 'text/event-stream';
+    }
+
     const response = await fetch(`${this.apiBase}/chat/completions`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`,
-      },
+      headers,
       body: JSON.stringify(requestBody),
     });
 

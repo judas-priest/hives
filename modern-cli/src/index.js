@@ -83,7 +83,7 @@ async function main() {
       ? argv.includeDirectories.split(',').map(d => d.trim())
       : [],
     yoloMode,
-    stream: false, // Can be toggled with /stream command
+    stream: true, // Enable streaming by default (can be toggled with /stream command)
     apiKey: process.env.POLZA_API_KEY,
     apiBase: process.env.POLZA_API_BASE || 'https://api.polza.ai/api/v1',
   };
