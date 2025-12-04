@@ -55,15 +55,39 @@ export async function startInteractive(config) {
   // Track if readline is closed
   let isClosed = false;
 
+  // Track Ctrl+C presses for double Ctrl+C exit
+  let ctrlCCount = 0;
+  let ctrlCTimeout = null;
+
   // Handle readline close event
   rl.on('close', () => {
     isClosed = true;
   });
 
-  // Handle SIGINT (Ctrl+C) gracefully
+  // Handle SIGINT (Ctrl+C) gracefully with double-press to exit
   rl.on('SIGINT', () => {
-    console.log(chalk.yellow('\n\n(To exit, type /exit or press Ctrl+C again)\n'));
-    rl.prompt();
+    ctrlCCount++;
+
+    // Clear existing timeout
+    if (ctrlCTimeout) {
+      clearTimeout(ctrlCTimeout);
+    }
+
+    if (ctrlCCount === 1) {
+      console.log(chalk.yellow('\n\n(To exit, press Ctrl+C again or type /exit)\n'));
+
+      // Reset count after 2 seconds
+      ctrlCTimeout = setTimeout(() => {
+        ctrlCCount = 0;
+      }, 2000);
+
+      rl.prompt();
+    } else if (ctrlCCount >= 2) {
+      // Second Ctrl+C - exit
+      console.log(chalk.cyan('\n👋 Goodbye!\n'));
+      rl.close();
+      process.exit(0);
+    }
   });
 
   // REPL loop
