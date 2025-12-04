@@ -1,10 +1,12 @@
 /**
  * Autocomplete and fuzzy search functionality with highlighting
+ * Uses fuzzysort for high-performance fuzzy matching
  */
 
 import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
+import fuzzysort from 'fuzzysort';
 
 /**
  * Available slash commands
@@ -191,6 +193,13 @@ export function formatCompletions(pattern, completions, maxDisplay = 10) {
 
 /**
  * Completer function for readline with enhanced fuzzy matching
+ *
+ * IMPORTANT: This function must return PLAIN TEXT completions without ANSI codes.
+ * Readline does not handle ANSI escape sequences in completion strings correctly,
+ * which causes invisible tab characters and other rendering issues.
+ *
+ * @param {Function} historyGetter - Function that returns command history array
+ * @returns {Function} Completer function for readline
  */
 export function createCompleter(historyGetter) {
   return function completer(line) {
@@ -200,26 +209,26 @@ export function createCompleter(historyGetter) {
     if (trimmedLine.startsWith('/')) {
       const pattern = trimmedLine.substring(1);
 
-      // Use fuzzy matching for commands
-      const matches = SLASH_COMMANDS
-        .filter(cmd => fuzzyMatch(pattern, cmd.substring(1)))
-        .map(cmd => ({
-          cmd,
-          score: fuzzyScore(pattern, cmd.substring(1)),
-        }))
-        .sort((a, b) => b.score - a.score)
-        .map(m => m.cmd);
+      // Use fuzzysort for high-performance fuzzy matching
+      if (pattern.length === 0) {
+        // No pattern yet - show all commands
+        return [SLASH_COMMANDS, trimmedLine];
+      }
+
+      const results = fuzzysort.go(pattern, SLASH_COMMANDS);
+      const matches = results.map(r => r.target);
 
       // If we have matches, return them; otherwise show all commands
       const hits = matches.length > 0 ? matches : SLASH_COMMANDS;
 
+      // Return PLAIN TEXT completions (no ANSI codes!)
       return [hits, trimmedLine];
     }
 
     // Autocomplete @file references
     if (trimmedLine.includes('@')) {
       const atIndex = trimmedLine.lastIndexOf('@');
-      const beforeAt = trimmedLine.substring(0, atIndex + 1);
+      const beforeAt = trimmedLine.substring(0, atIndex);
       const afterAt = trimmedLine.substring(atIndex + 1);
 
       try {
@@ -239,19 +248,18 @@ export function createCompleter(historyGetter) {
         }
 
         // Get files in the directory
-        const files = getFilesInDirectory(searchPath, 1);
+        const files = getFilesInDirectory(searchPath, 2);
 
-        // Filter with fuzzy matching
-        const matches = files
-          .filter(f => fuzzyMatch(searchPattern, f))
-          .map(f => ({
-            file: f,
-            score: fuzzyScore(searchPattern, f),
-          }))
-          .sort((a, b) => b.score - a.score)
-          .map(m => beforeAt + m.file);
+        // Use fuzzysort if we have a pattern, otherwise show all
+        let matches;
+        if (searchPattern.length > 0) {
+          const results = fuzzysort.go(searchPattern, files);
+          matches = results.map(r => beforeAt + '@' + r.target);
+        } else {
+          matches = files.slice(0, 20).map(f => beforeAt + '@' + f);
+        }
 
-        // Return matches or empty if none found
+        // Return PLAIN TEXT completions (no ANSI codes!)
         return [matches.length > 0 ? matches.slice(0, 20) : [], line];
       } catch (error) {
         // Silently handle errors - just return no completions
@@ -262,18 +270,15 @@ export function createCompleter(historyGetter) {
     // Fuzzy search history
     if (trimmedLine.length >= 2) {
       const history = historyGetter ? historyGetter() : [];
-      const matches = history
-        .filter(h => fuzzyMatch(trimmedLine, h))
-        .map(h => ({
-          text: h,
-          score: fuzzyScore(trimmedLine, h),
-        }))
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 5)
-        .map(m => m.text);
 
-      if (matches.length > 0) {
-        return [matches, trimmedLine];
+      if (history.length > 0) {
+        const results = fuzzysort.go(trimmedLine, history);
+        const matches = results.slice(0, 5).map(r => r.target);
+
+        if (matches.length > 0) {
+          // Return PLAIN TEXT completions (no ANSI codes!)
+          return [matches, trimmedLine];
+        }
       }
     }
 

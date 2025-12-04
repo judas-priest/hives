@@ -1,76 +1,48 @@
 /**
- * Enhanced readline with visual fuzzy completion highlighting
+ * Enhanced readline interface
+ *
+ * This is a simple wrapper around node:readline that provides a clean interface
+ * for creating readline instances with proper configuration.
+ *
+ * IMPORTANT: Do NOT add ANSI color codes to completion results.
+ * Readline does not handle ANSI escape sequences properly and will cause:
+ * - Invisible tab characters
+ * - Broken cursor positioning
+ * - Completion list rendering issues
+ *
+ * The completer function should return plain text completions only.
  */
 
 import readline from 'node:readline';
-import chalk from 'chalk';
-import { highlightMatch } from './completer.js';
 
 /**
- * Create enhanced readline interface with visual autocomplete
+ * Create readline interface with proper error handling
  *
- * This wrapper adds visual highlighting to Tab completion results while
- * avoiding interference with readline's internal state.
+ * @param {Object} options - Readline options
+ * @param {ReadableStream} options.input - Input stream
+ * @param {WritableStream} options.output - Output stream
+ * @param {Function} options.completer - Completer function (must return plain text!)
+ * @param {boolean} options.terminal - Whether streams should be treated as TTY
+ * @returns {readline.Interface} Readline interface
  */
 export function createEnhancedReadline(options) {
+  // Wrap the completer for error handling
   const originalCompleter = options.completer;
 
-  // Wrap the completer to add visual highlighting
   if (originalCompleter) {
-    options.completer = function enhancedCompleter(line) {
+    options.completer = function safeCompleter(line) {
       try {
-        // Call the original completer (synchronous)
         const result = originalCompleter(line);
 
-        // Safely handle null or undefined results
+        // Ensure result is in correct format [completions[], originalLine]
         if (!result || !Array.isArray(result)) {
           return [[], line];
         }
 
-        const [completions, originalLine] = result;
-
-        // If we have multiple completions, add highlighting
-        if (completions && completions.length > 1) {
-          // Extract the search pattern for highlighting
-          let searchPattern = originalLine || '';
-
-          if (searchPattern.startsWith('/')) {
-            searchPattern = searchPattern.substring(1);
-          } else if (searchPattern.includes('@')) {
-            const atIndex = searchPattern.lastIndexOf('@');
-            searchPattern = searchPattern.substring(atIndex + 1);
-          }
-
-          // Create highlighted versions of completions
-          const highlightedCompletions = completions.map(item => {
-            try {
-              // For commands, highlight the matching part
-              if (item.startsWith('/')) {
-                const itemWithoutSlash = item.substring(1);
-                return '/' + highlightMatch(searchPattern, itemWithoutSlash);
-              } else if (item.includes('@')) {
-                const atIndex = item.lastIndexOf('@');
-                const beforeAt = item.substring(0, atIndex + 1);
-                const afterAt = item.substring(atIndex + 1);
-                return beforeAt + highlightMatch(searchPattern, afterAt);
-              } else {
-                return highlightMatch(searchPattern, item);
-              }
-            } catch (err) {
-              // If highlighting fails, return item as-is
-              return item;
-            }
-          });
-
-          // Return highlighted completions for readline to display
-          return [highlightedCompletions, originalLine];
-        }
-
-        // For single or no completions, return as-is
         return result;
       } catch (error) {
-        // Fail gracefully - just return empty completions
-        // Don't let completer errors crash the application
+        // Fail gracefully - don't crash on completer errors
+        console.error('Completer error:', error.message);
         return [[], line];
       }
     };
