@@ -151,6 +151,10 @@ export async function handleCommand(input, context) {
       handleVimCommand(context);
       return false;
 
+    case 'shell':
+      await handleShellCommand(args, context);
+      return false;
+
     default:
       // Check if it's a custom command
       if (context.customCommands && context.customCommands.hasCommand(command)) {
@@ -202,6 +206,7 @@ function showHelp() {
     ['/restore <id>', 'Restore files from checkpoint'],
     ['/mcp [action]', 'Manage MCP servers and tools'],
     ['/vim', 'Toggle vim keybindings'],
+    ['/shell [action]', 'Manage shell command settings'],
   ];
 
   for (const [cmd, desc] of commands) {
@@ -212,7 +217,13 @@ function showHelp() {
 
   console.log(`  ${chalk.green('@file.js'.padEnd(20))} ${chalk.gray('Include file in prompt')}`);
   console.log(`  ${chalk.green('@src/'.padEnd(20))} ${chalk.gray('Include directory listing')}`);
-  console.log(`  ${chalk.green('!ls -la'.padEnd(20))} ${chalk.gray('Execute shell command (YOLO mode)')}`);
+
+  console.log(chalk.cyan.bold('\n🐚 Bang Commands (Shell Execution):\n'));
+
+  console.log(`  ${chalk.green('!pwd'.padEnd(20))} ${chalk.gray('Execute single shell command')}`);
+  console.log(`  ${chalk.green('!git status'.padEnd(20))} ${chalk.gray('Run any shell command')}`);
+  console.log(`  ${chalk.green('!'.padEnd(20))} ${chalk.gray('Toggle persistent shell mode')}`);
+  console.log(chalk.dim(`    ${chalk.gray('Note: Dangerous commands require confirmation unless in YOLO mode')}`));
 
   console.log(chalk.cyan.bold('\n⌨️  Keyboard Shortcuts:\n'));
 
@@ -806,4 +817,115 @@ function handleVimCommand(context) {
   }
 
   context.vimMode.toggle();
+}
+
+/**
+ * Handle shell command
+ */
+async function handleShellCommand(args, context) {
+  const subcommand = args[0]?.toLowerCase();
+
+  if (!context.bangShell) {
+    console.log(chalk.yellow('\n⚠️  Shell mode not initialized\n'));
+    return;
+  }
+
+  switch (subcommand) {
+    case 'status':
+    case undefined:
+      showShellStatus(context);
+      break;
+
+    case 'history':
+      showShellHistory(context);
+      break;
+
+    case 'clear':
+      context.bangShell.clearHistory();
+      console.log(chalk.green('\n✓ Shell command history cleared\n'));
+      break;
+
+    case 'yolo':
+      const newYoloMode = !context.bangShell.yoloMode;
+      context.bangShell.yoloMode = newYoloMode;
+      context.settingsManager.set('shell.yoloMode', newYoloMode);
+      await context.settingsManager.saveSettings();
+      console.log(
+        newYoloMode
+          ? chalk.yellow('\n⚠️  Shell YOLO Mode: ENABLED (no confirmations)\n')
+          : chalk.green('\n✓ Shell YOLO Mode: DISABLED (confirmations enabled)\n')
+      );
+      break;
+
+    case 'dangerous':
+      const dangerousList = context.settingsManager.get('shell.dangerousCommands');
+      console.log(chalk.cyan.bold('\n⚠️  Dangerous Commands List:\n'));
+      dangerousList.forEach((cmd, index) => {
+        console.log(`  ${chalk.gray((index + 1).toString().padStart(2))}. ${chalk.yellow(cmd)}`);
+      });
+      console.log(chalk.dim('\n  These commands require confirmation unless YOLO mode is enabled'));
+      console.log(chalk.gray('  Edit settings.json to customize this list\n'));
+      break;
+
+    default:
+      console.log(chalk.cyan.bold('\n🐚 Shell Commands:\n'));
+      console.log(`  ${chalk.green('/shell status'.padEnd(30))} ${chalk.gray('Show shell mode status')}`);
+      console.log(`  ${chalk.green('/shell history'.padEnd(30))} ${chalk.gray('Show shell command history')}`);
+      console.log(`  ${chalk.green('/shell clear'.padEnd(30))} ${chalk.gray('Clear shell history')}`);
+      console.log(`  ${chalk.green('/shell yolo'.padEnd(30))} ${chalk.gray('Toggle YOLO mode (auto-approve)')}`);
+      console.log(`  ${chalk.green('/shell dangerous'.padEnd(30))} ${chalk.gray('List dangerous commands')}`);
+      console.log();
+      console.log(chalk.cyan.bold('💡 Usage Examples:\n'));
+      console.log(`  ${chalk.green('!pwd'.padEnd(30))} ${chalk.gray('Execute single command')}`);
+      console.log(`  ${chalk.green('!git status'.padEnd(30))} ${chalk.gray('Any shell command')}`);
+      console.log(`  ${chalk.green('!'.padEnd(30))} ${chalk.gray('Toggle persistent shell mode')}`);
+      console.log();
+  }
+}
+
+/**
+ * Show shell status
+ */
+function showShellStatus(context) {
+  const { bangShell, settingsManager } = context;
+  const shellSettings = settingsManager.get('shell');
+
+  console.log(chalk.cyan.bold('\n🐚 Shell Mode Status:\n'));
+  console.log(`  ${chalk.green('Persistent Mode:'.padEnd(25))} ${bangShell.isActive() ? chalk.yellow('ACTIVE') : chalk.gray('Inactive')}`);
+  console.log(`  ${chalk.green('YOLO Mode:'.padEnd(25))} ${bangShell.yoloMode ? chalk.yellow('ENABLED') : chalk.gray('Disabled')}`);
+  console.log(`  ${chalk.green('Confirm Dangerous:'.padEnd(25))} ${shellSettings.confirmDangerous ? chalk.green('Yes') : chalk.red('No')}`);
+  console.log(`  ${chalk.green('Timeout:'.padEnd(25))} ${chalk.gray(shellSettings.timeout + 'ms')}`);
+  console.log(`  ${chalk.green('Max Buffer:'.padEnd(25))} ${chalk.gray((shellSettings.maxBuffer / 1024 / 1024).toFixed(1) + 'MB')}`);
+  console.log(`  ${chalk.green('Command History:'.padEnd(25))} ${chalk.gray(bangShell.getHistory().length + ' commands')}`);
+  console.log();
+
+  if (bangShell.yoloMode) {
+    console.log(chalk.yellow('⚠️  Warning: YOLO mode is enabled - all commands will be auto-approved!'));
+    console.log();
+  }
+}
+
+/**
+ * Show shell history
+ */
+function showShellHistory(context) {
+  const history = context.bangShell.getHistory();
+
+  if (history.length === 0) {
+    console.log(chalk.gray('\n  No shell commands executed yet.\n'));
+    return;
+  }
+
+  console.log(chalk.cyan.bold('\n📜 Shell Command History:\n'));
+
+  history.slice(-20).forEach((entry, index) => {
+    const timestamp = new Date(entry.timestamp).toLocaleTimeString();
+    console.log(`  ${chalk.gray(timestamp)} ${chalk.cyan('$')} ${chalk.white(entry.command)}`);
+  });
+
+  if (history.length > 20) {
+    console.log(chalk.dim(`\n  ... and ${history.length - 20} more commands`));
+  }
+
+  console.log();
 }

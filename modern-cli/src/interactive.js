@@ -19,6 +19,7 @@ import { ThemeManager } from './utils/themes.js';
 import { CheckpointManager } from './utils/checkpoints.js';
 import { MCPManager } from './utils/mcp.js';
 import { VimMode } from './utils/vim-mode.js';
+import { BangShellMode, parseBangCommand, executeShellCommand } from './utils/bang-shell.js';
 
 /**
  * Start interactive session
@@ -74,6 +75,16 @@ export async function startInteractive(config) {
   const vimMode = new VimMode(rl, settingsManager);
   await vimMode.initialize();
 
+  // Initialize bang-shell mode
+  const shellSettings = settingsManager.get('shell');
+  const bangShell = new BangShellMode({
+    yoloMode: config.yoloMode || shellSettings.yoloMode,
+    dangerousList: shellSettings.dangerousCommands,
+  });
+
+  // Track shell command history for AI context
+  const shellCommandHistory = [];
+
   // Promisify the question method
   const question = (prompt) => {
     return new Promise((resolve) => {
@@ -100,6 +111,7 @@ export async function startInteractive(config) {
   }
 
   console.log(chalk.gray('  💡 Tip: ') + chalk.dim('Press Tab for autocomplete, use /help for commands'));
+  console.log(chalk.gray('  💡 Tip: ') + chalk.dim('Use !command to run shell commands, ! to toggle shell mode'));
   console.log();
 
   // Track if readline is closed
@@ -143,7 +155,11 @@ export async function startInteractive(config) {
   // REPL loop
   while (!isClosed) {
     try {
-      const userInput = await question(chalk.green.bold('You > '));
+      // Use different prompt for shell mode
+      const promptText = bangShell.isActive()
+        ? chalk.yellow.bold('Shell > ')
+        : chalk.green.bold('You > ');
+      const userInput = await question(promptText);
 
       // If SIGINT was received, the question returns empty string
       // Skip this iteration to avoid showing the prompt again immediately
@@ -182,6 +198,56 @@ export async function startInteractive(config) {
         }
       }
 
+      // Handle persistent shell mode
+      if (bangShell.isActive()) {
+        // Check for shell mode toggle (exit)
+        if (userInput.trim() === '!') {
+          bangShell.toggle();
+          continue;
+        }
+
+        // Execute command in shell mode
+        if (userInput.trim()) {
+          const result = await bangShell.executeInMode(userInput.trim());
+          if (result && !result.cancelled) {
+            // Add to shell history for AI context
+            const contextEntry = bangShell.formatForContext(userInput.trim(), result);
+            shellCommandHistory.push(contextEntry);
+          }
+        }
+        continue;
+      }
+
+      // Handle bang-commands (when not in persistent shell mode)
+      const bangCommand = parseBangCommand(userInput);
+      if (bangCommand) {
+        if (bangCommand.type === 'toggle-shell-mode') {
+          bangShell.toggle();
+          continue;
+        } else if (bangCommand.type === 'single-command') {
+          const result = await executeShellCommand(bangCommand.command, {
+            yoloMode: config.yoloMode || shellSettings.yoloMode,
+            dangerousList: shellSettings.dangerousCommands,
+            timeout: shellSettings.timeout,
+            maxBuffer: shellSettings.maxBuffer,
+          });
+
+          if (result && !result.cancelled) {
+            // Add to shell history for AI context
+            const contextEntry = bangShell.formatForContext(bangCommand.command, result);
+            shellCommandHistory.push(contextEntry);
+
+            // Add result to conversation context so AI can see it
+            const contextText = `\n\nPrevious shell command executed:\n${contextEntry}`;
+            client.conversationHistory.push({
+              role: 'system',
+              content: contextText,
+            });
+          }
+          continue;
+        }
+      }
+
       // Handle slash commands
       if (userInput.startsWith('/')) {
         const context = {
@@ -194,7 +260,9 @@ export async function startInteractive(config) {
           themeManager,
           checkpointManager,
           mcpManager,
-          vimMode
+          vimMode,
+          bangShell,
+          shellCommandHistory
         };
         const shouldExit = await handleCommand(userInput, context);
         if (shouldExit) {
