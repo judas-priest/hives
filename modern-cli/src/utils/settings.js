@@ -49,6 +49,23 @@ const DEFAULT_SETTINGS = {
     shellExecution: false, // requires yolo mode
     fileOperations: true,
   },
+  shell: {
+    yoloMode: false, // Auto-approve all commands
+    confirmDangerous: true, // Ask for confirmation on dangerous commands
+    dangerousCommands: [
+      'rm', 'rmdir', 'del', 'delete',
+      'chmod', 'chown', 'chgrp',
+      'mv', 'move',
+      'dd', 'format', 'mkfs',
+      'kill', 'killall', 'pkill',
+      'shutdown', 'reboot', 'halt', 'poweroff',
+      'sudo', 'su',
+      'apt', 'yum', 'dnf', 'pacman', 'brew', 'npm', 'pip', 'gem',
+    ],
+    timeout: 30000, // 30 seconds
+    maxBuffer: 5242880, // 5MB
+    persistentMode: false, // Start in persistent shell mode
+  },
   advanced: {
     apiBase: 'https://api.polza.ai/v1',
     timeout: 30000,
@@ -202,6 +219,7 @@ export class SettingsManager {
     this.displaySettingsSection('Session', this.settings.session);
     this.displaySettingsSection('Context', this.settings.context);
     this.displaySettingsSection('Tools', this.settings.tools);
+    this.displaySettingsSection('Shell', this.settings.shell);
     this.displaySettingsSection('Advanced', this.settings.advanced);
 
     console.log(chalk.cyan('\n📂 Configuration Files:\n'));
@@ -219,7 +237,8 @@ export class SettingsManager {
     console.log(chalk.green(`  ${title}:`));
     for (const [key, value] of Object.entries(settings)) {
       const valueStr = typeof value === 'object' ? JSON.stringify(value) : String(value);
-      console.log(`    ${chalk.cyan(key.padEnd(20))} ${chalk.gray(valueStr)}`);
+      const displayValue = valueStr.length > 60 ? valueStr.substring(0, 60) + '...' : valueStr;
+      console.log(`    ${chalk.cyan(key.padEnd(20))} ${chalk.gray(displayValue)}`);
     }
     console.log();
   }
