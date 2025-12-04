@@ -103,16 +103,31 @@ export class VimMode {
       return;
     }
 
-    // ESC - Switch to normal mode
-    if (key.name === 'escape') {
-      this.switchToNormal();
+    // Allow Tab key to pass through for autocomplete in both modes
+    // This is critical for fuzzy search and file completion to work
+    if (key.name === 'tab') {
       return;
     }
 
+    // In insert mode, allow most keys to pass through normally
+    // Only intercept ESC to switch to normal mode
+    if (this.mode === 'insert') {
+      if (key.name === 'escape') {
+        this.switchToNormal();
+        return;
+      }
+      // Let all other keys in insert mode pass through to readline
+      return;
+    }
+
+    // ESC in normal mode (no-op)
+    if (key.name === 'escape') {
+      return;
+    }
+
+    // Handle normal mode separately
     if (this.mode === 'normal') {
       this.handleNormalMode(char, key);
-    } else if (this.mode === 'insert') {
-      this.handleInsertMode(char, key);
     }
   }
 
@@ -295,15 +310,14 @@ export class VimMode {
 
   /**
    * Handle keypress in insert mode
+   *
+   * Note: This function is now deprecated as insert mode handling
+   * is done directly in handleKeypress() for better compatibility
+   * with readline's built-in features (autocomplete, history, etc.)
    */
   handleInsertMode(char, key) {
-    // In insert mode, most keys behave normally
-    // Just check for special keys
-
-    if (key.ctrl && key.name === 'c') {
-      // Ctrl+C - switch to normal mode
-      this.switchToNormal();
-    }
+    // Deprecated - kept for backwards compatibility
+    // Insert mode now passes through all keys except ESC
   }
 
   /**
