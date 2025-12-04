@@ -39,11 +39,13 @@ marked.use({
       // Render each list item manually
       for (const item of token.items) {
         const bullet = chalk.cyan('•');
-        // Parse the item's content
-        const itemText = this.parser.parse(item.tokens).trim();
-        output += `  ${bullet} ${itemText}\n`;
+        // Parse inline content only to avoid nested formatting
+        const itemText = this.parser.parseInline(item.tokens).trim();
+        // Remove any leading/trailing whitespace and newlines
+        const cleanText = itemText.replace(/\n/g, ' ').replace(/\s+/g, ' ');
+        output += `  ${bullet} ${cleanText}\n`;
       }
-      return output;
+      return output + '\n';
     },
 
     paragraph(token) {
