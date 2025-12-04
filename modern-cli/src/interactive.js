@@ -58,6 +58,7 @@ export async function startInteractive(config) {
   // Track Ctrl+C presses for double Ctrl+C exit
   let ctrlCCount = 0;
   let ctrlCTimeout = null;
+  let sigintReceived = false; // Track if SIGINT was just received
 
   // Handle readline close event
   rl.on('close', () => {
@@ -66,6 +67,7 @@ export async function startInteractive(config) {
 
   // Handle SIGINT (Ctrl+C) gracefully with double-press to exit
   rl.on('SIGINT', () => {
+    sigintReceived = true; // Mark that SIGINT was received
     ctrlCCount++;
 
     // Clear existing timeout
@@ -74,14 +76,12 @@ export async function startInteractive(config) {
     }
 
     if (ctrlCCount === 1) {
-      console.log(chalk.yellow('\n\n(To exit, press Ctrl+C again or type /exit)\n'));
+      console.log(chalk.yellow('\n(To exit, press Ctrl+C again or type /exit)'));
 
       // Reset count after 2 seconds
       ctrlCTimeout = setTimeout(() => {
         ctrlCCount = 0;
       }, 2000);
-
-      rl.prompt();
     } else if (ctrlCCount >= 2) {
       // Second Ctrl+C - exit
       console.log(chalk.cyan('\n👋 Goodbye!\n'));
@@ -94,6 +94,13 @@ export async function startInteractive(config) {
   while (!isClosed) {
     try {
       const userInput = await question(chalk.green.bold('You > '));
+
+      // If SIGINT was received, skip processing this empty input
+      // (readline emits an empty line after SIGINT)
+      if (sigintReceived) {
+        sigintReceived = false;
+        continue;
+      }
 
       if (!userInput.trim()) {
         continue;
