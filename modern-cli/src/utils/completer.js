@@ -233,6 +233,11 @@ export function createCompleter(historyGetter) {
           searchPattern = afterAt.substring(lastSlash + 1);
         }
 
+        // Check if search path exists before proceeding
+        if (!fs.existsSync(searchPath)) {
+          searchPath = '.';
+        }
+
         // Get files in the directory
         const files = getFilesInDirectory(searchPath, 1);
 
@@ -246,8 +251,10 @@ export function createCompleter(historyGetter) {
           .sort((a, b) => b.score - a.score)
           .map(m => beforeAt + m.file);
 
-        return [matches.slice(0, 10), line];
+        // Return matches or empty if none found
+        return [matches.length > 0 ? matches.slice(0, 20) : [], line];
       } catch (error) {
+        // Silently handle errors - just return no completions
         return [[], line];
       }
     }
