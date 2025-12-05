@@ -13,6 +13,7 @@ import { startInteractive } from './interactive.js';
 import { runNonInteractive } from './non-interactive.js';
 import { showBanner } from './ui/banner.js';
 import { getVersion } from './utils/version.js';
+import { PROVIDERS, getDefaultModel, validateProviderConfig } from './lib/provider-factory.js';
 import chalk from 'chalk';
 
 /**
@@ -27,11 +28,16 @@ async function main() {
       type: 'string',
       description: 'Run in non-interactive mode with a single prompt',
     })
+    .option('provider', {
+      type: 'string',
+      description: 'AI provider to use (polza or kodacode)',
+      default: process.env.AI_PROVIDER || 'polza',
+      choices: ['polza', 'kodacode'],
+    })
     .option('model', {
       alias: 'm',
       type: 'string',
       description: 'AI model to use',
-      default: process.env.POLZA_DEFAULT_MODEL || 'anthropic/claude-sonnet-4.5',
     })
     .option('output-format', {
       alias: 'o',
@@ -64,28 +70,62 @@ async function main() {
     .epilogue('For more information, visit: https://github.com/judas-priest/hives')
     .parse();
 
-  // Check for API key
-  if (!process.env.POLZA_API_KEY) {
-    console.error(chalk.red.bold('\n✗ Error: Polza API key is required'));
-    console.error(chalk.yellow('Set POLZA_API_KEY environment variable:'));
-    console.error(chalk.cyan('  export POLZA_API_KEY=ak_your_key_here\n'));
+  // Determine provider and validate credentials
+  const provider = argv.provider || PROVIDERS.POLZA;
+
+  // Validate provider configuration
+  const providerConfig = {
+    provider,
+    polzaApiKey: process.env.POLZA_API_KEY,
+    githubToken: process.env.GITHUB_TOKEN,
+  };
+
+  const validation = validateProviderConfig(providerConfig);
+  if (!validation.valid) {
+    console.error(chalk.red.bold('\n✗ Configuration Error:'));
+    validation.errors.forEach(error => {
+      console.error(chalk.yellow(`  • ${error}`));
+    });
+    console.error('');
+
+    if (provider === PROVIDERS.POLZA) {
+      console.error(chalk.cyan('  For Polza AI:'));
+      console.error(chalk.cyan('    export POLZA_API_KEY=ak_your_key_here'));
+    } else if (provider === PROVIDERS.KODACODE) {
+      console.error(chalk.cyan('  For Kodacode:'));
+      console.error(chalk.cyan('    export GITHUB_TOKEN=your_github_token'));
+    }
+    console.error('');
     process.exit(1);
   }
 
   // Merge yolo and yolomode flags
   const yoloMode = argv.yolo || argv.yolomode;
 
+  // Determine model based on provider and user input
+  let defaultModel;
+  if (provider === PROVIDERS.KODACODE) {
+    defaultModel = process.env.KODACODE_DEFAULT_MODEL || getDefaultModel(PROVIDERS.KODACODE);
+  } else {
+    defaultModel = process.env.POLZA_DEFAULT_MODEL || getDefaultModel(PROVIDERS.POLZA);
+  }
+
   // Build configuration
   const config = {
-    model: argv.model,
+    provider,
+    model: argv.model || defaultModel,
     outputFormat: argv.outputFormat,
     includedDirectories: argv.includeDirectories
       ? argv.includeDirectories.split(',').map(d => d.trim())
       : [],
     yoloMode,
     stream: true, // Enable streaming by default (can be toggled with /stream command)
-    apiKey: process.env.POLZA_API_KEY,
-    apiBase: process.env.POLZA_API_BASE || 'https://api.polza.ai/api/v1',
+
+    // Provider-specific configuration
+    polzaApiKey: process.env.POLZA_API_KEY,
+    polzaApiBase: process.env.POLZA_API_BASE || 'https://api.polza.ai/api/v1',
+    githubToken: process.env.GITHUB_TOKEN,
+    kodacodeApiBase: process.env.KODACODE_API_BASE || 'https://api.kodacode.ru/v1',
   };
 
   // Non-interactive mode

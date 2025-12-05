@@ -5,7 +5,7 @@
 import { stdin as input, stdout as output } from 'process';
 import chalk from 'chalk';
 import ora from 'ora';
-import { PolzaClient } from './lib/polza-client.js';
+import { createClient, PROVIDERS, getProviderInfo } from './lib/provider-factory.js';
 import { getTools, getToolHandlers } from './lib/tools.js';
 import { renderMarkdown } from './ui/markdown.js';
 import { processPrompt } from './utils/prompt-processor.js';
@@ -41,8 +41,8 @@ export async function startInteractive(config) {
   const mcpManager = new MCPManager(settingsManager);
   await mcpManager.initialize();
 
-  // Initialize Polza client
-  const client = new PolzaClient(config.apiKey, config.apiBase);
+  // Initialize AI client using provider factory
+  const client = createClient(config);
 
   // Initialize context manager and load context files
   const contextManager = new ContextManager();
@@ -92,6 +92,9 @@ export async function startInteractive(config) {
     });
   };
 
+  // Show provider and model info
+  const providerInfo = getProviderInfo(config.provider);
+  console.log(chalk.gray('  Provider: ') + chalk.cyan(providerInfo ? providerInfo.name : config.provider));
   console.log(chalk.gray('  Current model: ') + chalk.cyan(config.model));
   if (config.stream) {
     console.log(chalk.green('  ⚡ Streaming: ') + chalk.gray('Enabled (character-by-character)'));

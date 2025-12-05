@@ -589,7 +589,11 @@ You > /export json conversation.json
 
 ### Supported Providers
 
-Hives Modern CLI is powered by **[Polza AI](https://polza.ai)**, a unified API gateway that provides access to **100+ AI models** from multiple providers:
+Hives Modern CLI supports **two AI providers**, giving you flexibility in choosing your AI backend:
+
+#### 1. **Polza AI** (Default)
+
+**[Polza AI](https://polza.ai)** is a unified API gateway that provides access to **100+ AI models** from multiple providers:
 
 - **Anthropic** - Claude models (Sonnet, Opus, Haiku)
 - **OpenAI** - GPT-4, GPT-3.5, and O1 reasoning models
@@ -597,7 +601,23 @@ Hives Modern CLI is powered by **[Polza AI](https://polza.ai)**, a unified API g
 - **Google** - Gemini models
 - **And many more** - Through Polza's multi-provider platform
 
-**Key Advantage**: Unlike single-provider CLIs (like Gemini CLI which only supports Google's models), Modern CLI lets you switch between any provider with a simple `-m` flag.
+**Authentication**: Requires `POLZA_API_KEY` from [polza.ai](https://polza.ai)
+
+#### 2. **Kodacode**
+
+**[Kodacode](https://api.kodacode.ru)** provides access to cutting-edge AI models with **large context windows** through GitHub authentication:
+
+- **MiniMax M2** (180K context)
+- **Gemini 2.5 Flash** (986K context) - Largest context window
+- **DeepSeek V3.1 Terminus** (114K context)
+- **GLM-4.6** (186K context)
+- **Qwen3 235B A22B** (116K context)
+- **Qwen3 Coder** (116K context)
+- **Kimi K2 Thinking** (244K context)
+
+**Authentication**: Requires `GITHUB_TOKEN` (uses GitHub token for authentication)
+
+**Key Advantage**: Unlike single-provider CLIs, Modern CLI lets you switch between providers and access different model ecosystems based on your needs.
 
 ### Supported Model Types
 
@@ -628,6 +648,25 @@ Here are some popular models you can use:
 
 **Note**: Polza AI supports 100+ additional models. Visit [polza.ai](https://polza.ai) for the complete list.
 
+### Switching Providers
+
+Choose your AI provider via environment variables:
+
+```bash
+# Use Polza AI (default)
+export AI_PROVIDER=polza
+export POLZA_API_KEY=ak_your_key_here
+node src/index.js
+
+# Use Kodacode
+export AI_PROVIDER=kodacode
+export GITHUB_TOKEN=your_github_token
+node src/index.js --provider kodacode
+
+# Or use command-line flag
+node src/index.js --provider kodacode -m "gemini-2.5-flash"
+```
+
 ### Changing Models
 
 Switch between models easily:
@@ -639,8 +678,14 @@ node src/index.js -m "openai/gpt-4o"
 # Or in interactive mode
 You > /model openai/gpt-4o
 
+# View available providers and models
+You > /provider list
+You > /provider models polza
+You > /provider models kodacode
+
 # Set default model via environment variable
-export POLZA_DEFAULT_MODEL="anthropic/claude-3-5-sonnet"
+export POLZA_DEFAULT_MODEL="anthropic/claude-3-5-sonnet"  # For Polza
+export KODACODE_DEFAULT_MODEL="gemini-2.5-flash"         # For Kodacode
 
 # Or in settings file (~/.hives-cli/settings.json)
 {

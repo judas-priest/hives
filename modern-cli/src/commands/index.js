@@ -10,6 +10,7 @@ import { copyToClipboard } from '../utils/clipboard.js';
 import { fetchAndDisplay } from '../utils/web-fetch.js';
 import { createDefaultSettings } from '../utils/settings.js';
 import { createExampleCommands } from '../utils/custom-commands.js';
+import { PROVIDERS, getProviderInfo } from '../lib/provider-factory.js';
 
 /**
  * Handle slash commands
@@ -40,6 +41,10 @@ export async function handleCommand(input, context) {
 
     case 'version':
       showVersion();
+      return false;
+
+    case 'provider':
+      handleProviderCommand(args, config);
       return false;
 
     case 'model':
@@ -185,6 +190,7 @@ function showHelp() {
     ['/history', 'Show conversation history'],
     ['/reset', 'Clear conversation history'],
     ['/version', 'Show version information'],
+    ['/provider [name]', 'Change or show current AI provider'],
     ['/model [name]', 'Change or show current AI model'],
     ['/yolo', 'Toggle YOLO mode (shell execution)'],
     ['/stream', 'Toggle streaming mode'],
@@ -928,4 +934,91 @@ function showShellHistory(context) {
   }
 
   console.log();
+}
+
+/**
+ * Handle provider command
+ */
+function handleProviderCommand(args, config) {
+  const subcommand = args[0]?.toLowerCase();
+
+  switch (subcommand) {
+    case 'list':
+    case undefined:
+      // List all available providers
+      console.log(chalk.cyan.bold('\n🔌 Available AI Providers:\n'));
+
+      const providers = [
+        { id: PROVIDERS.POLZA, name: 'Polza AI', current: config.provider === PROVIDERS.POLZA },
+        { id: PROVIDERS.KODACODE, name: 'Kodacode', current: config.provider === PROVIDERS.KODACODE },
+      ];
+
+      for (const provider of providers) {
+        const marker = provider.current ? chalk.green('✓') : ' ';
+        const info = getProviderInfo(provider.id);
+        console.log(`  ${marker} ${chalk.green(provider.name.padEnd(15))} ${chalk.gray(info.description)}`);
+        console.log(`     ${chalk.dim('Auth:')} ${chalk.gray(info.authType.padEnd(15))} ${chalk.dim('Default Model:')} ${chalk.gray(info.defaultModel)}`);
+      }
+
+      console.log(chalk.cyan('\n💡 Note:\n'));
+      console.log(chalk.gray('  Provider switching requires restarting the CLI with appropriate credentials.'));
+      console.log(chalk.gray('  Set AI_PROVIDER environment variable to change the default provider.'));
+      console.log();
+      break;
+
+    case 'models':
+      // Show models for a specific provider or current provider
+      const targetProvider = args[1] || config.provider;
+      const info = getProviderInfo(targetProvider);
+
+      if (!info) {
+        console.log(chalk.red(`\n✗ Provider '${targetProvider}' not found\n`));
+        return;
+      }
+
+      console.log(chalk.cyan.bold(`\n🤖 ${info.name} - Available Models:\n`));
+      for (const model of info.supportedModels) {
+        const isCurrent = model === config.model;
+        const marker = isCurrent ? chalk.green('✓') : ' ';
+        console.log(`  ${marker} ${chalk.green(model)}`);
+      }
+      console.log();
+      break;
+
+    case 'info':
+      // Show detailed info about a provider
+      const providerName = args[1] || config.provider;
+      const providerInfo = getProviderInfo(providerName);
+
+      if (!providerInfo) {
+        console.log(chalk.red(`\n✗ Provider '${providerName}' not found\n`));
+        return;
+      }
+
+      console.log(chalk.cyan.bold(`\n🔌 ${providerInfo.name} - Provider Information:\n`));
+      console.log(`  ${chalk.green('Website:'.padEnd(20))} ${chalk.gray(providerInfo.website)}`);
+      console.log(`  ${chalk.green('Description:'.padEnd(20))} ${chalk.gray(providerInfo.description)}`);
+      console.log(`  ${chalk.green('Authentication:'.padEnd(20))} ${chalk.gray(providerInfo.authType)}`);
+      console.log(`  ${chalk.green('Default Model:'.padEnd(20))} ${chalk.gray(providerInfo.defaultModel)}`);
+      console.log(`  ${chalk.green('Total Models:'.padEnd(20))} ${chalk.gray(providerInfo.supportedModels.length)}`);
+      console.log();
+      break;
+
+    default:
+      console.log(chalk.cyan.bold('\n🔌 Provider Commands:\n'));
+      console.log(`  ${chalk.green('/provider list'.padEnd(30))} ${chalk.gray('List all providers')}`);
+      console.log(`  ${chalk.green('/provider models [name]'.padEnd(30))} ${chalk.gray('List provider models')}`);
+      console.log(`  ${chalk.green('/provider info [name]'.padEnd(30))} ${chalk.gray('Show provider details')}`);
+      console.log();
+      console.log(chalk.cyan.bold('📝 Current Configuration:\n'));
+      console.log(`  ${chalk.green('Provider:'.padEnd(20))} ${chalk.cyan(config.provider)}`);
+      console.log(`  ${chalk.green('Model:'.padEnd(20))} ${chalk.cyan(config.model)}`);
+      console.log();
+      console.log(chalk.yellow('⚠️  To switch providers:\n'));
+      console.log(chalk.gray('  1. Set AI_PROVIDER environment variable (polza or kodacode)'));
+      console.log(chalk.gray('  2. Ensure appropriate credentials are set (POLZA_API_KEY or GITHUB_TOKEN)'));
+      console.log(chalk.gray('  3. Restart the CLI'));
+      console.log();
+      break;
+  }
 }
