@@ -585,9 +585,56 @@ You > /export markdown conversation.md
 You > /export json conversation.json
 ```
 
-## 🎯 Available Models
+## 🎯 AI Models and Providers
 
-Hives Modern CLI supports various AI models through Polza AI:
+### Supported Providers
+
+Hives Modern CLI supports **two AI providers**, giving you flexibility in choosing your AI backend:
+
+#### 1. **Polza AI** (Default)
+
+**[Polza AI](https://polza.ai)** is a unified API gateway that provides access to **100+ AI models** from multiple providers:
+
+- **Anthropic** - Claude models (Sonnet, Opus, Haiku)
+- **OpenAI** - GPT-4, GPT-3.5, and O1 reasoning models
+- **DeepSeek** - DeepSeek R1 reasoning models
+- **Google** - Gemini models
+- **And many more** - Through Polza's multi-provider platform
+
+**Authentication**: Requires `POLZA_API_KEY` from [polza.ai](https://polza.ai)
+
+#### 2. **Kodacode**
+
+**[Kodacode](https://api.kodacode.ru)** provides access to cutting-edge AI models with **large context windows** through GitHub authentication:
+
+- **MiniMax M2** (180K context)
+- **Gemini 2.5 Flash** (986K context) - Largest context window
+- **DeepSeek V3.1 Terminus** (114K context)
+- **GLM-4.6** (186K context)
+- **Qwen3 235B A22B** (116K context)
+- **Qwen3 Coder** (116K context)
+- **Kimi K2 Thinking** (244K context)
+
+**Authentication**: Requires `GITHUB_TOKEN` (uses GitHub token for authentication)
+
+**Key Advantage**: Unlike single-provider CLIs, Modern CLI lets you switch between providers and access different model ecosystems based on your needs.
+
+### Supported Model Types
+
+Modern CLI understands and supports the following types of AI models:
+
+| Model Type | Description | Examples |
+|------------|-------------|----------|
+| **Chat Completion Models** | Standard conversational AI models | All Claude, GPT-4, Gemini models |
+| **Reasoning Models** | Models with enhanced reasoning capabilities | `openai/o1-preview`, `deepseek/deepseek-r1` |
+| **Multimodal Models** | Models that can process text + images | Most modern models (supports PNG, JPG, GIF, etc.) |
+| **Tool-Calling Models** | Models that can call functions/tools | All supported models have tool-calling capability |
+
+All models use the OpenAI-compatible chat/completions API format through Polza AI's unified endpoint.
+
+### Available Models
+
+Here are some popular models you can use:
 
 | Provider | Model ID | Description |
 |----------|----------|-------------|
@@ -596,10 +643,33 @@ Hives Modern CLI supports various AI models through Polza AI:
 | OpenAI | `openai/gpt-4o` | GPT-4 Optimized |
 | OpenAI | `openai/o1-preview` | O1 with reasoning |
 | OpenAI | `openai/gpt-4o-mini` | GPT-4 Mini (cost-effective) |
-| DeepSeek | `deepseek/deepseek-r1` | DeepSeek R1 |
+| DeepSeek | `deepseek/deepseek-r1` | DeepSeek R1 with reasoning |
 | Google | `google/gemini-pro` | Google Gemini Pro |
 
-Change models:
+**Note**: Polza AI supports 100+ additional models. Visit [polza.ai](https://polza.ai) for the complete list.
+
+### Switching Providers
+
+Choose your AI provider via environment variables:
+
+```bash
+# Use Polza AI (default)
+export AI_PROVIDER=polza
+export POLZA_API_KEY=ak_your_key_here
+node src/index.js
+
+# Use Kodacode
+export AI_PROVIDER=kodacode
+export GITHUB_TOKEN=your_github_token
+node src/index.js --provider kodacode
+
+# Or use command-line flag
+node src/index.js --provider kodacode -m "gemini-2.5-flash"
+```
+
+### Changing Models
+
+Switch between models easily:
 
 ```bash
 # Command-line flag
@@ -607,6 +677,22 @@ node src/index.js -m "openai/gpt-4o"
 
 # Or in interactive mode
 You > /model openai/gpt-4o
+
+# View available providers and models
+You > /provider list
+You > /provider models polza
+You > /provider models kodacode
+
+# Set default model via environment variable
+export POLZA_DEFAULT_MODEL="anthropic/claude-3-5-sonnet"  # For Polza
+export KODACODE_DEFAULT_MODEL="gemini-2.5-flash"         # For Kodacode
+
+# Or in settings file (~/.hives-cli/settings.json)
+{
+  "general": {
+    "model": "openai/gpt-4o"
+  }
+}
 ```
 
 ## 🏗️ Architecture

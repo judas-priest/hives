@@ -3,7 +3,7 @@
  */
 
 import chalk from 'chalk';
-import { PolzaClient } from './lib/polza-client.js';
+import { createClient } from './lib/provider-factory.js';
 import { getTools, getToolHandlers } from './lib/tools.js';
 import { renderMarkdown } from './ui/markdown.js';
 import { processPrompt } from './utils/prompt-processor.js';
@@ -13,8 +13,8 @@ import { processPrompt } from './utils/prompt-processor.js';
  */
 export async function runNonInteractive(prompt, config) {
   try {
-    // Initialize Polza client
-    const client = new PolzaClient(config.apiKey, config.apiBase);
+    // Initialize AI client using provider factory
+    const client = createClient(config);
 
     // Get tools and handlers
     const tools = getTools(config.yoloMode);
