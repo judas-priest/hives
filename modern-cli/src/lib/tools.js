@@ -8,6 +8,10 @@ import { execSync } from 'child_process';
 import fg from 'fast-glob';
 import { join } from 'path';
 import { fetchUrl, htmlToText } from '../utils/web-fetch.js';
+import { FileSystemError, NetworkError, wrapError } from '../utils/errors.js';
+import { getLogger } from '../utils/logger.js';
+
+const logger = getLogger();
 
 /**
  * Get tool definitions for Polza AI
@@ -162,47 +166,80 @@ export function getToolHandlers(yoloMode = false) {
   const handlers = {
     read_file: async ({ path }) => {
       try {
+        logger.debug(`Reading file: ${path}`);
         const content = readFileSync(path, 'utf-8');
+        logger.debug(`File read successfully: ${path}`, { size: content.length });
         return { success: true, content };
       } catch (error) {
-        return { success: false, error: error.message };
+        const wrappedError = wrapError(error, { path, operation: 'read' });
+        logger.error(`Failed to read file: ${path}`, wrappedError);
+        return {
+          success: false,
+          error: wrappedError.message,
+          code: wrappedError.code,
+        };
       }
     },
 
     write_file: async ({ path, content }) => {
       try {
+        logger.debug(`Writing file: ${path}`, { size: content.length });
         writeFileSync(path, content, 'utf-8');
+        logger.info(`File written successfully: ${path}`);
         return { success: true, message: `File written: ${path}` };
       } catch (error) {
-        return { success: false, error: error.message };
+        const wrappedError = wrapError(error, { path, operation: 'write' });
+        logger.error(`Failed to write file: ${path}`, wrappedError);
+        return {
+          success: false,
+          error: wrappedError.message,
+          code: wrappedError.code,
+        };
       }
     },
 
     list_directory: async ({ path }) => {
       try {
+        logger.debug(`Listing directory: ${path}`);
         const entries = readdirSync(path, { withFileTypes: true });
         const files = entries.map(entry => ({
           name: entry.name,
           isDirectory: entry.isDirectory(),
           isFile: entry.isFile(),
         }));
+        logger.debug(`Directory listed: ${path}`, { count: files.length });
         return { success: true, files };
       } catch (error) {
-        return { success: false, error: error.message };
+        const wrappedError = wrapError(error, { path, operation: 'list' });
+        logger.error(`Failed to list directory: ${path}`, wrappedError);
+        return {
+          success: false,
+          error: wrappedError.message,
+          code: wrappedError.code,
+        };
       }
     },
 
     glob_files: async ({ pattern, cwd = process.cwd() }) => {
       try {
+        logger.debug(`Globbing files: ${pattern}`, { cwd });
         const files = await fg(pattern, { cwd, absolute: false });
+        logger.debug(`Glob completed: ${pattern}`, { count: files.length });
         return { success: true, files };
       } catch (error) {
-        return { success: false, error: error.message };
+        const wrappedError = wrapError(error, { pattern, cwd, operation: 'glob' });
+        logger.error(`Failed to glob files: ${pattern}`, wrappedError);
+        return {
+          success: false,
+          error: wrappedError.message,
+          code: wrappedError.code,
+        };
       }
     },
 
     file_exists: async ({ path }) => {
       try {
+        logger.debug(`Checking if file exists: ${path}`);
         const exists = existsSync(path);
         const stats = exists ? statSync(path) : null;
         return {
@@ -212,18 +249,30 @@ export function getToolHandlers(yoloMode = false) {
           isDirectory: exists ? stats.isDirectory() : false,
         };
       } catch (error) {
-        return { success: false, error: error.message };
+        const wrappedError = wrapError(error, { path, operation: 'exists' });
+        logger.error(`Failed to check file existence: ${path}`, wrappedError);
+        return {
+          success: false,
+          error: wrappedError.message,
+          code: wrappedError.code,
+        };
       }
     },
 
     web_fetch: async ({ url, format = 'html' }) => {
       try {
+        logger.debug(`Fetching URL: ${url}`, { format });
         const response = await fetchUrl(url);
         let content = response.body;
 
         if (format === 'text') {
           content = htmlToText(content);
         }
+
+        logger.info(`URL fetched successfully: ${url}`, {
+          statusCode: response.statusCode,
+          contentLength: content.length,
+        });
 
         return {
           success: true,
@@ -233,7 +282,15 @@ export function getToolHandlers(yoloMode = false) {
           url: response.url,
         };
       } catch (error) {
-        return { success: false, error: error.message };
+        const wrappedError = error instanceof NetworkError
+          ? error
+          : new NetworkError(error.message, 0, url, { originalError: error.name });
+        logger.error(`Failed to fetch URL: ${url}`, wrappedError);
+        return {
+          success: false,
+          error: wrappedError.message,
+          code: wrappedError.code,
+        };
       }
     },
   };
@@ -242,18 +299,22 @@ export function getToolHandlers(yoloMode = false) {
   if (yoloMode) {
     handlers.execute_shell = async ({ command }) => {
       try {
+        logger.warn(`Executing shell command (YOLO mode): ${command}`);
         const output = execSync(command, {
           encoding: 'utf-8',
           maxBuffer: 1024 * 1024 * 10, // 10MB
           timeout: 30000, // 30 seconds
         });
+        logger.info(`Shell command completed: ${command}`);
         return { success: true, output };
       } catch (error) {
+        logger.error(`Shell command failed: ${command}`, error);
         return {
           success: false,
           error: error.message,
           output: error.stdout || '',
           stderr: error.stderr || '',
+          code: error.code,
         };
       }
     };
