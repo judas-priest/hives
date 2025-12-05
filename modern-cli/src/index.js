@@ -11,6 +11,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { startInteractive } from './interactive.js';
 import { runNonInteractive } from './non-interactive.js';
+import { startTUI } from './tui-mode.js';
 import { showBanner } from './ui/banner.js';
 import { getVersion } from './utils/version.js';
 import { PROVIDERS, getDefaultModel, validateProviderConfig } from './lib/provider-factory.js';
@@ -58,6 +59,11 @@ async function main() {
     .option('yolomode', {
       type: 'boolean',
       description: 'Alias for --yolo',
+      default: false,
+    })
+    .option('tui', {
+      type: 'boolean',
+      description: 'Start in TUI (Text User Interface) mode with full-screen interface',
       default: false,
     })
     .version(getVersion())
@@ -131,6 +137,12 @@ async function main() {
   // Non-interactive mode
   if (argv.prompt) {
     await runNonInteractive(argv.prompt, config);
+    return;
+  }
+
+  // TUI mode
+  if (argv.tui) {
+    await startTUI(config);
     return;
   }
 

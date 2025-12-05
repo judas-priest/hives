@@ -160,6 +160,10 @@ export async function handleCommand(input, context) {
       await handleShellCommand(args, context);
       return false;
 
+    case 'tui':
+      handleTUICommand(context);
+      return false;
+
     default:
       // Check if it's a custom command
       if (context.customCommands && context.customCommands.hasCommand(command)) {
@@ -213,6 +217,7 @@ function showHelp() {
     ['/mcp [action]', 'Manage MCP servers and tools'],
     ['/vim', 'Toggle vim keybindings'],
     ['/shell [action]', 'Manage shell command settings'],
+    ['/tui', 'Show TUI mode information'],
   ];
 
   for (const [cmd, desc] of commands) {
@@ -909,6 +914,16 @@ function handleVimCommand(context) {
   }
 
   context.vimMode.toggle();
+}
+
+/**
+ * Handle TUI command
+ */
+function handleTUICommand(context) {
+  console.log(chalk.cyan('\n📺 Switching to TUI mode...\n'));
+  console.log(chalk.gray('To start in TUI mode, run: ') + chalk.white('node src/index.js --tui\n'));
+  console.log(chalk.yellow('⚠️  TUI mode cannot be toggled from within interactive mode.'));
+  console.log(chalk.yellow('   Please restart the CLI with the --tui flag.\n'));
 }
 
 /**

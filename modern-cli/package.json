@@ -25,6 +25,8 @@
   "author": "Hives Community",
   "license": "Unlicense",
   "dependencies": {
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.11.0",
     "boxen": "^8.0.1",
     "chalk": "^5.3.0",
     "fast-glob": "^3.3.2",

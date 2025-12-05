@@ -85,6 +85,23 @@ You > Explain async/await in JavaScript
 Assistant > [AI response with markdown formatting]
 ```
 
+### TUI Mode (NEW!)
+
+Start in full-screen TUI (Text User Interface) mode:
+
+```bash
+node src/index.js --tui
+```
+
+TUI mode provides a rich, full-screen interface with:
+- **Split-panel layout**: Conversation history in the main panel
+- **Dedicated input area**: Clear separation between history and input
+- **Status bar**: Real-time display of provider, model, and mode
+- **Mouse support**: Scroll through conversation with mouse wheel
+- **Visual feedback**: Colored output and better organization
+
+Perfect for extended conversations and better visual organization!
+
 ### Non-Interactive Mode
 
 Get quick answers without entering interactive mode:
@@ -104,6 +121,7 @@ Options:
   -o, --output-format <fmt>   Output format: text, json, stream-json
   --include-directories <dirs> Additional directories (comma-separated)
   --yolo, --yolomode          Enable YOLO mode (auto-execute shell commands)
+  --tui                       Start in TUI (Text User Interface) mode
   -h, --help                  Show help
   -v, --version               Show version
 ```
@@ -125,6 +143,12 @@ node src/index.js -p "List 3 programming languages" -o json
 
 # YOLO mode (shell commands auto-execute)
 node src/index.js --yolo
+
+# TUI mode (full-screen interface)
+node src/index.js --tui
+
+# TUI mode with specific model
+node src/index.js --tui -m "openai/gpt-4o"
 ```
 
 ## 💬 Slash Commands
@@ -867,6 +891,75 @@ Add servers to your settings file:
 # Show MCP statistics
 /mcp stats
 ```
+
+## 📺 TUI Mode
+
+Hives Modern CLI now supports a full-screen TUI (Text User Interface) mode powered by [blessed](https://github.com/chjj/blessed), providing a rich terminal experience similar to tools like `htop` or `vim`.
+
+### What is TUI Mode?
+
+TUI mode transforms the CLI into a full-screen application with:
+- **Split-panel layout**: Dedicated areas for conversation history and input
+- **Status bar**: Real-time information about your session
+- **Mouse support**: Click and scroll with your mouse
+- **Better visual organization**: Clear boundaries between UI elements
+- **Keyboard shortcuts**: Vim-like navigation and shortcuts
+
+### Starting TUI Mode
+
+```bash
+# Start in TUI mode
+node src/index.js --tui
+
+# TUI mode with specific model
+node src/index.js --tui -m "anthropic/claude-sonnet-4.5"
+
+# TUI mode with YOLO mode
+node src/index.js --tui --yolo
+```
+
+### TUI Features
+
+**Layout Components:**
+- **Conversation Log** (top 75%): Scrollable history of all messages
+- **Input Box** (middle 15%): Multi-line text input area
+- **Status Bar** (bottom): Shows provider, model, and mode status
+
+**Keyboard Shortcuts:**
+- `Enter` - Send message
+- `Ctrl+C` - Exit TUI mode
+- `Escape` - Alternative exit
+- Mouse wheel - Scroll through conversation
+
+**Special Syntax Support:**
+- All regular syntax works: `@file.js`, `!commands`, etc.
+- Context files automatically loaded
+- Full tool support (file operations, web fetch, etc.)
+
+### When to Use TUI Mode
+
+**Use TUI mode when:**
+- Having long conversations that need scrolling
+- Want better visual separation between input and output
+- Prefer a more structured interface
+- Working on a large terminal with plenty of screen space
+
+**Use regular interactive mode when:**
+- Quick questions and answers
+- Need to copy/paste from terminal easily
+- Working with screen readers
+- Prefer traditional CLI feel
+
+### Testing TUI Mode
+
+Test the TUI interface without API keys:
+
+```bash
+cd modern-cli
+node experiments/test-tui.js
+```
+
+This will start a test interface where you can try out the TUI components and verify everything works correctly.
 
 ## ⌨️ Vim Mode
 
