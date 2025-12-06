@@ -11,13 +11,12 @@ Hives Modern CLI brings AI-powered assistance directly into your terminal with a
 
 ### Core Features
 - 🎨 **Beautiful Terminal UI** - Gradient banners, colored output, and markdown rendering
-- ✨ **Modern UI Elements** - Contour lines (╰────) and pip-style progress bars
 - 🤖 **AI-Powered** - Chat with Claude, GPT-4, and other models via Polza AI
 - 🔧 **Built-in Tools** - File operations, shell commands, glob patterns, web fetch
 - 📝 **File Inclusion** - Use `@file.js` syntax to include files in prompts
 - 🖼️ **Multimodal Support** - Include images in prompts with `@image.png`
 - 💾 **Session Management** - Save, restore, and export conversations
-- ⚡ **Streaming Responses** - Real-time AI responses with animated progress bars
+- ⚡ **Streaming Responses** - Real-time AI responses (toggle with `/stream`)
 - 🚀 **Shell Execution** - Run shell commands with `!ls -la` (YOLO mode)
 - 💬 **Interactive & Non-Interactive** - Use in chat mode or for quick queries
 - 🎯 **Multiple Output Formats** - Text, JSON, or streaming JSON
@@ -733,8 +732,7 @@ modern-cli/
 │   │   └── tools.js          # Tool definitions & handlers
 │   ├── ui/
 │   │   ├── banner.js         # Welcome banner
-│   │   ├── markdown.js       # Markdown rendering
-│   │   └── elements.js       # Modern UI elements (NEW!)
+│   │   └── markdown.js       # Markdown rendering
 │   ├── utils/
 │   │   ├── version.js        # Version utilities
 │   │   └── prompt-processor.js # @file and !shell processor
@@ -743,76 +741,6 @@ modern-cli/
 ├── package.json
 └── README.md
 ```
-
-## ✨ Modern UI Elements
-
-Hives Modern CLI features beautiful, modern UI elements inspired by contemporary CLI tools like pip.
-
-### Contour Lines
-
-Elegant Unicode box-drawing characters for visual separation:
-
-```
-╰──────────────────────────────────────────────────
-```
-
-Used throughout the interface for:
-- Banner decorations
-- Response separators
-- Section dividers
-
-**Available Styles:**
-- `╰────` - Bottom-left corner style (default)
-- `╭────` - Top-left corner style
-- `────` - Simple horizontal line
-- Custom separators with text in the middle
-
-### Progress Bars
-
-Modern, pip-style progress bars for streaming responses:
-
-```
-Streaming response ████████████████████░░░░░░░░░░░░ 75%
-```
-
-**Features:**
-- Smooth animations with partial fill characters (▏▎▍▌▋▊▉)
-- Color-coded progress (cyan during streaming, green on completion)
-- Percentage display
-- Adaptive sizing
-
-**Usage in CLI:**
-- Automatically shown during streaming AI responses
-- Updates in real-time as tokens arrive
-- Clears automatically when response completes
-
-### Example Output
-
-```
-You > Hello!
-
-╰──────────────────────────────────────────────────
-Assistant >
-Hello! How can I help you today?
-
-───────────────────── End of Response ──────────────────────
-```
-
-### Testing UI Elements
-
-Try out the new UI elements with the test script:
-
-```bash
-cd modern-cli
-node experiments/test-ui-elements.js
-```
-
-This will demonstrate:
-- Different contour line styles
-- Static and animated progress bars
-- Separators and dividers
-- Boxes with borders
-- All available Unicode characters
 
 ## 🎨 Theme System
 

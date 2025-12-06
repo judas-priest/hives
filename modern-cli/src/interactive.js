@@ -8,7 +8,6 @@ import ora from 'ora';
 import { createClient, PROVIDERS, getProviderInfo } from './lib/provider-factory.js';
 import { getTools, getToolHandlers } from './lib/tools.js';
 import { renderMarkdown } from './ui/markdown.js';
-import { createAnimatedProgressBar, createDivider, createContourLine } from './ui/elements.js';
 import { processPrompt } from './utils/prompt-processor.js';
 import { handleCommand } from './commands/index.js';
 import { createCompleter } from './utils/completer.js';
@@ -325,14 +324,6 @@ export async function startInteractive(config) {
       try {
         // Check if streaming is enabled
         if (config.stream) {
-          // Create a modern progress bar for streaming
-          const progressBar = createAnimatedProgressBar({
-            width: 40,
-            color: 'cyan',
-            text: 'Streaming response',
-            stream: process.stderr,
-          });
-
           // Send streaming request
           const response = await client.chat(processedPrompt, {
             model: config.model,
@@ -346,8 +337,6 @@ export async function startInteractive(config) {
           // Display streaming response character by character
           console.log(chalk.blue.bold('\nAssistant > '));
           let fullResponse = '';
-          let charCount = 0;
-          const estimatedTotalChars = 1000; // Rough estimate for progress bar
 
           for await (const chunk of response) {
             if (chunk.choices?.[0]?.delta?.content) {
@@ -357,11 +346,6 @@ export async function startInteractive(config) {
               for (const char of text) {
                 process.stdout.write(char);
                 fullResponse += char;
-                charCount++;
-
-                // Update progress bar based on character count
-                const progress = Math.min(95, (charCount / estimatedTotalChars) * 100);
-                progressBar.update(progress);
 
                 // Small delay to make streaming visible (1-2ms per character)
                 await new Promise(resolve => setTimeout(resolve, 1));
@@ -369,17 +353,8 @@ export async function startInteractive(config) {
             }
           }
 
-          // Complete the progress bar
-          progressBar.finish();
-
-          // After streaming completes, clear the raw output and render with markdown
+          // After streaming completes
           console.log('\n');
-
-          // Add decorative contour line separator
-          console.log('  ' + createDivider('gray'));
-          console.log(chalk.blue.bold('Assistant > ') + chalk.dim('(formatted)'));
-          renderMarkdown(fullResponse);
-          console.log();
 
           // Add to conversation history
           client.conversationHistory.push({ role: 'user', content: processedPrompt });
@@ -396,8 +371,8 @@ export async function startInteractive(config) {
           spinner.stop();
           spinner.clear(); // Clear spinner artifacts
 
-          // Render response with contour line decoration
-          console.log('\n' + '  ' + createDivider('cyan'));
+          // Render response
+          console.log('\n');
           const assistantMessage = response.choices[0].message.content;
           console.log(chalk.blue.bold('Assistant > '));
           renderMarkdown(assistantMessage);
