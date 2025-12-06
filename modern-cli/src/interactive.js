@@ -322,62 +322,24 @@ export async function startInteractive(config) {
       }).start();
 
       try {
-        // Check if streaming is enabled
-        if (config.stream) {
-          // Send streaming request
-          const response = await client.chat(processedPrompt, {
-            model: config.model,
-            stream: true,
-            images: images.length > 0 ? images : undefined,
-          });
+        // Use non-streaming mode with tools for full functionality
+        // This ensures both markdown rendering and tool calling work properly
+        const response = await client.chatWithTools(processedPrompt, {
+          model: config.model,
+          tools,
+          toolHandlers,
+          images: images.length > 0 ? images : undefined,
+        });
 
-          spinner.stop();
-          spinner.clear();
+        spinner.stop();
+        spinner.clear(); // Clear spinner artifacts
 
-          // Display streaming response character by character
-          console.log(chalk.blue.bold('\nAssistant > '));
-          let fullResponse = '';
-
-          for await (const chunk of response) {
-            if (chunk.choices?.[0]?.delta?.content) {
-              const text = chunk.choices[0].delta.content;
-
-              // Stream character by character with slight delay for visual effect
-              for (const char of text) {
-                process.stdout.write(char);
-                fullResponse += char;
-
-                // Small delay to make streaming visible (1-2ms per character)
-                await new Promise(resolve => setTimeout(resolve, 1));
-              }
-            }
-          }
-
-          // After streaming completes
-          console.log('\n');
-
-          // Add to conversation history
-          client.conversationHistory.push({ role: 'user', content: processedPrompt });
-          client.conversationHistory.push({ role: 'assistant', content: fullResponse });
-        } else {
-          // Non-streaming mode with tools
-          const response = await client.chatWithTools(processedPrompt, {
-            model: config.model,
-            tools,
-            toolHandlers,
-            images: images.length > 0 ? images : undefined,
-          });
-
-          spinner.stop();
-          spinner.clear(); // Clear spinner artifacts
-
-          // Render response
-          console.log('\n');
-          const assistantMessage = response.choices[0].message.content;
-          console.log(chalk.blue.bold('Assistant > '));
-          renderMarkdown(assistantMessage);
-          console.log();
-        }
+        // Render response with markdown
+        console.log('\n');
+        const assistantMessage = response.choices[0].message.content;
+        console.log(chalk.blue.bold('Assistant > '));
+        renderMarkdown(assistantMessage);
+        console.log();
       } catch (error) {
         spinner.stop();
         spinner.clear(); // Clear spinner artifacts
