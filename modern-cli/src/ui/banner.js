@@ -5,6 +5,7 @@
 import chalk from 'chalk';
 import gradient from 'gradient-string';
 import boxen from 'boxen';
+import { createContourLine, createDivider } from './elements.js';
 
 /**
  * Display beautiful ASCII banner
@@ -35,6 +36,9 @@ export function showBanner() {
       }
     )
   );
+
+  // Add modern contour line decoration
+  console.log('  ' + createDivider('cyan'));
 
   console.log(chalk.gray('  Type ') + chalk.cyan('/help') + chalk.gray(' for commands, ') + chalk.cyan('/exit') + chalk.gray(' to quit\n'));
 }
