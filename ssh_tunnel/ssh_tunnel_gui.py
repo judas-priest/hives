@@ -1461,9 +1461,18 @@ class SSHTunnelApp:
             self.status_label.config(text="🟢 Connected - " + message)
             self.hide_progress()
         else:
-            self.status_label.config(text="🔴 " + message)
+            # Add visual indicator for different states
+            if 'reconnecting' in message.lower():
+                self.status_label.config(text="🔄 " + message)
+            elif 'waiting' in message.lower() or 'network' in message.lower():
+                self.status_label.config(text="⏳ " + message)
+            elif 'restarting' in message.lower():
+                self.status_label.config(text="🔄 " + message)
+            else:
+                self.status_label.config(text="🔴 " + message)
+
             # Показываем прогресс только для определенных статусов
-            if any(keyword in message.lower() for keyword in ['connecting', 'reconnecting', 'waiting']):
+            if any(keyword in message.lower() for keyword in ['connecting', 'reconnecting', 'waiting', 'restarting']):
                 self.show_progress(message)
             else:
                 self.hide_progress()
