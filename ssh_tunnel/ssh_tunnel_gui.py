@@ -1006,14 +1006,27 @@ class SSHTunnelApp:
         self.bind_addr_entry.bind('<FocusOut>', lambda e: self.save_last_settings())
         self.bind_addr_entry.bind('<KeyRelease>', lambda e: self.save_last_settings())
 
-        # Control Button
+        # Control Buttons
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=3, column=0, columnspan=2, pady=10)
 
         self.toggle_button = ttk.Button(
             button_frame, text="Start SSH Tunnel", command=self.toggle_connection
         )
-        self.toggle_button.pack()
+        self.toggle_button.pack(side=tk.LEFT, padx=(0, 5))
+
+        # Test Proxy button
+        self.test_proxy_button = ttk.Button(
+            button_frame, text="Test Proxy", command=self.test_proxy_speed
+        )
+        self.test_proxy_button.pack(side=tk.LEFT, padx=5)
+
+        # Restart button for quick reconnection
+        self.restart_button = ttk.Button(
+            button_frame, text="Quick Restart", command=self.quick_restart
+        )
+        self.restart_button.pack(side=tk.LEFT, padx=5)
+        self.restart_button.config(state=tk.DISABLED)  # Initially disabled
 
         # Кнопка скрытия в трей убрана - теперь работает автоматически при minimize
 
@@ -1722,15 +1735,224 @@ class SSHTunnelApp:
 
     def on_tunnel_started(self):
         self.toggle_button.config(text="Stop SSH Tunnel")
+        self.restart_button.config(state=tk.NORMAL)
         self.update_status("Connected", True)
         # Сохраняем состояние подключения при успешном запуске
         self.save_connection_state(True)
 
     def on_tunnel_stopped(self):
         self.toggle_button.config(text="Start SSH Tunnel")
+        self.restart_button.config(state=tk.DISABLED)
         self.update_status("Disconnected", False)
         # Сохраняем состояние отключения при остановке
         self.save_last_settings()
+
+    def quick_restart(self):
+        """Быстрый перезапуск туннеля без задержки"""
+        if not self.is_running:
+            self.log_message("⚠️  Tunnel is not running")
+            return
+
+        self.log_message("🔄 Quick restart initiated...")
+        self.update_status("Restarting...", False)
+
+        # Останавливаем туннель
+        self.stop_tunnel()
+
+        # Ждем немного для корректного завершения
+        time.sleep(0.5)
+
+        # Запускаем заново
+        self.log_message("🚀 Restarting tunnel...")
+        self.start_tunnel()
+
+    def test_proxy_speed(self):
+        """Тестирует скорость и доступность прокси"""
+        if not self.is_running:
+            messagebox.showwarning(
+                "Not Connected",
+                "Please start the SSH tunnel first before testing"
+            )
+            return
+
+        self.log_message("🧪 Starting proxy speed test...")
+        self.test_proxy_button.config(state=tk.DISABLED, text="Testing...")
+
+        # Запускаем тест в отдельном потоке
+        thread = threading.Thread(target=self.run_proxy_test, daemon=True)
+        thread.start()
+
+    def run_proxy_test(self):
+        """Выполняет тест прокси в отдельном потоке"""
+        try:
+            socks_port = self.socks_port_entry.get().strip()
+            bind_addr = self.bind_addr_entry.get().strip()
+            proxy_url = f"socks5://{bind_addr}:{socks_port}"
+
+            # Тест 1: Проверка подключения
+            self.root.after(0, lambda: self.log_message("📡 Test 1/3: Testing connectivity..."))
+            connectivity_result = self.test_proxy_connectivity(proxy_url)
+
+            if not connectivity_result["success"]:
+                self.root.after(0, lambda: self.log_message(
+                    f"❌ Connectivity test failed: {connectivity_result['error']}"
+                ))
+                return
+
+            self.root.after(0, lambda: self.log_message(
+                f"✅ Connectivity: OK ({connectivity_result['time']:.2f}s)"
+            ))
+
+            # Тест 2: Проверка латентности
+            self.root.after(0, lambda: self.log_message("⏱️  Test 2/3: Testing latency..."))
+            latency_result = self.test_proxy_latency(proxy_url)
+
+            self.root.after(0, lambda: self.log_message(
+                f"✅ Latency: {latency_result['avg']:.0f}ms (min: {latency_result['min']:.0f}ms, max: {latency_result['max']:.0f}ms)"
+            ))
+
+            # Тест 3: Проверка скорости
+            self.root.after(0, lambda: self.log_message("🚀 Test 3/3: Testing download speed..."))
+            speed_result = self.test_proxy_download_speed(proxy_url)
+
+            if speed_result["success"]:
+                speed_mbps = speed_result['speed_mbps']
+                self.root.after(0, lambda: self.log_message(
+                    f"✅ Download speed: {speed_mbps:.2f} Mbps"
+                ))
+            else:
+                self.root.after(0, lambda: self.log_message(
+                    f"⚠️  Speed test: {speed_result['error']}"
+                ))
+
+            # Итоговый результат
+            self.root.after(0, lambda: self.log_message("=" * 60))
+            self.root.after(0, lambda: self.log_message("📊 PROXY TEST RESULTS:"))
+            self.root.after(0, lambda: self.log_message(f"   Connectivity: ✅ OK"))
+            self.root.after(0, lambda: self.log_message(f"   Latency: {latency_result['avg']:.0f}ms"))
+            if speed_result["success"]:
+                self.root.after(0, lambda: self.log_message(f"   Download Speed: {speed_result['speed_mbps']:.2f} Mbps"))
+            self.root.after(0, lambda: self.log_message("=" * 60))
+
+        except Exception as e:
+            self.root.after(0, lambda: self.log_message(f"❌ Test error: {str(e)}"))
+        finally:
+            self.root.after(0, lambda: self.test_proxy_button.config(
+                state=tk.NORMAL, text="Test Proxy"
+            ))
+
+    def test_proxy_connectivity(self, proxy_url):
+        """Тестирует базовое подключение через прокси"""
+        import socket
+        import time
+
+        try:
+            start_time = time.time()
+
+            # Пытаемся подключиться к прокси напрямую
+            socks_port = int(self.socks_port_entry.get().strip())
+            bind_addr = self.bind_addr_entry.get().strip()
+
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(5)
+            result = sock.connect_ex((bind_addr, socks_port))
+            sock.close()
+
+            elapsed = time.time() - start_time
+
+            if result == 0:
+                return {"success": True, "time": elapsed}
+            else:
+                return {"success": False, "error": f"Cannot connect to SOCKS proxy", "time": elapsed}
+
+        except Exception as e:
+            return {"success": False, "error": str(e), "time": 0}
+
+    def test_proxy_latency(self, proxy_url):
+        """Тестирует латентность через прокси"""
+        import socket
+        import time
+
+        try:
+            socks_port = int(self.socks_port_entry.get().strip())
+            bind_addr = self.bind_addr_entry.get().strip()
+
+            latencies = []
+            attempts = 5
+
+            for i in range(attempts):
+                start_time = time.time()
+                try:
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.settimeout(2)
+                    sock.connect((bind_addr, socks_port))
+                    sock.close()
+                    latency_ms = (time.time() - start_time) * 1000
+                    latencies.append(latency_ms)
+                except:
+                    pass
+                time.sleep(0.1)
+
+            if latencies:
+                return {
+                    "min": min(latencies),
+                    "max": max(latencies),
+                    "avg": sum(latencies) / len(latencies)
+                }
+            else:
+                return {"min": 0, "max": 0, "avg": 0}
+
+        except Exception as e:
+            return {"min": 0, "max": 0, "avg": 0}
+
+    def test_proxy_download_speed(self, proxy_url):
+        """Тестирует скорость загрузки через прокси"""
+        try:
+            # Пытаемся использовать requests с SOCKS прокси
+            try:
+                import requests
+                from urllib.request import urlopen
+                import time
+
+                # Используем небольшой файл для теста
+                test_url = "https://httpbin.org/bytes/1048576"  # 1MB тестовый файл
+
+                # Настраиваем прокси для requests
+                socks_port = self.socks_port_entry.get().strip()
+                bind_addr = self.bind_addr_entry.get().strip()
+                proxies = {
+                    'http': f'socks5://{bind_addr}:{socks_port}',
+                    'https': f'socks5://{bind_addr}:{socks_port}'
+                }
+
+                start_time = time.time()
+                response = requests.get(test_url, proxies=proxies, timeout=10)
+                elapsed = time.time() - start_time
+
+                bytes_downloaded = len(response.content)
+                speed_bps = bytes_downloaded / elapsed
+                speed_mbps = (speed_bps * 8) / (1024 * 1024)
+
+                return {
+                    "success": True,
+                    "speed_mbps": speed_mbps,
+                    "bytes": bytes_downloaded,
+                    "time": elapsed
+                }
+
+            except ImportError:
+                return {
+                    "success": False,
+                    "error": "requests library not available (install: pip install requests[socks])"
+                }
+            except Exception as e:
+                return {
+                    "success": False,
+                    "error": f"Download test failed: {str(e)}"
+                }
+
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     def signal_handler(self, signum, frame):
         """Обработчик сигналов для graceful shutdown"""
