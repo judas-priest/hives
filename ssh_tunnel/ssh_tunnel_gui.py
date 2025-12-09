@@ -45,7 +45,7 @@ class SSHTunnelApp:
         self.restore_connection = True  # Новая переменная для восстановления подключения
         self.reconnect_attempts = 0
         self.max_reconnect_attempts = 5
-        self.reconnect_delay = 5  # seconds
+        self.reconnect_delay = 3  # seconds - уменьшено для более быстрого переподключения
 
         self.config_file = Path.home() / ".config" / "ssh_tunnel_gui" / "config.json"
         self.known_hosts_file = Path.home() / ".ssh" / "known_hosts"
@@ -65,7 +65,8 @@ class SSHTunnelApp:
             self.root.after(100, self.hide_to_tray)
         
         # Проверяем, нужно ли восстановить подключение (после загрузки UI)
-        self.root.after(500, self.check_restore_connection)
+        # Уменьшаем задержку для более быстрого восстановления
+        self.root.after(200, self.check_restore_connection)
         
         self.log_message("🚀 SSH Tunnel Manager initialized")
         self.log_message(f"   Auto-reconnect: {self.auto_reconnect}")
@@ -769,10 +770,14 @@ class SSHTunnelApp:
             row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10)
         )
 
+        # Connection status with background color indicator
+        status_frame = ttk.Frame(header_frame)
+        status_frame.pack(side=tk.LEFT)
+
         self.status_label = ttk.Label(
-            header_frame, text="🔴 Disconnected", font=("Arial", 12, "bold")
+            status_frame, text="🔴 Disconnected", font=("Arial", 12, "bold")
         )
-        self.status_label.pack(side=tk.LEFT)
+        self.status_label.pack(side=tk.LEFT, padx=5)
 
         ttk.Label(
             header_frame, text="SSH Tunnel Manager", font=("Arial", 14, "bold")
@@ -1012,14 +1017,33 @@ class SSHTunnelApp:
 
         # Кнопка скрытия в трей убрана - теперь работает автоматически при minimize
 
+        # Progress bar for connection status
+        self.progress_frame = ttk.Frame(main_frame)
+        self.progress_frame.grid(row=4, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 5))
+        self.progress_frame.columnconfigure(0, weight=1)
+
+        self.progress_bar = ttk.Progressbar(
+            self.progress_frame,
+            mode='indeterminate',
+            length=200
+        )
+        self.progress_bar.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=5)
+        self.progress_frame.grid_remove()  # Initially hidden
+
+        self.progress_label = ttk.Label(
+            self.progress_frame,
+            text="Connecting..."
+        )
+        self.progress_label.grid(row=1, column=0)
+
         # Log output
         log_frame = ttk.LabelFrame(main_frame, text="Connection Log", padding="10")
         log_frame.grid(
-            row=4, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10)
+            row=5, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10)
         )
         log_frame.columnconfigure(0, weight=1)
         log_frame.rowconfigure(0, weight=1)
-        main_frame.rowconfigure(4, weight=1)
+        main_frame.rowconfigure(5, weight=1)
 
         self.log_text = scrolledtext.ScrolledText(
             log_frame, height=12, width=70, font=("Monospace", 9)
@@ -1408,11 +1432,28 @@ class SSHTunnelApp:
         self.log_text.see(tk.END)
         self.root.update_idletasks()
 
+    def show_progress(self, message="Connecting..."):
+        """Показывает индикатор прогресса"""
+        self.progress_label.config(text=message)
+        self.progress_frame.grid()
+        self.progress_bar.start(10)  # Скорость анимации
+
+    def hide_progress(self):
+        """Скрывает индикатор прогресса"""
+        self.progress_bar.stop()
+        self.progress_frame.grid_remove()
+
     def update_status(self, message, is_connected=False):
         if is_connected:
             self.status_label.config(text="🟢 Connected - " + message)
+            self.hide_progress()
         else:
             self.status_label.config(text="🔴 " + message)
+            # Показываем прогресс только для определенных статусов
+            if any(keyword in message.lower() for keyword in ['connecting', 'reconnecting', 'waiting']):
+                self.show_progress(message)
+            else:
+                self.hide_progress()
 
         # Обновляем иконку в трее
         self.update_tray_icon(is_connected)
@@ -1461,66 +1502,78 @@ class SSHTunnelApp:
             and self.reconnect_attempts < self.max_reconnect_attempts
         ):
             if self.reconnect_attempts > 0:
+                # Улучшенное сообщение с прогрессом
                 self.log_message(
-                    f"Reconnection attempt {self.reconnect_attempts}/{self.max_reconnect_attempts}"
+                    f"🔄 Reconnection attempt {self.reconnect_attempts}/{self.max_reconnect_attempts} "
+                    f"(waiting {self.reconnect_delay}s...)"
+                )
+                self.root.after(
+                    0, lambda a=self.reconnect_attempts, m=self.max_reconnect_attempts:
+                    self.update_status(f"Reconnecting ({a}/{m})...", False)
                 )
                 time.sleep(self.reconnect_delay)
 
             # Проверяем доступность сети перед попыткой подключения
             if not self.is_network_available():
-                self.log_message("No network connection detected, waiting for network...")
+                self.log_message("⚠️  Network unavailable, retrying in 2s...")
                 self.root.after(
-                    0, lambda: self.update_status("Waiting for network connection...")
+                    0, lambda: self.update_status("Waiting for network...", False)
                 )
-                time.sleep(self.reconnect_delay)
+                # Используем уменьшенную задержку для более быстрых попыток
+                time.sleep(2)
                 continue
 
             self.run_single_tunnel()
 
             if self.is_running and self.auto_reconnect:
                 self.reconnect_attempts += 1
-                self.log_message("Connection lost, attempting to reconnect...")
+                self.log_message("🔌 Connection lost, attempting to reconnect...")
             else:
                 break
 
         if self.reconnect_attempts >= self.max_reconnect_attempts:
-            self.log_message("Max reconnection attempts reached")
+            self.log_message("❌ Max reconnection attempts reached")
             self.root.after(
-                0, lambda: self.update_status("Max reconnect attempts reached")
+                0, lambda: self.update_status("Max reconnect attempts reached", False)
             )
 
-    def is_network_available(self, timeout=3):
-        """Проверяет доступность сетевого подключения"""
+    def is_network_available(self, timeout=1):
+        """Проверяет доступность сетевого подключения (оптимизировано для скорости)"""
         try:
-            # Проверяем доступность Google DNS и Cloudflare DNS
-            test_hosts = ["8.8.8.8", "1.1.1.1", "208.67.222.222"]
-            
-            for host in test_hosts:
+            # Быстрая проверка через socket connection (намного быстрее ping)
+            import socket
+
+            # Пробуем подключиться к надежным DNS серверам
+            test_servers = [
+                ("8.8.8.8", 53),       # Google DNS
+                ("1.1.1.1", 53),       # Cloudflare DNS
+                ("208.67.222.222", 53) # OpenDNS
+            ]
+
+            for server, port in test_servers:
                 try:
-                    result = subprocess.run(
-                        ["ping", "-c", "1", "-W", str(timeout), host],
-                        capture_output=True,
-                        text=True,
-                        timeout=timeout + 1
-                    )
-                    if result.returncode == 0:
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.settimeout(timeout)
+                    result = sock.connect_ex((server, port))
+                    sock.close()
+                    if result == 0:
                         return True
-                except (subprocess.TimeoutExpired, subprocess.SubprocessError, FileNotFoundError):
+                except (socket.error, socket.timeout):
                     continue
-            
-            # Альтернативная проверка через curl (если ping недоступен)
+
+            # Fallback: попробуем проверить SSH сервер напрямую, если настройки заполнены
             try:
-                result = subprocess.run(
-                    ["curl", "--connect-timeout", str(timeout), "--max-time", str(timeout), 
-                     "http://www.google.com", "-s", "-o", "/dev/null"],
-                    capture_output=True,
-                    text=True,
-                    timeout=timeout + 2
-                )
-                return result.returncode == 0
-            except (subprocess.TimeoutExpired, subprocess.SubprocessError, FileNotFoundError):
+                host = self.host_entry.get().strip()
+                port = int(self.port_entry.get().strip())
+                if host and port:
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.settimeout(timeout)
+                    result = sock.connect_ex((host, port))
+                    sock.close()
+                    return result == 0
+            except (ValueError, socket.error, socket.timeout):
                 pass
-                
+
             return False
         except Exception as e:
             print(f"Network check error: {e}")
@@ -1731,10 +1784,10 @@ class SSHTunnelApp:
                         
                         # Загружаем настройки из сохраненного состояния
                         self.load_connection_settings(last_settings)
-                        
-                        # Запускаем подключение с задержкой
-                        self.root.after(1000, self.start_tunnel)
-                        self.log_message("   Connection will be restored in 1 second")
+
+                        # Запускаем подключение с минимальной задержкой для быстрого восстановления
+                        self.root.after(300, self.start_tunnel)
+                        self.log_message("   Connection will be restored in 0.3 seconds")
                     else:
                         self.log_message("⚠️  Previous connection was active but settings incomplete")
                         print(f"🔍 RESTORE CHECK: Settings incomplete - host='{host}', username='{username}'")
