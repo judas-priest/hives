@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 class DatabaseManager {
   constructor(dbPath = join(__dirname, '../database/pazaak.db')) {
     this.db = new Database(dbPath);
-    this.db.pragma('journal_mode = WAL');
+    this.db.exec('PRAGMA journal_mode = WAL');
     this.initializeDatabase();
   }
 
