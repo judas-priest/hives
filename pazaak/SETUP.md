@@ -2,8 +2,7 @@
 
 ## Prerequisites
 
-- Node.js 18 or higher
-- npm (comes with Node.js)
+- Bun 1.0 or higher (install from https://bun.sh)
 
 ## Quick Start
 
@@ -13,19 +12,19 @@
 # Navigate to backend directory
 cd pazaak/backend
 
-# Install dependencies (this will compile native modules like better-sqlite3)
-npm install
+# Install dependencies
+bun install
 
 # Create .env file (optional, uses defaults if not present)
 cp .env.example .env
 
 # Start the server
-npm start
+bun start
 ```
 
 The backend server will start on `http://localhost:3000`
 
-**Important:** The `npm install` step is required as it compiles native modules like `better-sqlite3`. Without this step, you'll see binding errors when starting the server.
+**Note:** This project uses Bun's built-in SQLite support (`bun:sqlite`), which eliminates the need for native module compilation and provides better performance.
 
 ### 2. Frontend Setup
 
@@ -81,7 +80,7 @@ Be the first player to win 3 rounds.
 Backend tests:
 ```bash
 cd pazaak/backend
-npm test
+bun test
 ```
 
 ### Building for Production
@@ -95,7 +94,7 @@ npm run build
 Backend (no build needed, it's already using ES modules):
 ```bash
 cd pazaak/backend
-NODE_ENV=production npm start
+NODE_ENV=production bun start
 ```
 
 ## Configuration
@@ -115,22 +114,21 @@ VITE_SOCKET_URL=http://localhost:3000
 
 ## Troubleshooting
 
-### better-sqlite3 Native Binding Error
+### Installing Bun
 
-If you encounter an error like "Could not locate the bindings file" for `better-sqlite3`, this means the native module needs to be compiled. This is a common issue and can be fixed:
+If you don't have Bun installed, you can install it with:
 
-**Solution:**
+**Linux/macOS:**
 ```bash
-cd pazaak/backend
-npm install
+curl -fsSL https://bun.sh/install | bash
 ```
 
-The `npm install` command will automatically compile the native bindings for your system.
+**Windows:**
+```bash
+powershell -c "irm bun.sh/install.ps1|iex"
+```
 
-**Note:** `better-sqlite3` requires compilation tools on your system:
-- **Linux**: Usually pre-installed. If not, install `build-essential` and `python3`
-- **macOS**: Requires Xcode Command Line Tools (`xcode-select --install`)
-- **Windows**: Requires Windows Build Tools (`npm install --global windows-build-tools`)
+After installation, restart your terminal or run `source ~/.bashrc` (or `~/.zshrc`) to update your PATH.
 
 ### Database Issues
 If you encounter database errors, delete the database file:
@@ -167,10 +165,10 @@ Make sure both backend and frontend are running and the URLs in `.env` files are
 - **Custom SVG** - Card graphics
 
 ### Backend
-- **Node.js** - Runtime
+- **Bun** - Runtime with built-in SQLite
 - **Express** - Web framework
 - **Socket.IO** - Real-time communication
-- **better-sqlite3** - Database
+- **bun:sqlite** - Built-in database (no native compilation needed)
 - **bcrypt** - Password hashing
 - **jsonwebtoken** - Authentication
 - **CORS** - Cross-origin support
