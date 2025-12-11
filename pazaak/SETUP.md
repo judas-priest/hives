@@ -13,7 +13,7 @@
 # Navigate to backend directory
 cd pazaak/backend
 
-# Install dependencies
+# Install dependencies (this will compile native modules like better-sqlite3)
 npm install
 
 # Create .env file (optional, uses defaults if not present)
@@ -24,6 +24,8 @@ npm start
 ```
 
 The backend server will start on `http://localhost:3000`
+
+**Important:** The `npm install` step is required as it compiles native modules like `better-sqlite3`. Without this step, you'll see binding errors when starting the server.
 
 ### 2. Frontend Setup
 
@@ -112,6 +114,23 @@ VITE_SOCKET_URL=http://localhost:3000
 ```
 
 ## Troubleshooting
+
+### better-sqlite3 Native Binding Error
+
+If you encounter an error like "Could not locate the bindings file" for `better-sqlite3`, this means the native module needs to be compiled. This is a common issue and can be fixed:
+
+**Solution:**
+```bash
+cd pazaak/backend
+npm install
+```
+
+The `npm install` command will automatically compile the native bindings for your system.
+
+**Note:** `better-sqlite3` requires compilation tools on your system:
+- **Linux**: Usually pre-installed. If not, install `build-essential` and `python3`
+- **macOS**: Requires Xcode Command Line Tools (`xcode-select --install`)
+- **Windows**: Requires Windows Build Tools (`npm install --global windows-build-tools`)
 
 ### Database Issues
 If you encounter database errors, delete the database file:
